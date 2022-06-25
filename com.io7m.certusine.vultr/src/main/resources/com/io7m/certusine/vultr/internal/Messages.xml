@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+  <entry key="errorDNSConfiguration">DNS configurator is misconfigured.</entry>
+
+  <entry key="errorMissingRequiredParameter"><![CDATA[
+Missing a required parameter.
+  Parameter: {0}
+  Required parameters: {1}
+]]>
+  </entry>
+
+  <entry key="errorServer">Could not create a DNS record: HTTP status: {0}</entry>
+
+</properties>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+  <entry key="errorOutputConfiguration">Output is misconfigured.</entry>
+  <entry key="errorMissingRequiredParameter"><![CDATA[
+Missing a required parameter.
+  Parameter: {0}
+  Required parameters: {1}
+]]>
+  </entry>
+  <entry key="errorUnexpectedResponse">Received an unexpected response: {0}</entry>
+</properties>

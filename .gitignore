@@ -1,0 +1,13 @@
+*.aux
+*.glob
+*.iml
+*.vo
+*.vok
+*.vos
+.idea
+.lia.cache
+.nia.cache
+.nra.cache
+config
+pom.xml.versionsBackup
+target

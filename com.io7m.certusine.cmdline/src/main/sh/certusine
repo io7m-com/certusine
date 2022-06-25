@@ -1,0 +1,6 @@
+#!/bin/sh
+
+exec /usr/bin/env java \
+-p /certusine/lib \
+-m com.io7m.certusine.cmdline/com.io7m.certusine.cmdline.Main \
+"$@"

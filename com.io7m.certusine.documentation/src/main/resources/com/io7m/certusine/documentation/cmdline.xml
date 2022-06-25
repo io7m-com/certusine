@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         title="Command-Line Interface">
+
+  <Section title="Overview">
+    <Paragraph>
+      The <Term type="package">certusine</Term> package provides a command-line interface for issuing and renewing
+      certificates using the <LinkExternal
+      target="https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment">ACME</LinkExternal>
+      protocol.
+    </Paragraph>
+    <FormalItem title="Command-Line Overview">
+      <Verbatim><xi:include parse="text" href="usage.txt"/></Verbatim>
+    </FormalItem>
+  </Section>
+
+</Section>

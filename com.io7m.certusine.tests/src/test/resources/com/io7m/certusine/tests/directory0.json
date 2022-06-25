@@ -1,0 +1,13 @@
+{
+  "keyChange": "http://localhost:20000/acme/key-change",
+  "meta": {
+    "caaIdentities": [
+      "localhost"
+    ]
+  },
+  "newAccount": "http://localhost:20000/acme/new-acct",
+  "newNonce": "http://localhost:20000/acme/new-nonce",
+  "newOrder": "http://localhost:20000/acme/new-order",
+  "renewalInfo": "http://localhost:20000/get/draft-aaron-ari/renewalInfo/",
+  "revokeCert": "http://localhost:20000/acme/revoke-cert"
+}

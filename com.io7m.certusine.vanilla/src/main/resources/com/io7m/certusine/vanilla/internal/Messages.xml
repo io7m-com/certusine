@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+  <entry key="orderFailed">Certificate order failed</entry>
+  <entry key="challengeFailed">Challenge failed</entry>
+  <entry key="challengeTypeUnavailable">No challenge of type {0} is available</entry>
+  <entry key="errorReportFormat">{0}</entry>
+  <entry key="parseFailed">Parsing failed</entry>
+  <entry key="errorOutputConfiguration">Output is misconfigured</entry>
+  <entry key="errorMissingRequiredParameter"><![CDATA[
+Missing a required parameter.
+  Parameter: {0}
+  Required parameters: {1}
+]]>
+  </entry>
+  <entry key="errorAccountURI">Problematic ACME URI: {0}</entry>
+  <entry key="errorDomainAccountNonexistent">Nonexistent account "{1}" specified in domain "{0}"</entry>
+  <entry key="challengeFailed">Server challenge failed</entry>
+  <entry key="errorReport"><![CDATA[{0}
+{1}
+]]></entry>
+
+  <entry key="errorAccountDuplicate">Multiple accounts defined with the name "{0}"</entry>
+  <entry key="errorOutputDuplicate">Multiple outputs defined with the name "{0}"</entry>
+  <entry key="errorDNSDuplicate">Multiple DNS configurators defined with the name "{0}"</entry>
+  <entry key="errorDomainDuplicate">Multiple domains defined with the name "{0}"</entry>
+  <entry key="errorDomainCertificateDuplicate">Multiple certificates defined in domain "{0}" with the name "{1}"</entry>
+
+  <entry key="errorDomainOutputNonexistent"><![CDATA[Domain "{0}" specifies a nonexistent certificate output "{1}".
+  Available outputs: {2}
+]]></entry>
+  <entry key="errorDomainDNSConfiguratorNonexistent"><![CDATA[Domain "{0}" specifies a nonexistent DNS configurator "{1}".
+  Available configurators: {2}
+]]></entry>
+  <entry key="errorDNSProviderNonexistent"><![CDATA[Unsupported DNS configurator type "{0}"
+  Available configurator types: {1}
+]]></entry>
+  <entry key="errorOutputProviderNonexistent"><![CDATA[Unsupported certificate output type "{0}"
+  Available output types: {1}
+]]></entry>
+  <entry key="errorParameterDuplicate">Duplicate parameter "{0}"</entry>
+  <entry key="errorPublicKeyCorrupt">File "{0}" did not contain a usable public key.</entry>
+  <entry key="errorPrivateKeyCorrupt">File "{0}" did not contain a usable private key.</entry>
+  <entry key="errorIOFile">Unable to open or read file "{0}"</entry>
+  <entry key="errorExceededRetries">Exceeded the maximum number of retries ({0}) for the task.</entry>
+  <entry key="errorDuration">Unparseable duration: {0} ("{1}")</entry>
+  <entry key="errorReportUnavailable">No error report is available.</entry>
+  <entry key="errorAllTasksFailed">All authorization challenges have failed.</entry>
+  <entry key="errorCertificateName">Certificate name "{0}" is invalid: {1}</entry>
+
+</properties>
