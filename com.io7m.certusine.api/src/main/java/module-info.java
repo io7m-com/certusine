@@ -20,8 +20,16 @@
 
 module com.io7m.certusine.api
 {
+  requires static org.osgi.annotation.bundle;
+  requires static org.osgi.annotation.versioning;
+
   requires transitive com.io7m.anethum.api;
   requires transitive com.io7m.anethum.common;
+
+  requires com.io7m.jxtrand.vanilla;
+
+  opens com.io7m.certusine.api.internal
+    to com.io7m.jxtrand.vanilla;
 
   exports com.io7m.certusine.api;
 }

@@ -3,12 +3,9 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 
 <properties>
-  <entry key="errorOutputConfiguration">Output is misconfigured.</entry>
-  <entry key="errorMissingRequiredParameter"><![CDATA[
-Missing a required parameter.
-  Parameter: {0}
-  Required parameters: {1}
-]]>
-  </entry>
   <entry key="errorUnexpectedResponse">Received an unexpected response: {0}</entry>
+
+  <entry key="parameterEndpoint">The base address/URI of the etcd server.</entry>
+  <entry key="parameterUserName">The username used to authenticate with the etcd server, if required.</entry>
+  <entry key="parameterPassword">The password used to authenticate with the etcd server, if required.</entry>
 </properties>

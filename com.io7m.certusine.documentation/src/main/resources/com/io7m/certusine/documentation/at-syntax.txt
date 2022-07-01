@@ -1,0 +1,10 @@
+$ certusine check-configuration --file config.json
+
+$ (cat <<EOF
+check-configuration
+--file
+config.json
+EOF
+) > args.txt
+
+$ certusine @args.txt

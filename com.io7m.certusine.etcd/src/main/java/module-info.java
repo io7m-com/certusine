@@ -23,6 +23,9 @@ import com.io7m.certusine.etcd.CSEtcdOutputProvider;
 
 module com.io7m.certusine.etcd
 {
+  requires static org.osgi.annotation.bundle;
+  requires static org.osgi.annotation.versioning;
+
   requires transitive com.io7m.certusine.api;
 
   requires com.fasterxml.jackson.annotation;

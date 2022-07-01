@@ -16,50 +16,52 @@
 
 package com.io7m.certusine.looseleaf;
 
-import com.io7m.anethum.common.ParseSeverity;
-import com.io7m.anethum.common.ParseStatus;
+import com.io7m.certusine.api.CSAbstractNamedProvider;
 import com.io7m.certusine.api.CSCertificateOutputProviderType;
 import com.io7m.certusine.api.CSCertificateOutputType;
 import com.io7m.certusine.api.CSConfigurationException;
+import com.io7m.certusine.api.CSConfigurationParameterDescription;
 import com.io7m.certusine.api.CSConfigurationParameters;
 import com.io7m.certusine.looseleaf.internal.CSLLCredentials;
 import com.io7m.certusine.looseleaf.internal.CSLLOutput;
 import com.io7m.certusine.looseleaf.internal.CSLLStrings;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+
+import static java.util.Map.entry;
 
 /**
  * Access to looseleaf.
  */
 
-public final class CSLLOutputProvider implements CSCertificateOutputProviderType
+public final class CSLLOutputProvider
+  extends CSAbstractNamedProvider
+  implements CSCertificateOutputProviderType
 {
   private static final String ENDPOINT_PARAMETER = "endpoint";
   private static final String USERNAME_PARAMETER = "username";
   private static final String PASSWORD_PARAMETER = "password";
-
-  private static final List<String> REQUIRED_PARAMETERS =
-    List.of(ENDPOINT_PARAMETER, USERNAME_PARAMETER, PASSWORD_PARAMETER);
-
-  private static final Set<String> KNOWN_PARAMETERS =
-    Set.of(ENDPOINT_PARAMETER, USERNAME_PARAMETER, PASSWORD_PARAMETER);
 
   private final CSLLStrings strings;
 
   /**
    * Access to looseleaf.
    *
+   * @param locale    A locale for error messages
    * @param inStrings String resources
+   *
+   * @throws IOException On I/O errors
    */
 
   public CSLLOutputProvider(
+    final Locale locale,
     final CSLLStrings inStrings)
+    throws IOException
   {
+    super(locale);
     this.strings = Objects.requireNonNull(inStrings, "strings");
   }
 
@@ -75,7 +77,7 @@ public final class CSLLOutputProvider implements CSCertificateOutputProviderType
     final Locale locale)
     throws IOException
   {
-    this(new CSLLStrings(locale));
+    this(locale, new CSLLStrings(locale));
   }
 
   /**
@@ -96,55 +98,21 @@ public final class CSLLOutputProvider implements CSCertificateOutputProviderType
     final CSConfigurationParameters parameters)
     throws CSConfigurationException
   {
-    final var errors =
-      new ArrayList<ParseStatus>();
-    final var parameterMap =
-      parameters.parameters();
+    Objects.requireNonNull(name, "name");
+    Objects.requireNonNull(parameters, "parameters");
 
-    for (final var required : REQUIRED_PARAMETERS) {
-      if (!parameterMap.containsKey(required)) {
-        errors.add(
-          ParseStatus.builder()
-            .setSeverity(ParseSeverity.PARSE_ERROR)
-            .setMessage(this.strings.format(
-              "errorMissingRequiredParameter",
-              required, REQUIRED_PARAMETERS))
-            .setLexical(parameters.lexical())
-            .setErrorCode("error-parameter-required")
-            .build()
-        );
-      }
-    }
+    this.checkParameters(parameters);
 
-    for (final var pName : parameterMap.keySet()) {
-      if (!KNOWN_PARAMETERS.contains(pName)) {
-        errors.add(
-          ParseStatus.builder()
-            .setSeverity(ParseSeverity.PARSE_ERROR)
-            .setMessage(this.strings.format(
-              "errorUnrecognizedParameter",
-              pName, KNOWN_PARAMETERS))
-            .setLexical(parameters.lexical())
-            .setErrorCode("error-parameter-unrecognized")
-            .build()
-        );
-      }
-    }
+    final var parameterMap = parameters.parameters();
 
-    if (errors.isEmpty()) {
-      return new CSLLOutput(
-        this.strings,
-        name,
-        new CSLLCredentials(
-          parameterMap.get(USERNAME_PARAMETER),
-          parameterMap.get(PASSWORD_PARAMETER)
-        ),
-        parameterMap.get(ENDPOINT_PARAMETER)
-      );
-    }
-
-    throw new CSConfigurationException(
-      errors, this.strings.format("errorOutputConfiguration")
+    return new CSLLOutput(
+      this.strings,
+      name,
+      new CSLLCredentials(
+        parameterMap.get(USERNAME_PARAMETER),
+        parameterMap.get(PASSWORD_PARAMETER)
+      ),
+      parameterMap.get(ENDPOINT_PARAMETER)
     );
   }
 
@@ -152,5 +120,45 @@ public final class CSLLOutputProvider implements CSCertificateOutputProviderType
   public String name()
   {
     return "looseleaf";
+  }
+
+  @Override
+  public String description()
+  {
+    return "Write certificates to a looseleaf server.";
+  }
+
+  @Override
+  public Map<String, CSConfigurationParameterDescription> parameters()
+  {
+    return Map.ofEntries(
+      entry(
+        ENDPOINT_PARAMETER,
+        new CSConfigurationParameterDescription(
+          ENDPOINT_PARAMETER,
+          this.strings.format("parameterEndpoint"),
+          "URI",
+          true
+        )
+      ),
+      entry(
+        USERNAME_PARAMETER,
+        new CSConfigurationParameterDescription(
+          USERNAME_PARAMETER,
+          this.strings.format("parameterUserName"),
+          "User name",
+          false
+        )
+      ),
+      entry(
+        PASSWORD_PARAMETER,
+        new CSConfigurationParameterDescription(
+          PASSWORD_PARAMETER,
+          this.strings.format("parameterPassword"),
+          "Password",
+          false
+        )
+      )
+    );
   }
 }

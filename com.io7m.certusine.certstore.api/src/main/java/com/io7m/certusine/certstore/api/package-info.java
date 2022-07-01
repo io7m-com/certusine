@@ -18,4 +18,9 @@
  * ACME client (Certificate store API)
  */
 
+@Export
+@Version("1.0.0")
 package com.io7m.certusine.certstore.api;
+
+import org.osgi.annotation.bundle.Export;
+import org.osgi.annotation.versioning.Version;

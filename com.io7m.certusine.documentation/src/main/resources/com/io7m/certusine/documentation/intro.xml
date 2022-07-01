@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         id="914f358e-c9ab-4861-9e97-a2013176b738"
+         title="Introduction">
+
+  <Paragraph>
+    The <Term type="package">looseleaf</Term> server is an HTTP-accessible key/value store with a focus on minimalism, a
+    small footprint, and reliability. The server has the following notable features:
+  </Paragraph>
+
+  <FormalItem title="Features">
+    <ListUnordered>
+      <Item>
+        Uses <LinkExternal target="https://github.com/shred/acme4j">acme4j</LinkExternal> internally for strong RFC
+        compliance.
+      </Item>
+      <Item>
+        Exclusively uses the <Term type="expression">DNS-01</Term> ACME challenge type for ease of integration with
+        infrastructure without having to set up insecure web servers.
+      </Item>
+      <Item>
+        A small, easily auditable codebase with a heavy use of modularity for correctness.
+      </Item>
+      <Item>
+        Exposes a
+        <LinkExternal target="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ServiceLoader.html">service provider</LinkExternal>
+        API for integrating with new DNS APIs.
+      </Item>
+      <Item>
+        Exposes a
+        <LinkExternal target="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ServiceLoader.html">service provider</LinkExternal>
+        API for implementing new types of certificate outputs.
+      </Item>
+      <Item>
+        Supports
+        <LinkExternal target="https://www.vultr.com/pt/docs/introduction-to-vultr-dns/">Vultr DNS</LinkExternal>.
+      </Item>
+      <Item>
+        Supports writing certificates to
+        <LinkExternal target="https://www.io7m.com/software/looseleaf/">looseleaf</LinkExternal>
+        servers.
+      </Item>
+      <Item>
+        An extensive automated test suite with high coverage.
+      </Item>
+      <Item>
+        A small footprint; the server is designed to run in tiny 16-32mb JVM heap configurations.
+      </Item>
+      <Item>
+        Platform independence. No platform-dependent code is included in any form, and installations can largely be
+        carried between platforms without changes.
+      </Item>
+      <Item>
+        <LinkExternal target="https://www.osgi.org/">OSGi</LinkExternal>-ready
+      </Item>
+      <Item>
+        <LinkExternal target="https://en.wikipedia.org/wiki/Java_Platform_Module_System">JPMS</LinkExternal>-ready
+      </Item>
+      <Item>
+        ISC license
+      </Item>
+    </ListUnordered>
+  </FormalItem>
+
+</Section>

@@ -23,6 +23,9 @@ import com.io7m.certusine.looseleaf.CSLLOutputProvider;
 
 module com.io7m.certusine.looseleaf
 {
+  requires static org.osgi.annotation.bundle;
+  requires static org.osgi.annotation.versioning;
+
   requires transitive com.io7m.certusine.api;
 
   requires org.slf4j;

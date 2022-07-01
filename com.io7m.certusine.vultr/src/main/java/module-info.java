@@ -23,6 +23,9 @@ import com.io7m.certusine.vultr.CSVultrDNSConfigurators;
 
 module com.io7m.certusine.vultr
 {
+  requires static org.osgi.annotation.bundle;
+  requires static org.osgi.annotation.versioning;
+
   requires transitive com.io7m.certusine.api;
 
   requires com.io7m.jxtrand.vanilla;

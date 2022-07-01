@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         id="fb83ff3e-739d-430d-a356-8ad88b34d0a6"
+         title="Directory">
+
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="package">directory</Term> - Write certificates to a local directory
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Description">
+    <Paragraph>
+      The <Term type="package">directory</Term> output writes certificates to a local directory.
+      For a directory at <Term type="expression">/path</Term>, for a given domain name <Term type="expression">d</Term>
+      and certificate name <Term type="expression">c</Term>, certificates are written to the following files:
+    </Paragraph>
+
+    <FormalItem title="Output Keys">
+      <Table type="genericTable">
+        <Columns>
+          <Column>Key Name</Column>
+          <Column>Description</Column>
+        </Columns>
+        <Row>
+          <Cell><Term type="expression">/path/d/c/public_key</Term></Cell>
+          <Cell>The certificate public key.</Cell>
+        </Row>
+        <Row>
+          <Cell><Term type="expression">/path/d/c/private_key</Term></Cell>
+          <Cell>The certificate private key.</Cell>
+        </Row>
+        <Row>
+          <Cell><Term type="expression">/path/d/c/certificate</Term></Cell>
+          <Cell>The PEM-encoded certificate.</Cell>
+        </Row>
+        <Row>
+          <Cell><Term type="expression">/path/d/c/certificate_full_chain</Term></Cell>
+          <Cell>The PEM-encoded full certificate chain.</Cell>
+        </Row>
+      </Table>
+    </FormalItem>
+
+    <Paragraph>
+      Note that <Term type="expression">d</Term> is <LinkExternal
+      target="https://en.wikipedia.org/wiki/Percent-encoding">percent-encoded</LinkExternal> to ensure that
+      names are filesystem-safe.
+    </Paragraph>
+
+    <Paragraph>
+      The output accepts the following parameters:
+    </Paragraph>
+
+    <FormalItem title="Parameters">
+      <xi:include href="output-directory-parameters.xml"/>
+    </FormalItem>
+  </Subsection>
+
+  <Subsection title="Example">
+    <FormalItem title="Example Configuration">
+      <Verbatim><![CDATA[
+{
+  "Type": "directory",
+  "Name": "an-example-output",
+  "Parameters": [
+    {
+      "Name": "path",
+      "Value": "/tmp"
+    }
+  ]
+}
+]]></Verbatim>
+    </FormalItem>
+  </Subsection>
+
+</Section>

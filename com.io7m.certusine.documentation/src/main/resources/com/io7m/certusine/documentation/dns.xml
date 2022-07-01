@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         id="16a79f45-e27b-45ee-8787-13616109176f"
+         title="DNS Configurators">
+
+  <Section title="Overview">
+    <Paragraph>This section of the documentation describes all of the supported DNS configurator types.</Paragraph>
+  </Section>
+
+  <xi:include href="dns-vultr.xml"/>
+
+</Section>

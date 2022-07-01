@@ -17,6 +17,8 @@
 
 package com.io7m.certusine.api;
 
+import java.util.Map;
+
 /**
  * A named provider service.
  */
@@ -28,4 +30,16 @@ public interface CSNamedProviderType
    */
 
   String name();
+
+  /**
+   * @return A human-readable description of the provider
+   */
+
+  String description();
+
+  /**
+   * @return A map describing the parameters
+   */
+
+  Map<String, CSConfigurationParameterDescription> parameters();
 }

@@ -136,6 +136,26 @@ public final class CSCommandLineTest
   }
 
   @Test
+  public void testHelpShowCertificateOutputs()
+  {
+    final var r = Main.mainExitless(new String[]{
+      "help",
+      "show-certificate-outputs"
+    });
+    assertEquals(0, r);
+  }
+
+  @Test
+  public void testHelpShowDNSConfigurators()
+  {
+    final var r = Main.mainExitless(new String[]{
+      "help",
+      "show-dns-configurators"
+    });
+    assertEquals(0, r);
+  }
+
+  @Test
   public void testGenerateKeyPair()
   {
     final var publicKey =
@@ -208,5 +228,25 @@ public final class CSCommandLineTest
       realFile.toString()
     });
     assertEquals(1, r);
+  }
+
+  @Test
+  public void testShowDNSConfigurators()
+    throws IOException
+  {
+    final int r = Main.mainExitless(new String[]{
+      "show-dns-configurators"
+    });
+    assertEquals(0, r);
+  }
+
+  @Test
+  public void testShowCertificateOutputs()
+    throws IOException
+  {
+    final int r = Main.mainExitless(new String[]{
+      "show-certificate-outputs"
+    });
+    assertEquals(0, r);
   }
 }

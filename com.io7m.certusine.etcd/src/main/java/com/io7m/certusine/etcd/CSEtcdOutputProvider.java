@@ -17,57 +17,53 @@
 
 package com.io7m.certusine.etcd;
 
-import com.io7m.anethum.common.ParseSeverity;
-import com.io7m.anethum.common.ParseStatus;
+import com.io7m.certusine.api.CSAbstractNamedProvider;
 import com.io7m.certusine.api.CSCertificateOutputProviderType;
 import com.io7m.certusine.api.CSCertificateOutputType;
 import com.io7m.certusine.api.CSConfigurationException;
+import com.io7m.certusine.api.CSConfigurationParameterDescription;
 import com.io7m.certusine.api.CSConfigurationParameters;
 import com.io7m.certusine.etcd.internal.CSEtcdCredentials;
 import com.io7m.certusine.etcd.internal.CSEtcdOutput;
 import com.io7m.certusine.etcd.internal.CSEtcdStrings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
+
+import static java.util.Map.entry;
 
 /**
  * An etcd certificate output.
  */
 
 public final class CSEtcdOutputProvider
+  extends CSAbstractNamedProvider
   implements CSCertificateOutputProviderType
 {
-  private static final Logger LOG =
-    LoggerFactory.getLogger(CSEtcdOutputProvider.class);
-
   private static final String ENDPOINT_PARAMETER = "endpoint";
   private static final String USERNAME_PARAMETER = "username";
   private static final String PASSWORD_PARAMETER = "password";
-
-  private static final List<String> REQUIRED_PARAMETERS =
-    List.of(ENDPOINT_PARAMETER);
-
-  private static final Set<String> KNOWN_PARAMETERS =
-    Set.of(ENDPOINT_PARAMETER, USERNAME_PARAMETER, PASSWORD_PARAMETER);
 
   private final CSEtcdStrings strings;
 
   /**
    * Access to etcd.
    *
+   * @param locale    A locale for error messages
    * @param inStrings String resources
+   *
+   * @throws IOException On I/O errors
    */
 
   public CSEtcdOutputProvider(
+    final Locale locale,
     final CSEtcdStrings inStrings)
+    throws IOException
   {
+    super(locale);
     this.strings = Objects.requireNonNull(inStrings, "strings");
   }
 
@@ -83,7 +79,7 @@ public final class CSEtcdOutputProvider
     final Locale locale)
     throws IOException
   {
-    this(new CSEtcdStrings(locale));
+    this(locale, new CSEtcdStrings(locale));
   }
 
   /**
@@ -104,41 +100,12 @@ public final class CSEtcdOutputProvider
     final CSConfigurationParameters parameters)
     throws CSConfigurationException
   {
-    final var errors =
-      new ArrayList<ParseStatus>();
-    final var parameterMap =
-      parameters.parameters();
+    Objects.requireNonNull(name, "name");
+    Objects.requireNonNull(parameters, "parameters");
 
-    for (final var required : REQUIRED_PARAMETERS) {
-      if (!parameterMap.containsKey(required)) {
-        errors.add(
-          ParseStatus.builder()
-            .setSeverity(ParseSeverity.PARSE_ERROR)
-            .setMessage(this.strings.format(
-              "errorMissingRequiredParameter",
-              required, REQUIRED_PARAMETERS))
-            .setLexical(parameters.lexical())
-            .setErrorCode("error-parameter-required")
-            .build()
-        );
-      }
-    }
+    this.checkParameters(parameters);
 
-    for (final var pName : parameterMap.keySet()) {
-      if (!KNOWN_PARAMETERS.contains(pName)) {
-        errors.add(
-          ParseStatus.builder()
-            .setSeverity(ParseSeverity.PARSE_ERROR)
-            .setMessage(this.strings.format(
-              "errorUnrecognizedParameter",
-              pName, KNOWN_PARAMETERS))
-            .setLexical(parameters.lexical())
-            .setErrorCode("error-parameter-unrecognized")
-            .build()
-        );
-      }
-    }
-
+    final var parameterMap = parameters.parameters();
     Optional<CSEtcdCredentials> credentials = Optional.empty();
     if (parameterMap.containsKey(USERNAME_PARAMETER)) {
       if (parameterMap.containsKey(PASSWORD_PARAMETER)) {
@@ -151,17 +118,11 @@ public final class CSEtcdOutputProvider
       }
     }
 
-    if (errors.isEmpty()) {
-      return new CSEtcdOutput(
-        this.strings,
-        name,
-        credentials,
-        parameterMap.get(ENDPOINT_PARAMETER)
-      );
-    }
-
-    throw new CSConfigurationException(
-      errors, this.strings.format("errorOutputConfiguration")
+    return new CSEtcdOutput(
+      this.strings,
+      name,
+      credentials,
+      parameterMap.get(ENDPOINT_PARAMETER)
     );
   }
 
@@ -169,5 +130,45 @@ public final class CSEtcdOutputProvider
   public String name()
   {
     return "etcd";
+  }
+
+  @Override
+  public String description()
+  {
+    return "Write certificates to an etcd server.";
+  }
+
+  @Override
+  public Map<String, CSConfigurationParameterDescription> parameters()
+  {
+    return Map.ofEntries(
+      entry(
+        ENDPOINT_PARAMETER,
+        new CSConfigurationParameterDescription(
+          ENDPOINT_PARAMETER,
+          this.strings.format("parameterEndpoint"),
+          "URI",
+          true
+        )
+      ),
+      entry(
+        USERNAME_PARAMETER,
+        new CSConfigurationParameterDescription(
+          USERNAME_PARAMETER,
+          this.strings.format("parameterUserName"),
+          "User name",
+          false
+        )
+      ),
+      entry(
+        PASSWORD_PARAMETER,
+        new CSConfigurationParameterDescription(
+          PASSWORD_PARAMETER,
+          this.strings.format("parameterPassword"),
+          "Password",
+          false
+        )
+      )
+    );
   }
 }

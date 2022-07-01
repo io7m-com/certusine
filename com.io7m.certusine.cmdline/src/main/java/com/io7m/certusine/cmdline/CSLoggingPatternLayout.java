@@ -17,6 +17,7 @@
 package com.io7m.certusine.cmdline;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.core.LayoutBase;
 import org.slf4j.MDC;
 
@@ -44,7 +45,6 @@ public final class CSLoggingPatternLayout extends LayoutBase<ILoggingEvent>
     final var s = new StringBuilder(128);
     s.append(event.getLevel().toString().toLowerCase(Locale.ROOT));
     s.append(": ");
-    // s.append(event.getLoggerName());
 
     final var domain = MDC.get("domain");
     if (domain != null) {
@@ -65,7 +65,37 @@ public final class CSLoggingPatternLayout extends LayoutBase<ILoggingEvent>
     }
 
     s.append(event.getFormattedMessage());
+
+    {
+      final var throwable = event.getThrowableProxy();
+      if (throwable != null) {
+        s.append(this.formatThrowable(throwable));
+      }
+    }
+
     s.append(System.lineSeparator());
     return s.toString();
+  }
+
+  private String formatThrowable(
+    final IThrowableProxy throwable)
+  {
+    final var text = new StringBuilder();
+    text.append(throwable.getClassName());
+    text.append(": ");
+    text.append(throwable.getMessage());
+    text.append(System.lineSeparator());
+
+    for (final var e : throwable.getStackTraceElementProxyArray()) {
+      text.append("  ");
+      text.append(e.getSTEAsString());
+      text.append(System.lineSeparator());
+    }
+
+    final var cause = throwable.getCause();
+    if (cause != null) {
+      text.append(this.formatThrowable(cause));
+    }
+    return text.toString();
   }
 }

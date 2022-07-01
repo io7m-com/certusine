@@ -12,4 +12,8 @@ Missing a required parameter.
   </entry>
   <entry key="errorUnexpectedResponse">Received an unexpected response: {0}</entry>
   <entry key="errorServer">Server returned an error status: {0}</entry>
+
+  <entry key="parameterEndpoint">The base address/URI of the looseleaf server.</entry>
+  <entry key="parameterUserName">The username used to authenticate with the looseleaf server.</entry>
+  <entry key="parameterPassword">The password used to authenticate with the looseleaf server.</entry>
 </properties>

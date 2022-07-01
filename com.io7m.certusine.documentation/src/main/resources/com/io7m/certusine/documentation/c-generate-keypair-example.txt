@@ -1,0 +1,6 @@
+$ certusine generate-keypair --private-key key.pri --public-key key.pub
+
+$ certusine generate-keypair --private-key key.pri --public-key key.pub
+error: java.nio.file.FileAlreadyExistsException: key.pub
+
+$ certusine generate-keypair --private-key key.pri --public-key key.pub --overwrite true

@@ -1,0 +1,16 @@
+info: Usage: generate-keypair [options]
+
+  Options:
+    --overwrite
+      Overwrite keys if already present.
+      Default: false
+  * --private-key
+      The private key
+  * --public-key
+      The public key
+    --verbose
+      Set the minimum logging verbosity level.
+      Default: info
+      Possible Values: [trace, debug, info, warn, error]
+
+

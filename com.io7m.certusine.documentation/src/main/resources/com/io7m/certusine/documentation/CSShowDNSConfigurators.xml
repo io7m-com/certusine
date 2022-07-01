@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Table xmlns="urn:com.io7m.structural:8:0" type="genericTable">
+   <Columns>
+      <Column>Parameter</Column>
+      <Column>Type</Column>
+      <Column>Required</Column>
+      <Column>Description</Column>
+   </Columns>
+   <Row>
+      <Cell>
+         <Term type="parameter">--verbose</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">CLPLogLevel</Term>
+      </Cell>
+      <Cell>false</Cell>
+      <Cell>Set the minimum logging verbosity level.</Cell>
+   </Row>
+</Table>

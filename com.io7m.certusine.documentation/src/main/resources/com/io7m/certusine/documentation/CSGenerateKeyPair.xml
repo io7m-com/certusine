@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Table xmlns="urn:com.io7m.structural:8:0" type="genericTable">
+   <Columns>
+      <Column>Parameter</Column>
+      <Column>Type</Column>
+      <Column>Required</Column>
+      <Column>Description</Column>
+   </Columns>
+   <Row>
+      <Cell>
+         <Term type="parameter">--verbose</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">CLPLogLevel</Term>
+      </Cell>
+      <Cell>false</Cell>
+      <Cell>Set the minimum logging verbosity level.</Cell>
+   </Row>
+   <Row>
+      <Cell>
+         <Term type="parameter">--public-key</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">Path</Term>
+      </Cell>
+      <Cell>true</Cell>
+      <Cell>The public key</Cell>
+   </Row>
+   <Row>
+      <Cell>
+         <Term type="parameter">--private-key</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">Path</Term>
+      </Cell>
+      <Cell>true</Cell>
+      <Cell>The private key</Cell>
+   </Row>
+   <Row>
+      <Cell>
+         <Term type="parameter">--overwrite</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">boolean</Term>
+      </Cell>
+      <Cell>false</Cell>
+      <Cell>Overwrite keys if already present.</Cell>
+   </Row>
+</Table>

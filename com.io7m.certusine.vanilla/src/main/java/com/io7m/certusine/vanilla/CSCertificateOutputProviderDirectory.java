@@ -16,26 +16,29 @@
 
 package com.io7m.certusine.vanilla;
 
-import com.io7m.anethum.common.ParseSeverity;
-import com.io7m.anethum.common.ParseStatus;
+import com.io7m.certusine.api.CSAbstractNamedProvider;
 import com.io7m.certusine.api.CSCertificateOutputProviderType;
 import com.io7m.certusine.api.CSCertificateOutputType;
 import com.io7m.certusine.api.CSConfigurationException;
+import com.io7m.certusine.api.CSConfigurationParameterDescription;
 import com.io7m.certusine.api.CSConfigurationParameters;
 import com.io7m.certusine.vanilla.internal.CSCertificateOutputDirectory;
 import com.io7m.certusine.vanilla.internal.CSStrings;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+
+import static java.util.Map.entry;
 
 /**
  * A directory-based certificate output.
  */
 
 public final class CSCertificateOutputProviderDirectory
+  extends CSAbstractNamedProvider
   implements CSCertificateOutputProviderType
 {
   private static final String PATH_PARAMETER = "path";
@@ -48,12 +51,18 @@ public final class CSCertificateOutputProviderDirectory
   /**
    * A directory-based certificate output.
    *
+   * @param locale    A locale for error messages
    * @param inStrings String resources
+   *
+   * @throws IOException On I/O errors
    */
 
   public CSCertificateOutputProviderDirectory(
+    final Locale locale,
     final CSStrings inStrings)
+    throws IOException
   {
+    super(locale);
     this.strings = Objects.requireNonNull(inStrings, "strings");
   }
 
@@ -69,7 +78,7 @@ public final class CSCertificateOutputProviderDirectory
     final Locale locale)
     throws IOException
   {
-    this(new CSStrings(locale));
+    this(locale, new CSStrings(locale));
   }
 
   /**
@@ -99,33 +108,35 @@ public final class CSCertificateOutputProviderDirectory
     Objects.requireNonNull(name, "name");
     Objects.requireNonNull(parameters, "parameters");
 
-    final var errors = new ArrayList<ParseStatus>();
+    this.checkParameters(parameters);
+
     final var parameterMap = parameters.parameters();
 
-    for (final var required : REQUIRED_PARAMETERS) {
-      if (!parameterMap.containsKey(required)) {
-        errors.add(
-          ParseStatus.builder()
-            .setSeverity(ParseSeverity.PARSE_ERROR)
-            .setMessage(this.strings.format(
-              "errorMissingRequiredParameter",
-              required, REQUIRED_PARAMETERS))
-            .setLexical(parameters.lexical())
-            .setErrorCode("error-parameter-required")
-            .build()
-        );
-      }
-    }
+    return new CSCertificateOutputDirectory(
+      name,
+      parameters.baseDirectory().resolve(parameterMap.get(PATH_PARAMETER))
+    );
+  }
 
-    if (errors.isEmpty()) {
-      return new CSCertificateOutputDirectory(
-        name,
-        parameters.baseDirectory().resolve(parameterMap.get(PATH_PARAMETER))
-      );
-    }
+  @Override
+  public String description()
+  {
+    return "Write certificates to a local directory.";
+  }
 
-    throw new CSConfigurationException(
-      errors, this.strings.format("errorOutputConfiguration")
+  @Override
+  public Map<String, CSConfigurationParameterDescription> parameters()
+  {
+    return Map.ofEntries(
+      entry(
+        PATH_PARAMETER,
+        new CSConfigurationParameterDescription(
+          PATH_PARAMETER,
+          this.strings.format("parameterPath"),
+          "Path",
+          true
+        )
+      )
     );
   }
 }

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         id="55c1f3b5-80c7-4fc3-9b8d-521106ce907b"
+         title="looseleaf">
+
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="package">looseleaf</Term> - Write certificates to a looseleaf server
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Description">
+    <Paragraph>
+      The <Term type="package">looseleaf</Term> output writes certificates to an external
+      <LinkExternal target="https://www.io7m.com/software/looseleaf/">looseleaf</LinkExternal>
+      server. For a given domain name <Term type="expression">d</Term> and certificate name
+      <Term type="expression">c</Term>, certificates are written to the following database keys:
+    </Paragraph>
+
+    <FormalItem title="Output Keys">
+      <Table type="genericTable">
+        <Columns>
+          <Column>Key Name</Column>
+          <Column>Description</Column>
+        </Columns>
+        <Row>
+          <Cell><Term type="expression">/certificates/d/c/public_key</Term></Cell>
+          <Cell>The certificate public key.</Cell>
+        </Row>
+        <Row>
+          <Cell><Term type="expression">/certificates/d/c/private_key</Term></Cell>
+          <Cell>The certificate private key.</Cell>
+        </Row>
+        <Row>
+          <Cell><Term type="expression">/certificates/d/c/certificate</Term></Cell>
+          <Cell>The PEM-encoded certificate.</Cell>
+        </Row>
+        <Row>
+          <Cell><Term type="expression">/certificates/d/c/certificate_full_chain</Term></Cell>
+          <Cell>The PEM-encoded full certificate chain.</Cell>
+        </Row>
+      </Table>
+    </FormalItem>
+
+    <Paragraph>
+      The output accepts the following parameters:
+    </Paragraph>
+
+    <FormalItem title="Parameters">
+      <xi:include href="output-looseleaf-parameters.xml"/>
+    </FormalItem>
+  </Subsection>
+
+  <Subsection title="Example">
+    <FormalItem title="Example Configuration">
+      <Verbatim><![CDATA[{
+  "Type": "looseleaf",
+  "Name": "an-example-looseleaf-output",
+  "Parameters": [
+    {
+      "Name": "endpoint",
+      "Value": "http://looseleaf.example.com:20000/"
+    },
+    {
+      "Name": "username",
+      "Value": "grouch"
+    },
+    {
+      "Name": "password",
+      "Value": "12345678"
+    }
+  ]
+}
+]]></Verbatim>
+    </FormalItem>
+  </Subsection>
+
+</Section>

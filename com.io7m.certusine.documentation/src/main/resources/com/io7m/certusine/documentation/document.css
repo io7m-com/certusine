@@ -30,6 +30,11 @@
   font-size:   80%;
 }
 
+.term
+{
+  font-style: italic;
+}
+
 .command,
 .constant,
 .element,
@@ -37,7 +42,7 @@
 .file,
 .package,
 .parameter,
-.term
+.variable
 {
   font-family: monospace;
 }

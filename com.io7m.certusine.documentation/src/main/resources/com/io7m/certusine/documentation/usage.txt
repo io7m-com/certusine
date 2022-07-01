@@ -1,4 +1,4 @@
-INFO   Usage: certusine [options] [command] [command options]
+info: Usage: certusine [options] [command] [command options]
 
   Options:
     --verbose
@@ -18,10 +18,14 @@ INFO   Usage: certusine [options] [command] [command options]
     $ certusine @file.txt
 
   Commands:
-    check-configuration     Check configuration file.
-    generate-keypair        Generate keypairs.
-    help                    Show detailed help messages for commands.
-    renew                   Renew certificates.
+    check-configuration          Check configuration file.
+    generate-keypair             Generate keypairs.
+    help                         Show detailed help messages for commands.
+    renew                        Renew certificates.
+    show-certificate-outputs     Show supported certificate outputs.
+    show-dns-configurators       Show supported DNS configurators.
+    version                      Show the package version.
 
   Documentation:
     https://www.io7m.com/software/certusine/documentation/
+
