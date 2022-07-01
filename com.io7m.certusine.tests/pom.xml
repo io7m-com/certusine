@@ -48,7 +48,20 @@
       <artifactId>com.io7m.certusine.vultr</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.certusine.looseleaf</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
+    <dependency>
+      <groupId>com.io7m.looseleaf</groupId>
+      <artifactId>com.io7m.looseleaf.server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.looseleaf</groupId>
+      <artifactId>com.io7m.looseleaf.server.api</artifactId>
+    </dependency>
     <dependency>
       <groupId>com.io7m.jaffirm</groupId>
       <artifactId>com.io7m.jaffirm.core</artifactId>

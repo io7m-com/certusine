@@ -14,25 +14,30 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+import com.io7m.certusine.api.CSCertificateOutputProviderType;
+import com.io7m.certusine.looseleaf.CSLLOutputProvider;
+
 /**
- * ACME client (unit tests)
+ * ACME client (looseleaf Support)
  */
 
-module com.io7m.certusine.tests
+module com.io7m.certusine.looseleaf
 {
-  requires com.io7m.certusine.api;
-  requires com.io7m.certusine.vanilla;
-  requires com.io7m.certusine.etcd;
+  requires transitive com.io7m.certusine.api;
 
-  requires com.io7m.jaffirm.core;
+  requires org.slf4j;
+  requires com.io7m.jxtrand.vanilla;
   requires com.io7m.looseleaf.protocol.v1;
-  requires com.io7m.looseleaf.server.api;
-  requires com.io7m.looseleaf.server;
   requires java.net.http;
-  requires org.bouncycastle.pkix;
-  requires org.eclipse.jetty.server;
-  requires org.eclipse.jetty.servlet;
-  requires org.shredzone.acme4j;
 
-  exports com.io7m.certusine.tests;
+  provides CSCertificateOutputProviderType
+    with CSLLOutputProvider;
+
+  opens com.io7m.certusine.looseleaf.internal
+    to com.io7m.jxtrand.vanilla;
+
+  exports com.io7m.certusine.looseleaf.internal
+    to com.io7m.certusine.tests;
+
+  exports com.io7m.certusine.looseleaf;
 }

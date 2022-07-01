@@ -15,24 +15,7 @@
  */
 
 /**
- * ACME client (unit tests)
+ * ACME client (looseleaf Support [internals])
  */
 
-module com.io7m.certusine.tests
-{
-  requires com.io7m.certusine.api;
-  requires com.io7m.certusine.vanilla;
-  requires com.io7m.certusine.etcd;
-
-  requires com.io7m.jaffirm.core;
-  requires com.io7m.looseleaf.protocol.v1;
-  requires com.io7m.looseleaf.server.api;
-  requires com.io7m.looseleaf.server;
-  requires java.net.http;
-  requires org.bouncycastle.pkix;
-  requires org.eclipse.jetty.server;
-  requires org.eclipse.jetty.servlet;
-  requires org.shredzone.acme4j;
-
-  exports com.io7m.certusine.tests;
-}
+package com.io7m.certusine.looseleaf.internal;
