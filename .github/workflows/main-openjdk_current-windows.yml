@@ -16,4 +16,4 @@ jobs:
         with:
           java-version: 17
       - name: Build
-        run: mvn '-Ddocker.skip.build=true' --errors clean verify site
+        run: mvn -Ddocker.skip=true --errors clean verify site
