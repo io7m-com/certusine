@@ -4,7 +4,7 @@ FROM docker.io/library/alpine:3.16.0
 FROM docker.io/library/eclipse-temurin:17.0.3_7-jre-alpine
 
 ENV PATH="/certusine/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/java/openjdk/bin"
-ENV LOOSELEAF_HOME="/certusine"
+ENV CERTUSINE_HOME="/certusine"
 
 COPY certusine /certusine
 
