@@ -46,6 +46,7 @@
   <xi:include href="c-renew.xml"/>
   <xi:include href="c-show-certificate-outputs.xml"/>
   <xi:include href="c-show-dns-configurators.xml"/>
+  <xi:include href="c-looseleaf-download.xml"/>
   <xi:include href="c-version.xml"/>
 
 </Section>

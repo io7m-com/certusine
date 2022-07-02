@@ -18,6 +18,7 @@ package com.io7m.certusine.looseleaf.internal;
 
 import com.io7m.certusine.api.CSCertificateOutputData;
 import com.io7m.certusine.api.CSCertificateOutputType;
+import com.io7m.certusine.looseleaf.CSLLCredentials;
 import com.io7m.looseleaf.protocol.v1.LLv1Errors;
 import com.io7m.looseleaf.protocol.v1.LLv1Messages;
 import com.io7m.looseleaf.protocol.v1.LLv1RUD;

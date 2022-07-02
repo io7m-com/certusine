@@ -1,0 +1,28 @@
+info: Usage: looseleaf-download [options]
+
+  Options:
+  * --certificate-name
+      The certificate name.
+  * --domain
+      The domain name.
+  * --endpoint
+      The target looseleaf endpoint base.
+    --only-once
+      Download certificates once and then exit.
+      Default: false
+  * --output-directory
+      The output directory.
+  * --password
+      The password.
+    --schedule
+      Download certificates repeatedly, waiting this duration between 
+      attempts. 
+      Default: PT1H
+  * --username
+      The user name.
+    --verbose
+      Set the minimum logging verbosity level.
+      Default: info
+      Possible Values: [trace, debug, info, warn, error]
+
+

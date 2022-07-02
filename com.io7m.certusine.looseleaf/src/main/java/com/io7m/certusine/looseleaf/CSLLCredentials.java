@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.certusine.looseleaf.internal;
+package com.io7m.certusine.looseleaf;
 
 import java.util.Objects;
 

@@ -18,6 +18,7 @@ package com.io7m.certusine.cmdline;
 
 import com.io7m.certusine.cmdline.internal.CSCheckConfiguration;
 import com.io7m.certusine.cmdline.internal.CSGenerateKeyPair;
+import com.io7m.certusine.cmdline.internal.CSLooseleafDownload;
 import com.io7m.certusine.cmdline.internal.CSRenew;
 import com.io7m.certusine.cmdline.internal.CSShowCertificateOutputs;
 import com.io7m.certusine.cmdline.internal.CSShowDNSConfigurators;
@@ -71,7 +72,8 @@ public final class Main implements Runnable
         CSRenew::new,
         CSShowCertificateOutputs::new,
         CSShowDNSConfigurators::new,
-        CSVersion::new
+        CSVersion::new,
+        CSLooseleafDownload::new
       );
 
     final var configuration =

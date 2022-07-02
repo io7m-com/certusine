@@ -22,7 +22,6 @@ import com.io7m.certusine.api.CSCertificateOutputType;
 import com.io7m.certusine.api.CSConfigurationException;
 import com.io7m.certusine.api.CSConfigurationParameterDescription;
 import com.io7m.certusine.api.CSConfigurationParameters;
-import com.io7m.certusine.looseleaf.internal.CSLLCredentials;
 import com.io7m.certusine.looseleaf.internal.CSLLOutput;
 import com.io7m.certusine.looseleaf.internal.CSLLStrings;
 

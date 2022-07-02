@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         title="looseleaf-download">
+
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">looseleaf-download</Term> - Download certificates from a looseleaf server
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Description">
+    <Paragraph>
+      The <Term type="command">looseleaf-download</Term> command downloads certificates from a
+      <LinkExternal target="https://www.io7m.com/software/looseleaf">looseleaf</LinkExternal> server.
+      The command is designed to run perpetually as a service, repeatedly downloading certificates on a schedule.
+    </Paragraph>
+
+    <FormalItem title="Parameters">
+      <xi:include href="CSLooseleafDownload.xml"/>
+    </FormalItem>
+  </Subsection>
+
+  <Subsection title="Examples">
+    <FormalItem title="Example" type="example">
+      <Verbatim>
+        <xi:include parse="text"
+                    href="c-looseleaf-download-example.txt"/>
+      </Verbatim>
+    </FormalItem>
+  </Subsection>
+
+</Section>

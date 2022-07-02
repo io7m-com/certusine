@@ -8,16 +8,6 @@
    </Columns>
    <Row>
       <Cell>
-         <Term type="parameter">--file</Term>
-      </Cell>
-      <Cell>
-         <Term type="constant">Path</Term>
-      </Cell>
-      <Cell>true</Cell>
-      <Cell>The configuration file</Cell>
-   </Row>
-   <Row>
-      <Cell>
          <Term type="parameter">--verbose</Term>
       </Cell>
       <Cell>
@@ -25,5 +15,15 @@
       </Cell>
       <Cell>false</Cell>
       <Cell>Set the minimum logging verbosity level.</Cell>
+   </Row>
+   <Row>
+      <Cell>
+         <Term type="parameter">--file</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">Path</Term>
+      </Cell>
+      <Cell>true</Cell>
+      <Cell>The configuration file</Cell>
    </Row>
 </Table>

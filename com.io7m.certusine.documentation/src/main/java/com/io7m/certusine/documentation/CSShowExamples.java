@@ -57,7 +57,8 @@ public final class CSShowExamples
       "renew",
       "show-certificate-outputs",
       "show-dns-configurators",
-      "version"
+      "version",
+      "looseleaf-download"
     );
 
     for (final var command : commands) {

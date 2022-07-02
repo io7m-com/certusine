@@ -14,12 +14,17 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/**
+ * ACME client (Command-line)
+ */
+
 module com.io7m.certusine.cmdline
 {
   requires ch.qos.logback.classic;
   requires ch.qos.logback.core;
   requires com.io7m.certusine.api;
   requires com.io7m.certusine.etcd;
+  requires com.io7m.certusine.looseleaf;
   requires com.io7m.certusine.vanilla;
   requires com.io7m.certusine.vultr;
   requires com.io7m.claypot.core;
