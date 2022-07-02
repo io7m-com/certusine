@@ -18,4 +18,9 @@
  * ACME client (API)
  */
 
+@Export
+@Version("1.0.0")
 package com.io7m.certusine.api;
+
+import org.osgi.annotation.bundle.Export;
+import org.osgi.annotation.versioning.Version;

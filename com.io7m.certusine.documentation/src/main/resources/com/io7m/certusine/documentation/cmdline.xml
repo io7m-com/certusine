@@ -6,14 +6,46 @@
 
   <Section title="Overview">
     <Paragraph>
-      The <Term type="package">certusine</Term> package provides a command-line interface for issuing and renewing
-      certificates using the <LinkExternal
-      target="https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment">ACME</LinkExternal>
-      protocol.
+      The <Term type="package">certusine</Term> package provides a command-line interface for performing tasks such as
+      starting the server, checking configuration files, hashing passwords, and etc. The base
+      <Term type="command">certusine</Term> command is broken into a number of subcommands which are documented
+      over the following sections.
     </Paragraph>
     <FormalItem title="Command-Line Overview">
       <Verbatim><xi:include parse="text" href="usage.txt"/></Verbatim>
     </FormalItem>
+    <Paragraph>
+      All subcommands accept a <Term type="parameter">--verbose</Term> parameter that may be set to one of
+      <Term type="constant">trace</Term>, <Term type="constant">debug</Term>, <Term type="constant">info</Term>,
+      <Term type="constant">warn</Term>, or <Term type="constant">error</Term>. This parameter sets the lower bound for
+      the severity of messages that will be logged. For example, at <Term type="constant">debug</Term> verbosity, only
+      messages of severity <Term type="constant">debug</Term> and above will be logged. Setting the verbosity to
+      <Term type="constant">trace</Term>
+      level effectively causes everything to be logged, and will produce large volumes of debugging output.
+    </Paragraph>
+    <Paragraph id="9833c2f4-01db-4366-8315-8e9522e4a25a">
+      The <Term type="package">certusine</Term> command-line tool uses <LinkExternal target="https://jcommander.org/">
+      jcommander
+    </LinkExternal> to parse command-line arguments, and therefore supports placing command-line arguments into a file,
+      one argument per line, and then referencing that file with <Term type="constant">@</Term>. For example:
+    </Paragraph>
+    <FormalItem title="@ Syntax">
+      <Verbatim>
+        <xi:include parse="text"
+                    href="at-syntax.txt"/>
+      </Verbatim>
+    </FormalItem>
+    <Paragraph>
+      All subcommands, unless otherwise specified, yield an exit code of <Term type="constant">0</Term> on success, and
+      a non-zero exit code on failure.
+    </Paragraph>
   </Section>
+
+  <xi:include href="c-check-configuration.xml"/>
+  <xi:include href="c-generate-keypair.xml"/>
+  <xi:include href="c-renew.xml"/>
+  <xi:include href="c-show-certificate-outputs.xml"/>
+  <xi:include href="c-show-dns-configurators.xml"/>
+  <xi:include href="c-version.xml"/>
 
 </Section>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         id="de1d01c0-1dbe-4e86-a1d1-29a0cf5afbc3"
+         title="Certificate Outputs">
+
+  <Section title="Overview">
+    <Paragraph>This section of the documentation describes all of the supported certificate output types.</Paragraph>
+  </Section>
+
+  <xi:include href="output-directory.xml"/>
+  <xi:include href="output-etcd.xml"/>
+  <xi:include href="output-looseleaf.xml"/>
+
+</Section>

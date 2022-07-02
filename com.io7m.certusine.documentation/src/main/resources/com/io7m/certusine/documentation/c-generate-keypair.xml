@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         title="generate-keypair">
+
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">generate-keypair</Term> - Generate keypairs
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Description">
+    <Paragraph>
+      The <Term type="command">generate-keypair</Term> command generates keypairs.
+    </Paragraph>
+
+    <FormalItem title="Parameters">
+      <xi:include href="CSGenerateKeyPair.xml"/>
+    </FormalItem>
+
+    <Paragraph>
+      The <Term type="command">generate-keypair</Term> command will generate a keypair and write the private key
+      to the file specified with <Term type="parameter">--private-key</Term>, and write the public key to the file
+      specified with <Term type="parameter">--public-key</Term>. If the key files already exist, they will not be
+      overwritten unless the <Term type="parameter">--overwrite</Term> parameter is specified.
+    </Paragraph>
+    <Paragraph>
+      If the command encounters no errors or warnings, it will not print anything.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Examples">
+    <FormalItem title="Example" type="example">
+      <Verbatim>
+        <xi:include parse="text"
+                    href="c-generate-keypair-example.txt"/>
+      </Verbatim>
+    </FormalItem>
+  </Subsection>
+
+</Section>

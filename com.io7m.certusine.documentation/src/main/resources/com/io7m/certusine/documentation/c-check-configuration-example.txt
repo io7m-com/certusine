@@ -1,0 +1,2 @@
+$ certusine check-configuration --file main.json
+error: main.json:0:0: Multiple DNS configurators defined with the name "vultr-dns"

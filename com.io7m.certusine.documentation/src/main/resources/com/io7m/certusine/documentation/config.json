@@ -1,0 +1,69 @@
+{
+  "%Schema": "https://www.io7m.com/software/certusine/config-1.json",
+
+  "Options": {
+    "DNSWaitTime": "PT5M",
+    "CertificateStore": "store.db",
+    "CertificateExpirationThreshold": "PT72H"
+  },
+
+  "Accounts": [
+    {
+      "Name": "main",
+      "PublicKeyPath": "account.pub",
+      "PrivateKeyPath": "account.pri",
+      "AcmeURI": "https://acme-staging-v02.api.letsencrypt.org/directory"
+    }
+  ],
+
+  "Outputs": [
+    {
+      "Type": "directory",
+      "Name": "main-output",
+      "Parameters": [
+        {
+          "Name": "path",
+          "Value": "/tmp"
+        }
+      ]
+    }
+  ],
+
+  "DNSConfigurators": [
+    {
+      "Type": "vultr",
+      "Name": "vultr-dns",
+      "Parameters": [
+        {
+          "Name": "api-key",
+          "Value": "25DDk6MT+2JI5KBABMysYLPFEOge+MZE3/GiBgrR+CU="
+        },
+        {
+          "Name": "domain",
+          "Value": "example.com"
+        }
+      ]
+    }
+  ],
+
+  "Domains": [
+    {
+      "Name": "example.com",
+      "Account": "main",
+      "Certificates": [
+        {
+          "Name": "www",
+          "PublicKeyPath": "www.pub",
+          "PrivateKeyPath": "www.pri",
+          "Hosts": [
+            "www.example.com"
+          ]
+        }
+      ],
+      "Outputs": [
+        "main-output"
+      ],
+      "DNSConfigurator": "vultr-dns"
+    }
+  ]
+}

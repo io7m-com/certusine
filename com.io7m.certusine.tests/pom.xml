@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.certusine</artifactId>
     <groupId>com.io7m.certusine</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
   </parent>
 
   <artifactId>com.io7m.certusine.tests</artifactId>
@@ -48,7 +48,20 @@
       <artifactId>com.io7m.certusine.vultr</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.certusine.looseleaf</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
+    <dependency>
+      <groupId>com.io7m.looseleaf</groupId>
+      <artifactId>com.io7m.looseleaf.server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.looseleaf</groupId>
+      <artifactId>com.io7m.looseleaf.server.api</artifactId>
+    </dependency>
     <dependency>
       <groupId>com.io7m.jaffirm</groupId>
       <artifactId>com.io7m.jaffirm.core</artifactId>
@@ -86,5 +99,15 @@
       <artifactId>jetcd-core</artifactId>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Determine test coverage -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

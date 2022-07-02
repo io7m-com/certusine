@@ -1,0 +1,8 @@
+$ certusine renew --file config.json --schedule PT1M
+info: [example.com] (attempt 1/10) checking if domain is authorized
+info: [example.com] (attempt 1/10) domain is already authorized
+info: [example.com] (attempt 1/10) checking if certificates require reissuing
+info: [example.com] (attempt 1/10) certificates do not require reissuing
+info: [example.com] (attempt 1/10) saving certificates to outputs
+info: [example.com] (attempt 1/10) saving certificate to output directory:main-output
+info: waiting until 2022-07-01T13:45:34Z for the next renewal attempt (PT1M)

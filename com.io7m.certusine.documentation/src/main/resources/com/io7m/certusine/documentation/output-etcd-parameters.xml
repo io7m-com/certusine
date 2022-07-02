@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Table xmlns="urn:com.io7m.structural:8:0" type="genericTable">
+   <Columns>
+      <Column>Parameter</Column>
+      <Column>Type</Column>
+      <Column>Required</Column>
+      <Column>Description</Column>
+   </Columns>
+   <Row>
+      <Cell>
+         <Term type="parameter">password</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">Password</Term>
+      </Cell>
+      <Cell>false</Cell>
+      <Cell>The password used to authenticate with the etcd server, if required.</Cell>
+   </Row>
+   <Row>
+      <Cell>
+         <Term type="parameter">username</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">User name</Term>
+      </Cell>
+      <Cell>false</Cell>
+      <Cell>The username used to authenticate with the etcd server, if required.</Cell>
+   </Row>
+   <Row>
+      <Cell>
+         <Term type="parameter">endpoint</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">URI</Term>
+      </Cell>
+      <Cell>true</Cell>
+      <Cell>The base address/URI of the etcd server.</Cell>
+   </Row>
+</Table>

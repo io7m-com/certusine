@@ -18,4 +18,9 @@
  * ACME client (etcd Support)
  */
 
+@Export
+@Version("1.0.0")
 package com.io7m.certusine.etcd;
+
+import org.osgi.annotation.bundle.Export;
+import org.osgi.annotation.versioning.Version;

@@ -1,6 +1,12 @@
 #!/bin/sh
 
+if [ -z "${CERTUSINE_HOME}" ]
+then
+  echo "CERTUSINE_HOME is unset" 1>&2
+  exit 1
+fi
+
 exec /usr/bin/env java \
--p /certusine/lib \
+-p "${CERTUSINE_HOME}/lib" \
 -m com.io7m.certusine.cmdline/com.io7m.certusine.cmdline.Main \
 "$@"

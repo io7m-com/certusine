@@ -30,8 +30,14 @@ module com.io7m.certusine.cmdline
   requires org.slf4j;
 
   uses com.io7m.certusine.certstore.api.CSCertificateStoreFactoryType;
+  uses com.io7m.certusine.api.CSDNSConfiguratorProviderType;
+  uses com.io7m.certusine.api.CSCertificateOutputProviderType;
 
-  opens com.io7m.certusine.cmdline.internal to jcommander;
+  opens com.io7m.certusine.cmdline.internal
+    to jcommander;
+
+  exports com.io7m.certusine.cmdline.internal
+    to com.io7m.certusine.documentation;
 
   exports com.io7m.certusine.cmdline;
 }

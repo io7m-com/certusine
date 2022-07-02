@@ -19,6 +19,9 @@ package com.io7m.certusine.cmdline;
 import com.io7m.certusine.cmdline.internal.CSCheckConfiguration;
 import com.io7m.certusine.cmdline.internal.CSGenerateKeyPair;
 import com.io7m.certusine.cmdline.internal.CSRenew;
+import com.io7m.certusine.cmdline.internal.CSShowCertificateOutputs;
+import com.io7m.certusine.cmdline.internal.CSShowDNSConfigurators;
+import com.io7m.certusine.cmdline.internal.CSVersion;
 import com.io7m.claypot.core.CLPApplicationConfiguration;
 import com.io7m.claypot.core.CLPCommandConstructorType;
 import com.io7m.claypot.core.CLPCommandType;
@@ -64,8 +67,11 @@ public final class Main implements Runnable
     final List<CLPCommandConstructorType> commands =
       List.of(
         CSCheckConfiguration::new,
+        CSGenerateKeyPair::new,
         CSRenew::new,
-        CSGenerateKeyPair::new
+        CSShowCertificateOutputs::new,
+        CSShowDNSConfigurators::new,
+        CSVersion::new
       );
 
     final var configuration =

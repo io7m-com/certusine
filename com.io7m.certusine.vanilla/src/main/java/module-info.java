@@ -26,6 +26,9 @@ import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreH2MVFactory;
 
 module com.io7m.certusine.vanilla
 {
+  requires static org.osgi.annotation.bundle;
+  requires static org.osgi.annotation.versioning;
+
   requires transitive com.io7m.anethum.api;
   requires transitive com.io7m.anethum.common;
   requires transitive com.io7m.certusine.api;

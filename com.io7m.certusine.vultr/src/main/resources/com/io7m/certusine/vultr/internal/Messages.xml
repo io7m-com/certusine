@@ -4,14 +4,8 @@
 
 <properties>
   <entry key="errorDNSConfiguration">DNS configurator is misconfigured.</entry>
-
-  <entry key="errorMissingRequiredParameter"><![CDATA[
-Missing a required parameter.
-  Parameter: {0}
-  Required parameters: {1}
-]]>
-  </entry>
-
   <entry key="errorServer">Could not create a DNS record: HTTP status: {0}</entry>
-
+  <entry key="parameterApiKey">The Vultr API key.</entry>
+  <entry key="parameterDomain">The domain name.</entry>
+  <entry key="parameterApiBase">The Vultr API base address.</entry>
 </properties>

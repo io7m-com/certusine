@@ -24,6 +24,8 @@ import com.io7m.certusine.etcd.CSEtcdOutputProvider;
 import com.io7m.jlexing.core.LexicalPositions;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.Client;
+import io.etcd.jetcd.launcher.Etcd;
+import io.etcd.jetcd.launcher.EtcdCluster;
 import io.etcd.jetcd.test.EtcdClusterExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 public final class CSEtcdOutputTest
 {
   private static final Logger LOG =
@@ -51,20 +54,19 @@ public final class CSEtcdOutputTest
 
   private Path directory;
   private CSEtcdOutputProvider outputs;
-  private CSFakeEtcdServer server;
-
-  @RegisterExtension
-  public static final EtcdClusterExtension ETCD_CLUSTER =
-    EtcdClusterExtension.builder()
-      .withNodes(1)
-      .build();
+  private EtcdCluster etcd;
 
   @BeforeEach
   public void setup()
     throws Exception
   {
-    this.server =
-      CSFakeEtcdServer.create(20000);
+    this.etcd =
+      Etcd.builder()
+        .withNodes(1)
+        .build();
+
+    this.etcd.start();
+
     this.directory =
       CSTestDirectories.createTempDirectory();
     this.outputs =
@@ -75,8 +77,8 @@ public final class CSEtcdOutputTest
   public void tearDown()
     throws Exception
   {
+    this.etcd.close();
     CSTestDirectories.deleteDirectory(this.directory);
-    this.server.close();
   }
 
   @Test
@@ -119,7 +121,7 @@ public final class CSEtcdOutputTest
           Map.ofEntries(
             Map.entry(
               "endpoint",
-              ETCD_CLUSTER.clientEndpoints().get(0).toString())
+              this.etcd.clientEndpoints().get(0).toString())
           )
         )
       );
@@ -142,7 +144,7 @@ public final class CSEtcdOutputTest
   {
     final var clientBuilder =
       Client.builder()
-        .endpoints(ETCD_CLUSTER.clientEndpoints());
+        .endpoints(this.etcd.clientEndpoints());
 
     if (authenticated) {
       clientBuilder.user(ByteSequence.from("root", UTF_8));
@@ -215,14 +217,14 @@ public final class CSEtcdOutputTest
           Map.ofEntries(
             Map.entry(
               "endpoint",
-              ETCD_CLUSTER.clientEndpoints().get(0).toString()),
+              this.etcd.clientEndpoints().get(0).toString()),
             Map.entry("username", "root"),
             Map.entry("password", "12345678")
           )
         )
       );
 
-    createRootUserAndEnableAuthentication();
+    this.createRootUserAndEnableAuthentication();
 
     output.write(new CSCertificateOutputData(
       "example.com",
@@ -250,14 +252,14 @@ public final class CSEtcdOutputTest
           Map.ofEntries(
             Map.entry(
               "endpoint",
-              ETCD_CLUSTER.clientEndpoints().get(0).toString()),
+              this.etcd.clientEndpoints().get(0).toString()),
             Map.entry("username", "root"),
             Map.entry("password", "WRONG!")
           )
         )
       );
 
-    createRootUserAndEnableAuthentication();
+    this.createRootUserAndEnableAuthentication();
 
     final var ex = assertThrows(IOException.class, () -> {
       output.write(new CSCertificateOutputData(
@@ -271,12 +273,12 @@ public final class CSEtcdOutputTest
     });
   }
 
-  private static void createRootUserAndEnableAuthentication()
+  private void createRootUserAndEnableAuthentication()
     throws InterruptedException, ExecutionException
   {
     try (var client =
            Client.builder()
-             .endpoints(ETCD_CLUSTER.clientEndpoints())
+             .endpoints(this.etcd.clientEndpoints())
              .build()) {
 
       final var auth = client.getAuthClient();

@@ -49,5 +49,5 @@ Missing a required parameter.
   <entry key="errorReportUnavailable">No error report is available.</entry>
   <entry key="errorAllTasksFailed">All authorization challenges have failed.</entry>
   <entry key="errorCertificateName">Certificate name "{0}" is invalid: {1}</entry>
-
+  <entry key="parameterPath">The path to the output directory.</entry>
 </properties>

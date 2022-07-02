@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.certusine</artifactId>
     <groupId>com.io7m.certusine</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
   </parent>
 
   <artifactId>com.io7m.certusine.etcd</artifactId>
@@ -30,10 +30,6 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.io7m.anethum</groupId>
-      <artifactId>com.io7m.anethum.common</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.io7m.jxtrand</groupId>
       <artifactId>com.io7m.jxtrand.vanilla</artifactId>
     </dependency>
@@ -52,6 +48,17 @@
     <dependency>
       <groupId>com.io7m.dixmont</groupId>
       <artifactId>com.io7m.dixmont.core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.annotation.bundle</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.annotation.versioning</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

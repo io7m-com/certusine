@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         title="renew">
+
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="command">renew</Term>
+      - Issue and renew certificates
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Description">
+    <Paragraph>
+      The <Term type="command">renew</Term> command encapsulates the main functionality of the
+      <Term type="package">certusine</Term>
+      package: It issues and/or renews certificates in a perpetual loop, and sends those certificates to a set of
+      configured outputs.
+    </Paragraph>
+
+    <FormalItem title="Parameters">
+      <xi:include href="CSRenew.xml"/>
+    </FormalItem>
+
+    <Paragraph>
+      The <Term type="command">renew</Term> command will validate the configuration file specified with
+      <Term type="parameter">--file</Term>, and then loop forever attempting to issue and/or renew all certificates for
+      all domains specified in the
+      <Link target="966f04c2-65df-4a6b-8fd6-066c5434015e">domains</Link>
+      section of the configuration file. The command will pause for the duration specified by
+      <Term type="parameter">--schedule</Term>
+      between attempts to renew certificates, and only certificates that have less than the amount of time specified by
+      the
+      <Link target="bc26c6cd-dcab-49bd-8e50-02cd4ff85c1f">CertificateExpirationThreshold</Link>
+      parameter before expiration will be passed through the full
+      <LinkExternal target="https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment">ACME
+      </LinkExternal>
+      renewal process. If the <Term type="parameter">--only-one</Term> option is specified, the client will
+      execute one iteration of the renewal loop and then exit.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Output Idempotence">
+    <Paragraph>
+      The <Term type="command">renew</Term> command will aggressively write and re-write existing certificates to all
+      the configured certificate
+      <Link target="f91541cb-7b44-4ace-af3d-47dd3fa93d90">outputs</Link>, redundantly. Thus, it is necessary that all
+      certificate output implementations be <Term type="term">idempotent</Term> with regards to the write operation.
+      There are multiple reasons for this redundancy. Firstly, the
+      <Term type="package">certusine</Term>
+      client cannot know the status of all the external systems to which it supplies certificates; external systems can
+      be destroyed and recreated at any given time, and an external system should not be forced to wait until the next
+      certificate renewal to receive certificates just because it wasn't present at the exact time the original
+      issue/renewal occurred. Secondly, the very nature of systems being external means that the act of sending
+      certificates to those systems can fail. Whilst the <Term type="package">certusine</Term> client does retry I/O
+      operations on failure, sometimes a system can be inaccessible long enough for all of the retry attempts to fail.
+      If the
+      <Term type="package">certusine</Term>
+      client did not redundantly write certificates, the external system would be stuck without any certificates until
+      the next full renewal attempt.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Examples">
+    <FormalItem title="Example"
+                type="example">
+      <Verbatim>
+        <xi:include parse="text"
+                    href="c-renew-example.txt"/>
+      </Verbatim>
+    </FormalItem>
+  </Subsection>
+
+</Section>
