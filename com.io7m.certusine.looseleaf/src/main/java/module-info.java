@@ -28,10 +28,11 @@ module com.io7m.certusine.looseleaf
 
   requires transitive com.io7m.certusine.api;
 
-  requires org.slf4j;
+  requires com.io7m.jdeferthrow.core;
   requires com.io7m.jxtrand.vanilla;
   requires com.io7m.looseleaf.protocol.v1;
   requires java.net.http;
+  requires org.slf4j;
 
   provides CSCertificateOutputProviderType
     with CSLLOutputProvider;
@@ -43,4 +44,5 @@ module com.io7m.certusine.looseleaf
     to com.io7m.certusine.tests;
 
   exports com.io7m.certusine.looseleaf;
+  opens com.io7m.certusine.looseleaf to com.io7m.jxtrand.vanilla;
 }

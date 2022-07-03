@@ -19,6 +19,7 @@ package com.io7m.certusine.documentation;
 import com.beust.jcommander.Parameter;
 import com.io7m.certusine.cmdline.internal.CSCheckConfiguration;
 import com.io7m.certusine.cmdline.internal.CSGenerateKeyPair;
+import com.io7m.certusine.cmdline.internal.CSLooseleafDownload;
 import com.io7m.certusine.cmdline.internal.CSRenew;
 import com.io7m.certusine.cmdline.internal.CSShowCertificateOutputs;
 import com.io7m.certusine.cmdline.internal.CSShowDNSConfigurators;
@@ -74,7 +75,8 @@ public final class CSShowParameters
       CSRenew.class,
       CSShowCertificateOutputs.class,
       CSShowDNSConfigurators.class,
-      CSVersion.class
+      CSVersion.class,
+      CSLooseleafDownload.class
     );
 
     for (final var clazz : classes) {

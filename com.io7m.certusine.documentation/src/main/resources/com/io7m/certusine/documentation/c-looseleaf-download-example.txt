@@ -1,0 +1,8 @@
+$ certusine looseleaf-download               \
+  --endpoint http://looseleaf4.example.com/  \
+  --output-directory /certificates           \
+  --domain example.com                       \
+  --certificate-name www                     \
+  --username somebody                        \
+  --password 12345678                        \
+  --schedule PT1H
