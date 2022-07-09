@@ -17,5 +17,6 @@ LABEL "org.opencontainers.image.url"="https://www.io7m.com/software/certusine"
 LABEL "org.opencontainers.image.version"="$certusine_version"
 
 VOLUME "/certusine/etc"
+VOLUME "/certusine/var"
 
 CMD ["/certusine/bin/certusine"]
