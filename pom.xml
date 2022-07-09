@@ -11,7 +11,7 @@
 
   <groupId>com.io7m.certusine</groupId>
   <artifactId>com.io7m.certusine</artifactId>
-  <version>0.0.4</version>
+  <version>0.0.5-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <name>com.io7m.certusine</name>
@@ -38,7 +38,7 @@
     <com.io7m.jsx.version>3.0.0</com.io7m.jsx.version>
     <com.io7m.looseleaf.version>0.0.1</com.io7m.looseleaf.version>
     <com.io7m.xstructural.version>1.5.0</com.io7m.xstructural.version>
-    <io7m.api.previousVersion>0.0.2-SNAPSHOT</io7m.api.previousVersion>
+    <io7m.api.previousVersion>0.0.5-SNAPSHOT</io7m.api.previousVersion>
     <jackson.version>2.13.2</jackson.version>
     <jetcd.version>0.7.1</jetcd.version>
     <jetty.version>11.0.11</jetty.version>
