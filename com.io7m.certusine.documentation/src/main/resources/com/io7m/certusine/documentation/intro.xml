@@ -5,8 +5,8 @@
          title="Introduction">
 
   <Paragraph>
-    The <Term type="package">looseleaf</Term> server is an HTTP-accessible key/value store with a focus on minimalism, a
-    small footprint, and reliability. The server has the following notable features:
+    The <Term type="package">certusine</Term> client is an ACME client with a focus on minimalism, a
+    small footprint, and reliability. The client has the following notable features:
   </Paragraph>
 
   <FormalItem title="Features">
