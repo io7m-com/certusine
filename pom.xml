@@ -37,7 +37,7 @@
     <com.io7m.anethum.version>0.0.2</com.io7m.anethum.version>
     <com.io7m.jsx.version>3.0.0</com.io7m.jsx.version>
     <com.io7m.looseleaf.version>0.0.1</com.io7m.looseleaf.version>
-    <com.io7m.xstructural.version>1.6.0</com.io7m.xstructural.version>
+    <com.io7m.xstructural.version>1.7.1</com.io7m.xstructural.version>
     <io7m.api.previousVersion>0.0.5-SNAPSHOT</io7m.api.previousVersion>
     <jackson.version>2.13.2</jackson.version>
     <jetcd.version>0.7.1</jetcd.version>
