@@ -2,7 +2,7 @@ certusine
 ===
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.io7m.certusine/com.io7m.certusine.svg?style=flat-square)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.io7m.certusine%22)
-[![Maven Central (snapshot)](https://img.shields.io/nexus/s/https/oss.sonatype.org/com.io7m.certusine/com.io7m.certusine.svg?style=flat-square)](https://oss.sonatype.org/content/repositories/snapshots/com/io7m/certusine/)
+[![Maven Central (snapshot)](https://img.shields.io/nexus/s/https/s01.oss.sonatype.org/com.io7m.certusine/com.io7m.certusine.svg?style=flat-square)](https://s01.oss.sonatype.org/content/repositories/snapshots/com/io7m/certusine/)
 [![Codecov](https://img.shields.io/codecov/c/github/io7m/certusine.svg?style=flat-square)](https://codecov.io/gh/io7m/certusine)
 
 ![certusine](./src/site/resources/certusine.jpg?raw=true)
