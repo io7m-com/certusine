@@ -25,7 +25,6 @@
     <module>com.io7m.certusine.documentation</module>
     <module>com.io7m.certusine.etcd</module>
     <module>com.io7m.certusine.looseleaf</module>
-    <module>com.io7m.certusine.oci</module>
     <module>com.io7m.certusine.tests</module>
     <module>com.io7m.certusine.vanilla</module>
     <module>com.io7m.certusine.vultr</module>
@@ -37,7 +36,7 @@
     <com.io7m.anethum.version>0.0.2</com.io7m.anethum.version>
     <com.io7m.jsx.version>3.0.0</com.io7m.jsx.version>
     <com.io7m.looseleaf.version>0.0.1</com.io7m.looseleaf.version>
-    <com.io7m.xstructural.version>1.7.1</com.io7m.xstructural.version>
+    <com.io7m.xstructural.version>1.8.0</com.io7m.xstructural.version>
     <io7m.api.previousVersion>0.0.5-SNAPSHOT</io7m.api.previousVersion>
     <jackson.version>2.13.2</jackson.version>
     <jetcd.version>0.7.1</jetcd.version>
@@ -262,16 +261,6 @@
         <version>2.1.214</version>
       </dependency>
       <dependency>
-        <groupId>com.io7m.xstructural</groupId>
-        <artifactId>com.io7m.xstructural.cmdline</artifactId>
-        <version>${com.io7m.xstructural.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.io7m.xstructural</groupId>
-        <artifactId>com.io7m.xstructural.xml</artifactId>
-        <version>${com.io7m.xstructural.version}</version>
-      </dependency>
-      <dependency>
         <groupId>com.io7m.primogenitor</groupId>
         <artifactId>com.io7m.primogenitor.support</artifactId>
         <version>7.4.0</version>
@@ -315,16 +304,6 @@
   </dependencyManagement>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>io.fabric8</groupId>
-          <artifactId>docker-maven-plugin</artifactId>
-          <version>0.40.1</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
     <plugins>
       <!-- Generate a site -->
       <plugin>

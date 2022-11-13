@@ -21,8 +21,11 @@
 module com.io7m.certusine.tests
 {
   requires com.io7m.certusine.api;
-  requires com.io7m.certusine.vanilla;
+  requires com.io7m.certusine.certstore.api;
   requires com.io7m.certusine.etcd;
+  requires com.io7m.certusine.looseleaf;
+  requires com.io7m.certusine.vanilla;
+  requires com.io7m.certusine.vultr;
 
   requires com.io7m.jaffirm.core;
   requires com.io7m.looseleaf.protocol.v1;
