@@ -37,6 +37,10 @@
         <LinkExternal target="https://www.vultr.com/pt/docs/introduction-to-vultr-dns/">Vultr DNS</LinkExternal>.
       </Item>
       <Item>
+        Supports
+        <LinkExternal target="https://api.gandi.net/docs/livedns/">Gandi LiveDNS</LinkExternal>.
+      </Item>
+      <Item>
         Supports writing certificates to
         <LinkExternal target="https://www.io7m.com/software/looseleaf/">looseleaf</LinkExternal>
         servers.

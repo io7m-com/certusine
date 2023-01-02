@@ -14,40 +14,54 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.certusine.tests;
 
-import com.io7m.certusine.api.CSDNSConfiguratorType;
+package com.io7m.certusine.gandi.internal;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
+import com.io7m.jxtrand.vanilla.JXTAbstractStrings;
 
-public final class CSFakeDNSConfigurator implements CSDNSConfiguratorType
+import java.io.IOException;
+import java.util.Locale;
+
+/**
+ * String resources.
+ */
+
+public final class CSGandiStrings extends JXTAbstractStrings
 {
-  private final ArrayDeque<String> requests;
+  /**
+   * String resources.
+   *
+   * @param locale The locale
+   *
+   * @throws IOException On I/O errors
+   */
 
-  public CSFakeDNSConfigurator()
+  public CSGandiStrings(
+    final Locale locale)
+    throws IOException
   {
-    this.requests = new ArrayDeque<>();
-  }
-
-  public Queue<String> requests()
-  {
-    return this.requests;
+    super(
+      locale,
+      CSGandiStrings.class,
+      "/com/io7m/certusine/gandi/internal",
+      "Messages"
+    );
   }
 
   @Override
-  public void createTXTRecord(
-    final String name,
-    final String text)
+  public String format(
+    final String id,
+    final Object... args)
   {
-    this.requests.add("CREATE " + name);
+    return super.format(id, args).trim();
   }
 
   @Override
-  public void deleteTXTRecord(
-    final String recordName,
-    final String recordValue)
+  public String toString()
   {
-    this.requests.add("DELETE " + recordName);
+    return String.format(
+      "[CSGandiStrings 0x%08x]",
+      Integer.valueOf(this.hashCode())
+    );
   }
 }

@@ -23,6 +23,7 @@ module com.io7m.certusine.tests
   requires com.io7m.certusine.api;
   requires com.io7m.certusine.certstore.api;
   requires com.io7m.certusine.etcd;
+  requires com.io7m.certusine.gandi;
   requires com.io7m.certusine.looseleaf;
   requires com.io7m.certusine.vanilla;
   requires com.io7m.certusine.vultr;
@@ -33,6 +34,7 @@ module com.io7m.certusine.tests
   requires com.io7m.looseleaf.server;
   requires java.net.http;
   requires org.bouncycastle.pkix;
+  requires org.dnsjava;
   requires org.eclipse.jetty.server;
   requires org.eclipse.jetty.servlet;
   requires org.shredzone.acme4j;

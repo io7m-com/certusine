@@ -56,7 +56,7 @@
           "PublicKeyPath": "www.pub",
           "PrivateKeyPath": "www.pri",
           "Hosts": [
-            "www.example.com"
+            "www"
           ]
         }
       ],

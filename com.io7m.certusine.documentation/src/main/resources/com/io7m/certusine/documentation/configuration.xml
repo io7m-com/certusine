@@ -239,8 +239,9 @@
 
     <Paragraph>
       The <Term type="expression">Hosts</Term> property for a given certificate specifies the hosts within the domain
-      to which the certificate applies. Hosts may include wildcards, so for example a certificate may declare a host
-      such as <Term type="expression">*.example.com</Term>.
+      to which the certificate applies. Note that these are <Term type="term">not</Term> fully-qualified names.
+      Hosts may include wildcards, so for example a certificate may declare a host
+      such as <Term type="expression">*</Term>.
     </Paragraph>
 
     <Paragraph>
@@ -267,7 +268,7 @@
         "PublicKeyPath": "www.pub",
         "PrivateKeyPath": "www.pri",
         "Hosts": [
-          "www.example.com"
+          "www"
         ]
       }
     ],

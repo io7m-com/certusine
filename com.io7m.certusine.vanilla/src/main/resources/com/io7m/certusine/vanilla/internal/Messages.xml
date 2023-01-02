@@ -43,11 +43,13 @@ Missing a required parameter.
   <entry key="errorParameterDuplicate">Duplicate parameter "{0}"</entry>
   <entry key="errorPublicKeyCorrupt">File "{0}" did not contain a usable public key.</entry>
   <entry key="errorPrivateKeyCorrupt">File "{0}" did not contain a usable private key.</entry>
-  <entry key="errorIOFile">Unable to open or read file "{0}"</entry>
+  <entry key="errorIOFile">Unable to open or read file "{0}" ({1})</entry>
   <entry key="errorExceededRetries">Exceeded the maximum number of retries ({0}) for the task.</entry>
   <entry key="errorDuration">Unparseable duration: {0} ("{1}")</entry>
   <entry key="errorReportUnavailable">No error report is available.</entry>
   <entry key="errorAllTasksFailed">All authorization challenges have failed.</entry>
   <entry key="errorCertificateName">Certificate name "{0}" is invalid: {1}</entry>
   <entry key="parameterPath">The path to the output directory.</entry>
+
+  <entry key="warnHostContainsDomain">The hostname "{0}" contains the domain name "{1}"; this is probably a mistake!</entry>
 </properties>

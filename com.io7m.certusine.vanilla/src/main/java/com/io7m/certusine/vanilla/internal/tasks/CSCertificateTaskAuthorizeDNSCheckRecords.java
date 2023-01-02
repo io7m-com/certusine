@@ -94,23 +94,26 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecords
 
         LOG.debug("located nameservers {} for {}", nsHosts, domainName);
 
-        /*
-         * Note: The trailing period is significant. Without it, the name will
-         * not be considered an absolute name.
-         */
-
-        final var checkName =
-          "_acme-challenge.%s.".formatted(domainName);
-
+        final var recordName =
+          this.txtRecordNameToQuery(domainName);
         final var txtRecords =
           dnsQueries.withNameServers(nsHosts)
-            .findTXTRecordsForDomain(checkName);
+            .findTXTRecordsForDomain(recordName);
 
-        LOG.debug("checking that TXT record {} is visible", checkName);
+        LOG.debug("checking that TXT record {} is visible", recordName);
         var found = false;
         LOG.debug("received {} records", Integer.valueOf(txtRecords.size()));
+
+        /*
+         * The values returned in TXT records will be quoted. Therefore,
+         * the expected text value needs to be quoted too, otherwise the
+         * comparison will never succeed.
+         */
+
+        final var expectedText = "\"%s\"".formatted(recordText);
         for (final var record : txtRecords) {
-          if (record.value().equals(recordText)) {
+          final var receivedText = record.value();
+          if (receivedText.equals(expectedText)) {
             LOG.debug("found matching TXT record for domain {}", domainName);
             found = true;
             break;
@@ -118,9 +121,9 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecords
         }
 
         if (found) {
-          LOG.debug("TXT record {} is visible", checkName);
+          LOG.debug("TXT record {} is visible", recordName);
         } else {
-          LOG.debug("TXT record {} is not yet visible", checkName);
+          LOG.debug("TXT record {} is not yet visible", recordName);
         }
 
         foundAll &= found;

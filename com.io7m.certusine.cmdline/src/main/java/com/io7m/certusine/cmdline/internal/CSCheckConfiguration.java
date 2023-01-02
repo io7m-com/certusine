@@ -63,6 +63,9 @@ public final class CSCheckConfiguration extends CLPAbstractCommand
     final var parsers =
       new CSConfigurationParsers();
 
+    this.file =
+      this.file.toAbsolutePath();
+
     final var logger = this.logger();
     try {
       parsers.parseFileWithContext(this.file.getParent(), this.file);

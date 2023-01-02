@@ -15,7 +15,7 @@
  */
 
 
-package com.io7m.certusine.vultr.internal;
+package com.io7m.certusine.gandi.internal;
 
 import com.io7m.certusine.api.CSDNSConfiguratorType;
 import org.slf4j.Logger;
@@ -31,31 +31,31 @@ import java.util.Objects;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * A Vultr DNS configurator.
+ * A Gandi DNS configurator.
  */
 
-public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
+public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
 {
   private static final Logger LOG =
-    LoggerFactory.getLogger(CSVultrDNSConfigurator.class);
+    LoggerFactory.getLogger(CSGandiDNSConfigurator.class);
 
-  private final CSVultrStrings strings;
+  private final CSGandiStrings strings;
   private final HttpClient client;
   private final String apiBase;
   private final String apiKey;
   private final String domain;
 
   /**
-   * A Vultr DNS configurator.
+   * A Gandi DNS configurator.
    *
    * @param inDomain  The owning domain
    * @param inStrings String resources
-   * @param inApiKey  The Vultr API key
+   * @param inApiKey  The Gandi API key
    * @param inApiBase The API base address
    */
 
-  public CSVultrDNSConfigurator(
-    final CSVultrStrings inStrings,
+  public CSGandiDNSConfigurator(
+    final CSGandiStrings inStrings,
     final String inDomain,
     final String inApiKey,
     final String inApiBase)
@@ -84,7 +84,14 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
     Objects.requireNonNull(recordValue, "recordValue");
 
     final var targetURI =
-      URI.create("%s/domains/%s/records".formatted(this.apiBase, this.domain));
+      URI.create(
+        "%s/v5/livedns/domains/%s/records/%s"
+          .formatted(
+            this.apiBase,
+            this.domain,
+            recordName
+          )
+      );
 
     LOG.debug(
       "creating a TXT record {} = {} for domain {}",
@@ -96,19 +103,18 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
 
     final var json = """
       {
-        "name": "%s",
-        "type": "TXT",
-        "data": "%s",
-        "ttl": 600,
-        "priority": 0
+        "rrset_type": "TXT",
+        "rrset_values": [
+          "%s"
+        ]
       }
-      """.formatted(recordName, recordValue);
+      """.formatted(recordValue);
 
     final var request =
       HttpRequest.newBuilder()
         .uri(targetURI)
         .POST(HttpRequest.BodyPublishers.ofString(json, UTF_8))
-        .header("Authorization", "Bearer " + this.apiKey)
+        .header("Authorization", "Apikey " + this.apiKey)
         .build();
 
     final var r =
@@ -116,10 +122,16 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
 
     LOG.debug("response: {}", r.body());
 
-    if (r.statusCode() != 201) {
-      throw new IOException(
-        this.strings.format("errorServer", r.statusCode())
-      );
+    final var statusCode = r.statusCode();
+    switch (statusCode) {
+      case 200, 201 -> {
+
+      }
+      default -> {
+        throw new IOException(
+          this.strings.format("errorServer", statusCode)
+        );
+      }
     }
   }
 
@@ -127,9 +139,51 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
   public void deleteTXTRecord(
     final String recordName,
     final String recordValue)
+    throws IOException, InterruptedException
   {
-    Objects.requireNonNull(recordName, "name");
-    Objects.requireNonNull(recordValue, "text");
+    Objects.requireNonNull(recordName, "recordName");
+    Objects.requireNonNull(recordValue, "recordValue");
 
+    final var targetURI =
+      URI.create(
+        "%s/v5/livedns/domains/%s/records/%s"
+          .formatted(
+            this.apiBase,
+            this.domain,
+            recordName
+          )
+      );
+
+    LOG.debug(
+      "deleting a TXT record {} = {} for domain {}",
+      recordName,
+      recordValue,
+      this.domain
+    );
+    LOG.debug("DELETE {}", targetURI);
+
+    final var request =
+      HttpRequest.newBuilder()
+        .uri(targetURI)
+        .DELETE()
+        .header("Authorization", "Apikey " + this.apiKey)
+        .build();
+
+    final var r =
+      this.client.send(request, HttpResponse.BodyHandlers.ofString());
+
+    LOG.debug("response: {}", r.body());
+
+    final var statusCode = r.statusCode();
+    switch (statusCode) {
+      case 200, 201 -> {
+
+      }
+      default -> {
+        throw new IOException(
+          this.strings.format("errorServer", statusCode)
+        );
+      }
+    }
   }
 }

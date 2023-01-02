@@ -9,6 +9,7 @@
     <Paragraph>This section of the documentation describes all of the supported DNS configurator types.</Paragraph>
   </Section>
 
+  <xi:include href="dns-gandi-v5.xml"/>
   <xi:include href="dns-vultr.xml"/>
 
 </Section>

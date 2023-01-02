@@ -14,40 +14,32 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.certusine.tests;
+import com.io7m.certusine.api.CSDNSConfiguratorProviderType;
+import com.io7m.certusine.gandi.CSGandiDNSConfigurators;
 
-import com.io7m.certusine.api.CSDNSConfiguratorType;
+/**
+ * ACME (Gandi Support)
+ */
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
-public final class CSFakeDNSConfigurator implements CSDNSConfiguratorType
+module com.io7m.certusine.gandi
 {
-  private final ArrayDeque<String> requests;
+  requires static org.osgi.annotation.bundle;
+  requires static org.osgi.annotation.versioning;
 
-  public CSFakeDNSConfigurator()
-  {
-    this.requests = new ArrayDeque<>();
-  }
+  requires transitive com.io7m.certusine.api;
 
-  public Queue<String> requests()
-  {
-    return this.requests;
-  }
+  requires com.io7m.jxtrand.vanilla;
+  requires java.net.http;
+  requires org.slf4j;
 
-  @Override
-  public void createTXTRecord(
-    final String name,
-    final String text)
-  {
-    this.requests.add("CREATE " + name);
-  }
+  provides CSDNSConfiguratorProviderType
+    with CSGandiDNSConfigurators;
 
-  @Override
-  public void deleteTXTRecord(
-    final String recordName,
-    final String recordValue)
-  {
-    this.requests.add("DELETE " + recordName);
-  }
+  opens com.io7m.certusine.gandi.internal
+    to com.io7m.jxtrand.vanilla;
+
+  exports com.io7m.certusine.gandi.internal
+    to com.io7m.certusine.tests;
+
+  exports com.io7m.certusine.gandi;
 }

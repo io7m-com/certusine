@@ -14,40 +14,13 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.certusine.tests;
+/**
+ * ACME (Gandi Support)
+ */
 
-import com.io7m.certusine.api.CSDNSConfiguratorType;
+@Export
+@Version("1.0.0")
+package com.io7m.certusine.gandi;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
-public final class CSFakeDNSConfigurator implements CSDNSConfiguratorType
-{
-  private final ArrayDeque<String> requests;
-
-  public CSFakeDNSConfigurator()
-  {
-    this.requests = new ArrayDeque<>();
-  }
-
-  public Queue<String> requests()
-  {
-    return this.requests;
-  }
-
-  @Override
-  public void createTXTRecord(
-    final String name,
-    final String text)
-  {
-    this.requests.add("CREATE " + name);
-  }
-
-  @Override
-  public void deleteTXTRecord(
-    final String recordName,
-    final String recordValue)
-  {
-    this.requests.add("DELETE " + recordName);
-  }
-}
+import org.osgi.annotation.bundle.Export;
+import org.osgi.annotation.versioning.Version;

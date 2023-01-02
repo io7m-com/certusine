@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Table xmlns="urn:com.io7m.structural:8:0" type="genericTable">
+   <Columns>
+      <Column>Parameter</Column>
+      <Column>Type</Column>
+      <Column>Required</Column>
+      <Column>Description</Column>
+   </Columns>
+   <Row>
+      <Cell>
+         <Term type="parameter">domain</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">Domain name</Term>
+      </Cell>
+      <Cell>true</Cell>
+      <Cell>The domain name.</Cell>
+   </Row>
+   <Row>
+      <Cell>
+         <Term type="parameter">api-key</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">API Key</Term>
+      </Cell>
+      <Cell>true</Cell>
+      <Cell>The Gandi API key.</Cell>
+   </Row>
+   <Row>
+      <Cell>
+         <Term type="parameter">api-base</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">URI</Term>
+      </Cell>
+      <Cell>false</Cell>
+      <Cell>The Gandi API base address.</Cell>
+   </Row>
+</Table>

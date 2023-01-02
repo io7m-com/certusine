@@ -151,7 +151,9 @@ public final class CSCertificateTaskAuthorizeDNSInitial
     final Authorization auth)
     throws CSCertificateTaskException, InterruptedException
   {
-    final var domainName = auth.getIdentifier().getDomain();
+    final var domainName =
+      auth.getIdentifier()
+        .getDomain();
 
     LOG.debug("executing authorization");
 
@@ -166,7 +168,7 @@ public final class CSCertificateTaskAuthorizeDNSInitial
     }
 
     final var recordName =
-      "_acme-challenge.%s".formatted(domainName);
+      this.txtRecordNameToSet(domainName);
     final var recordText =
       challenge.getDigest();
 
@@ -175,7 +177,10 @@ public final class CSCertificateTaskAuthorizeDNSInitial
       this.context()
         .domain()
         .dnsConfigurator()
-        .createTXTRecord(recordName, recordText);
+        .createTXTRecord(
+          recordName,
+          recordText
+        );
     } catch (final IOException e) {
       throw new CSCertificateTaskException(e, true);
     }

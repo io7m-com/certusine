@@ -113,6 +113,9 @@ public final class CSLooseleafDownload extends CLPAbstractCommand
   protected Status executeActual()
     throws Exception
   {
+    this.outputDirectory =
+      this.outputDirectory.toAbsolutePath();
+
     this.downloader =
       CSLLDownloader.create(
         this.outputDirectory,

@@ -76,6 +76,7 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_INTE
 import static com.fasterxml.jackson.databind.MapperFeature.SORT_PROPERTIES_ALPHABETICALLY;
 import static com.fasterxml.jackson.databind.SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS;
 import static com.io7m.anethum.common.ParseSeverity.PARSE_ERROR;
+import static com.io7m.anethum.common.ParseSeverity.PARSE_WARNING;
 
 /**
  * A certificate pipeline parser.
@@ -397,6 +398,22 @@ public final class CSConfigurationParser
             this.baseDirectory.resolve(certificate.privateKeyPath())
           );
 
+        final var hostNames =
+          certificate.hosts();
+
+        for (final var hostName : hostNames) {
+          if (hostName.contains(domainName)) {
+            this.publishWarning(
+              "warn-host-contains-domain",
+              LexicalPositions.zero(),
+              this.strings.format(
+                "warnHostContainsDomain",
+                name,
+                domainName)
+            );
+          }
+        }
+
         final var newCertificate =
           new CSCertificate(
             this.parseCertificateName(certificate),
@@ -631,8 +648,8 @@ public final class CSConfigurationParser
         lexical,
         this.strings.format(
           "errorIOFile",
-          e.getClass().getSimpleName(),
-          privateFile)
+          privateFile,
+          e.getClass().getSimpleName())
       );
     }
   }
@@ -664,18 +681,35 @@ public final class CSConfigurationParser
         lexical,
         this.strings.format(
           "errorIOFile",
-          e.getClass().getSimpleName(),
-          publicFile)
+          publicFile,
+          e.getClass().getSimpleName())
       );
     }
   }
 
   private CSInternalParseException publishError(
     final String errorCode,
-    final LexicalPosition<URI> e,
+    final LexicalPosition<URI> lex,
     final String message)
   {
-    this.publishError(createParseError(errorCode, e, message));
+    this.publishError(createParseError(errorCode, lex, message));
     return new CSInternalParseException();
+  }
+
+  private void publishWarning(
+    final String errorCode,
+    final LexicalPosition<URI> lex,
+    final String message)
+  {
+    final var status =
+      ParseStatus.builder()
+        .setErrorCode(errorCode)
+        .setLexical(lex)
+        .setSeverity(PARSE_WARNING)
+        .setMessage(message)
+        .build();
+
+    this.statusValues.add(status);
+    this.statusConsumer.accept(status);
   }
 }

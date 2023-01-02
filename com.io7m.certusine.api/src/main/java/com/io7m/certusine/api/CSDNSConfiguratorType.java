@@ -27,30 +27,30 @@ public interface CSDNSConfiguratorType
   /**
    * Create a TXT record with the given text.
    *
-   * @param name The record name
-   * @param text The text
+   * @param recordName  The record name
+   * @param recordValue The text
    *
    * @throws IOException          On errors
    * @throws InterruptedException On thread interruption
    */
 
   void createTXTRecord(
-    String name,
-    String text)
+    String recordName,
+    String recordValue)
     throws IOException, InterruptedException;
 
   /**
    * Delete a TXT record with the given text.
    *
-   * @param name The record name
-   * @param text The text
+   * @param recordName  The record name
+   * @param recordValue The text
    *
    * @throws IOException          On errors
    * @throws InterruptedException On thread interruption
    */
 
   void deleteTXTRecord(
-    String name,
-    String text)
+    String recordName,
+    String recordValue)
     throws IOException, InterruptedException;
 }

@@ -85,6 +85,9 @@ public final class CSRenew extends CLPAbstractCommand
     final var parsers =
       new CSConfigurationParsers();
 
+    this.file =
+      this.file.toAbsolutePath();
+
     final var logger = this.logger();
 
     while (true) {

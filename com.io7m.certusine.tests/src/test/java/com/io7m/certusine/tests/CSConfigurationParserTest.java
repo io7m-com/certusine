@@ -18,6 +18,7 @@
 package com.io7m.certusine.tests;
 
 import com.io7m.anethum.common.ParseException;
+import com.io7m.anethum.common.ParseSeverity;
 import com.io7m.anethum.common.ParseStatus;
 import com.io7m.certusine.vanilla.CSConfigurationParsers;
 import org.junit.jupiter.api.AfterEach;
@@ -107,6 +108,15 @@ public final class CSConfigurationParserTest
       );
 
     assertEquals(1, configuration.domains().size());
+
+    assertTrue(
+      this.statusLog.stream()
+        .allMatch(status -> status.message().contains("contains the domain name \"example.com\"; this is probably a mistake!"))
+    );
+    assertTrue(
+      this.statusLog.stream()
+        .allMatch(status -> status.severity() == ParseSeverity.PARSE_WARNING)
+    );
   }
 
   /**

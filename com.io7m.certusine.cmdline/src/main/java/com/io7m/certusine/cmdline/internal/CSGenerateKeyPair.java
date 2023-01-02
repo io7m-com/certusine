@@ -81,6 +81,11 @@ public final class CSGenerateKeyPair extends CLPAbstractCommand
     final var generator =
       KeyPairGenerator.getInstance("EC", "BC");
 
+    this.privateKeyFile =
+      this.privateKeyFile.toAbsolutePath();
+    this.publicKeyFile =
+      this.publicKeyFile.toAbsolutePath();
+
     generator.initialize(new ECGenParameterSpec("P-256"));
 
     final var keyPair = generator.generateKeyPair();

@@ -48,11 +48,11 @@ public final class CSFakeDNSConfiguratorCrashing implements CSDNSConfiguratorTyp
 
   @Override
   public void deleteTXTRecord(
-    final String name,
-    final String text)
+    final String recordName,
+    final String recordValue)
     throws IOException
   {
-    this.requests.add("DELETE " + name);
+    this.requests.add("DELETE " + recordName);
     throw new IOException();
   }
 }
