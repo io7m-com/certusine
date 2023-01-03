@@ -17,7 +17,6 @@
 package com.io7m.certusine.documentation;
 
 import com.io7m.certusine.api.CSCertificateOutputProviderType;
-import com.io7m.certusine.api.CSDNSConfiguratorProviderType;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
