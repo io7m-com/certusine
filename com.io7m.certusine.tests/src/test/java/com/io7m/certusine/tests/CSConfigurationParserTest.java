@@ -17,6 +17,7 @@
 
 package com.io7m.certusine.tests;
 
+import ch.qos.logback.classic.Level;
 import com.io7m.anethum.common.ParseException;
 import com.io7m.anethum.common.ParseSeverity;
 import com.io7m.anethum.common.ParseStatus;
@@ -74,6 +75,11 @@ public final class CSConfigurationParserTest
         .toAbsolutePath();
 
     this.statusLog = new ArrayList<ParseStatus>();
+
+    final var root =
+      (ch.qos.logback.classic.Logger)
+        LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    root.setLevel(Level.TRACE);
   }
 
   @AfterEach
@@ -97,7 +103,7 @@ public final class CSConfigurationParserTest
       CSTestDirectories.resourceOf(
         CSConfigurationParserTest.class,
         this.directory,
-        "configuration-basic.json"
+        "configuration-basic.xml"
       );
 
     final var configuration =
@@ -120,20 +126,20 @@ public final class CSConfigurationParserTest
   }
 
   /**
-   * A configuration file containing every possible kind of error fails.
+   * A configuration file containing validation errors fails.
    *
    * @throws Exception On errors
    */
 
   @Test
-  public void testParseHugeErrors()
+  public void testParseErrors0()
     throws Exception
   {
     final var file =
       CSTestDirectories.resourceOf(
         CSConfigurationParserTest.class,
         this.directory,
-        "configuration-errors.json"
+        "configuration-errors.xml"
       );
 
     final var ex =
@@ -146,21 +152,101 @@ public final class CSConfigurationParserTest
       });
 
     final var requiredCodes = Set.of(
-      "error-account-duplicate",
-      "error-dns-duplicate",
-      "error-dns-provider-nonexistent",
-      "error-domain-account-nonexistent",
-      "error-domain-certificate-duplicate",
-      "error-domain-dnsconfigurator-nonexistent",
-      "error-domain-duplicate",
-      "error-domain-output-nonexistent",
-      "error-duration",
-      "error-io-file",
-      "error-output-duplicate",
-      "error-output-provider-nonexistent",
-      "error-parameter-duplicate",
-      "error-parameter-required",
-      "error-private-key-corrupt",
+      "error-parse",
+      "error-xml-validation"
+    );
+
+    for (final var requiredCode : requiredCodes) {
+      assertTrue(
+        this.statusLog.stream()
+          .anyMatch(p -> Objects.equals(p.errorCode(), requiredCode)),
+        "Status log %s must contain the error code %s".formatted(
+          this.statusLog.stream()
+            .map(ParseStatus::errorCode)
+            .collect(Collectors.toSet()),
+          requiredCode
+        )
+      );
+    }
+
+    assertTrue(this.statusLog.size() > 6);
+  }
+
+  /**
+   * A configuration file containing validation errors fails.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testParseErrors1()
+    throws Exception
+  {
+    final var file =
+      CSTestDirectories.resourceOf(
+        CSConfigurationParserTest.class,
+        this.directory,
+        "configuration-error-private-key-corrupt.xml"
+      );
+
+    final var ex =
+      assertThrows(ParseException.class, () -> {
+        this.parsers.parseFileWithContext(
+          this.directory,
+          file,
+          this::onStatus
+        );
+      });
+
+    final var requiredCodes = Set.of(
+      "error-parse",
+      "error-private-key-corrupt"
+    );
+
+    for (final var requiredCode : requiredCodes) {
+      assertTrue(
+        this.statusLog.stream()
+          .anyMatch(p -> Objects.equals(p.errorCode(), requiredCode)),
+        "Status log %s must contain the error code %s".formatted(
+          this.statusLog.stream()
+            .map(ParseStatus::errorCode)
+            .collect(Collectors.toSet()),
+          requiredCode
+        )
+      );
+    }
+
+    assertTrue(this.statusLog.size() > 2);
+  }
+
+  /**
+   * A configuration file containing validation errors fails.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testParseErrors2()
+    throws Exception
+  {
+    final var file =
+      CSTestDirectories.resourceOf(
+        CSConfigurationParserTest.class,
+        this.directory,
+        "configuration-error-public-key-corrupt.xml"
+      );
+
+    final var ex =
+      assertThrows(ParseException.class, () -> {
+        this.parsers.parseFileWithContext(
+          this.directory,
+          file,
+          this::onStatus
+        );
+      });
+
+    final var requiredCodes = Set.of(
+      "error-parse",
       "error-public-key-corrupt"
     );
 
@@ -177,17 +263,158 @@ public final class CSConfigurationParserTest
       );
     }
 
-    assertTrue(this.statusLog.size() > 15);
+    assertTrue(this.statusLog.size() > 2);
   }
 
   /**
-   * A configuration file that isn't JSON fails.
+   * A configuration file containing validation errors fails.
    *
    * @throws Exception On errors
    */
 
   @Test
-  public void testParseNotJSON()
+  public void testParseErrors3()
+    throws Exception
+  {
+    final var file =
+      CSTestDirectories.resourceOf(
+        CSConfigurationParserTest.class,
+        this.directory,
+        "configuration-error-public-key-missing.xml"
+      );
+
+    final var ex =
+      assertThrows(ParseException.class, () -> {
+        this.parsers.parseFileWithContext(
+          this.directory,
+          file,
+          this::onStatus
+        );
+      });
+
+    final var requiredCodes = Set.of(
+      "error-parse",
+      "error-io-file"
+    );
+
+    for (final var requiredCode : requiredCodes) {
+      assertTrue(
+        this.statusLog.stream()
+          .anyMatch(p -> Objects.equals(p.errorCode(), requiredCode)),
+        "Status log %s must contain the error code %s".formatted(
+          this.statusLog.stream()
+            .map(ParseStatus::errorCode)
+            .collect(Collectors.toSet()),
+          requiredCode
+        )
+      );
+    }
+
+    assertTrue(this.statusLog.size() > 2);
+  }
+
+  /**
+   * A configuration file containing validation errors fails.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testParseErrors4()
+    throws Exception
+  {
+    final var file =
+      CSTestDirectories.resourceOf(
+        CSConfigurationParserTest.class,
+        this.directory,
+        "configuration-error-private-key-missing.xml"
+      );
+
+    final var ex =
+      assertThrows(ParseException.class, () -> {
+        this.parsers.parseFileWithContext(
+          this.directory,
+          file,
+          this::onStatus
+        );
+      });
+
+    final var requiredCodes = Set.of(
+      "error-parse",
+      "error-io-file"
+    );
+
+    for (final var requiredCode : requiredCodes) {
+      assertTrue(
+        this.statusLog.stream()
+          .anyMatch(p -> Objects.equals(p.errorCode(), requiredCode)),
+        "Status log %s must contain the error code %s".formatted(
+          this.statusLog.stream()
+            .map(ParseStatus::errorCode)
+            .collect(Collectors.toSet()),
+          requiredCode
+        )
+      );
+    }
+
+    assertTrue(this.statusLog.size() > 2);
+  }
+
+  /**
+   * A configuration file containing validation errors fails.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testParseErrors5()
+    throws Exception
+  {
+    final var file =
+      CSTestDirectories.resourceOf(
+        CSConfigurationParserTest.class,
+        this.directory,
+        "configuration-error-certificate-name.xml"
+      );
+
+    final var ex =
+      assertThrows(ParseException.class, () -> {
+        this.parsers.parseFileWithContext(
+          this.directory,
+          file,
+          this::onStatus
+        );
+      });
+
+    final var requiredCodes = Set.of(
+      "error-parse",
+      "error-certificate-name-invalid"
+    );
+
+    for (final var requiredCode : requiredCodes) {
+      assertTrue(
+        this.statusLog.stream()
+          .anyMatch(p -> Objects.equals(p.errorCode(), requiredCode)),
+        "Status log %s must contain the error code %s".formatted(
+          this.statusLog.stream()
+            .map(ParseStatus::errorCode)
+            .collect(Collectors.toSet()),
+          requiredCode
+        )
+      );
+    }
+
+    assertTrue(this.statusLog.size() > 1);
+  }
+
+  /**
+   * A configuration file that isn't XML fails.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testParseNotXML()
     throws Exception
   {
     final var ex =
@@ -200,7 +427,51 @@ public final class CSConfigurationParserTest
       });
 
     final var requiredCodes = Set.of(
-      "error-io"
+      "error-jaxb",
+      "error-xml-validation"
+    );
+
+    for (final var requiredCode : requiredCodes) {
+      assertTrue(
+        this.statusLog.stream()
+          .anyMatch(p -> Objects.equals(p.errorCode(), requiredCode)),
+        "Status log %s must contain the error code %s".formatted(
+          this.statusLog.stream()
+            .map(ParseStatus::errorCode)
+            .collect(Collectors.toSet()),
+          requiredCode
+        )
+      );
+    }
+
+    assertEquals(2, this.statusLog.size());
+  }
+
+  /**
+   * A configuration file containing warnings succeeds.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testParseWarnings0()
+    throws Exception
+  {
+    final var file =
+      CSTestDirectories.resourceOf(
+        CSConfigurationParserTest.class,
+        this.directory,
+        "configuration-warn-domain.xml"
+      );
+
+    this.parsers.parseFileWithContext(
+      this.directory,
+      file,
+      this::onStatus
+    );
+
+    final var requiredCodes = Set.of(
+      "warn-host-contains-domain"
     );
 
     for (final var requiredCode : requiredCodes) {

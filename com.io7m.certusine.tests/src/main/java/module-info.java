@@ -28,6 +28,7 @@ module com.io7m.certusine.tests
   requires com.io7m.certusine.vanilla;
   requires com.io7m.certusine.vultr;
 
+  requires ch.qos.logback.classic;
   requires com.io7m.jaffirm.core;
   requires com.io7m.looseleaf.protocol.v1;
   requires com.io7m.looseleaf.server.api;

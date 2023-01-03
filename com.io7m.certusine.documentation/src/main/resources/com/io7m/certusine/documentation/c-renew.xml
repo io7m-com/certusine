@@ -36,8 +36,9 @@
       parameter before expiration will be passed through the full
       <LinkExternal target="https://en.wikipedia.org/wiki/Automatic_Certificate_Management_Environment">ACME
       </LinkExternal>
-      renewal process. If the <Term type="parameter">--only-one</Term> option is specified, the client will
-      execute one iteration of the renewal loop and then exit.
+
+      renewal process. If the <Term type="parameter">--only-once</Term> option is specified, the client will execute one
+      iteration of the renewal loop and then exit.
     </Paragraph>
   </Subsection>
 

@@ -55,24 +55,14 @@
 
   <Subsection title="Example">
     <FormalItem title="Example Configuration">
-      <Verbatim><![CDATA[{
-  "Type": "looseleaf",
-  "Name": "an-example-looseleaf-output",
-  "Parameters": [
-    {
-      "Name": "endpoint",
-      "Value": "http://looseleaf.example.com:20000/"
-    },
-    {
-      "Name": "username",
-      "Value": "grouch"
-    },
-    {
-      "Name": "password",
-      "Value": "12345678"
-    }
-  ]
-}
+      <Verbatim><![CDATA[
+<Output Type="looseleaf" Name="an-example-looseleaf-output">
+  <Parameters>
+    <Parameter Name="endpoint" Value="http://looseleaf.example.com:20000/"/>
+    <Parameter Name="username" Value="grouch"/>
+    <Parameter Name="password" Value="12345678"/>
+  </Parameters>
+</Output>
 ]]></Verbatim>
     </FormalItem>
   </Subsection>

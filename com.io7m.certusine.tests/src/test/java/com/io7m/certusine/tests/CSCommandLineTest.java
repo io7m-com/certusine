@@ -207,7 +207,7 @@ public final class CSCommandLineTest
       CSTestDirectories.resourceOf(
         CSCommandLineTest.class,
         this.directory,
-        "configuration-basic.json"
+        "configuration-basic.xml"
       );
 
     int r = Main.mainExitless(new String[]{

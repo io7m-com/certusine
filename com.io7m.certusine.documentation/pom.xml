@@ -166,7 +166,7 @@
               <excludes>module-info.java</excludes>
               <includeGroupIds>${project.groupId}</includeGroupIds>
               <includeArtifactIds>com.io7m.certusine.vanilla</includeArtifactIds>
-              <includes>**/config-1.schema.json</includes>
+              <includes>**/config-1.xsd</includes>
               <classifier>sources</classifier>
               <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
               <outputDirectory>${project.build.directory}/documentation/</outputDirectory>

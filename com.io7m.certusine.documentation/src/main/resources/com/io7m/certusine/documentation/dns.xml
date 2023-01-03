@@ -6,7 +6,7 @@
          title="DNS Configurators">
 
   <Section title="Overview">
-    <Paragraph>This section of the documentation describes all of the supported DNS configurator types.</Paragraph>
+    <Paragraph>This section of the documentation describes all the supported DNS configurator types.</Paragraph>
   </Section>
 
   <xi:include href="dns-gandi-v5.xml"/>

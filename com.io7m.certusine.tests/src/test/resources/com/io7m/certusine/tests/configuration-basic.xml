@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Configuration xmlns="urn:com.io7m.certusine:configuration:1">
+
+  <Options CertificateStore="store.db"
+           DNSWaitTime="PT5M"
+           CertificateExpirationThreshold="PT72H"/>
+
+  <Accounts>
+    <Account Name="main"
+             PublicKeyPath="fake.pub"
+             PrivateKeyPath="fake.pri"
+             AcmeURI="https://acme-staging-v02.api.letsencrypt.org/directory"/>
+  </Accounts>
+
+  <Outputs>
+    <Output Type="directory"
+            Name="main-output">
+      <Parameters>
+        <Parameter Name="path"
+                   Value="/tmp"/>
+      </Parameters>
+    </Output>
+  </Outputs>
+
+  <DNSConfigurators>
+    <DNSConfigurator Type="vultr"
+                     Name="vultr-dns">
+      <Parameters>
+        <Parameter Name="api-key"
+                   Value="NOTANAPIKEY"/>
+        <Parameter Name="domain"
+                   Value="example.com"/>
+      </Parameters>
+    </DNSConfigurator>
+  </DNSConfigurators>
+
+  <Domains>
+    <Domain Name="example.com"
+            Account="main"
+            DNSConfigurator="vultr-dns">
+      <Certificates>
+        <Certificate Name="www"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="www0"/>
+            <Host Name="www1"/>
+            <Host Name="www2"/>
+          </Hosts>
+        </Certificate>
+        <Certificate Name="mail"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="mail0"/>
+            <Host Name="mail1"/>
+          </Hosts>
+        </Certificate>
+        <Certificate Name="wildcard"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="*"/>
+          </Hosts>
+        </Certificate>
+      </Certificates>
+      <OutputReferences>
+        <OutputReference Name="main-output"/>
+      </OutputReferences>
+    </Domain>
+  </Domains>
+
+</Configuration>

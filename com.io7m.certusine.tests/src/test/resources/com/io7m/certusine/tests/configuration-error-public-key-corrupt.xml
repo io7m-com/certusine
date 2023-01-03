@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Configuration xmlns="urn:com.io7m.certusine:configuration:1">
+
+  <Options CertificateStore="store.db"
+           DNSWaitTime="PT5M"
+           CertificateExpirationThreshold="PT72H"/>
+
+  <Accounts>
+    <Account Name="main"
+             PublicKeyPath="fake.txt"
+             PrivateKeyPath="fake.pri"
+             AcmeURI="https://acme-staging-v02.api.letsencrypt.org/directory"/>
+  </Accounts>
+
+  <Outputs>
+    <Output Type="directory"
+            Name="main-output">
+      <Parameters>
+        <Parameter Name="path"
+                   Value="/tmp"/>
+      </Parameters>
+    </Output>
+  </Outputs>
+
+  <DNSConfigurators>
+    <DNSConfigurator Type="vultr"
+                     Name="vultr-dns">
+      <Parameters>
+        <Parameter Name="api-key"
+                   Value="NOTANAPIKEY"/>
+        <Parameter Name="domain"
+                   Value="example.com"/>
+      </Parameters>
+    </DNSConfigurator>
+  </DNSConfigurators>
+
+  <Domains>
+    <Domain Name="example.com"
+            Account="main"
+            DNSConfigurator="vultr-dns">
+      <Certificates>
+        <Certificate Name="www"
+                     PublicKeyPath="fake.txt"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="www0"/>
+          </Hosts>
+        </Certificate>
+      </Certificates>
+      <OutputReferences>
+        <OutputReference Name="main-output"/>
+      </OutputReferences>
+    </Domain>
+  </Domains>
+
+</Configuration>
