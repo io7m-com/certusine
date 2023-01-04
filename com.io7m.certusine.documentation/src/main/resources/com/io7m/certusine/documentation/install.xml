@@ -6,13 +6,10 @@
 
   <Subsection title="Overview">
     <Paragraph>
-      The <Term type="package">certusine</Term> package is available from several sources:
+      The <Term type="package">certusine</Term> package is available from the following sources:
     </Paragraph>
     <FormalItem title="Sources">
       <ListUnordered>
-        <Item>
-          <Link target="b0fb60ed-d24a-4d12-8f9d-6057b228ad7b">Podman / Docker</Link>
-        </Item>
         <Item>
           <Link target="0b57cdab-91a4-4930-b660-061239aabca5">Maven Central</Link>
         </Item>
@@ -21,40 +18,11 @@
     <Paragraph>
       Regardless of the distribution method, the <Term type="package">certusine</Term> package
       will contain a command named <Term type="command">certusine</Term> that acts as the main
-      entrypoint to all of the package's functionality. The <Term type="command">certusine</Term>
+      entrypoint to all the package's functionality. The <Term type="command">certusine</Term>
       command expects an environment variable named <Term type="variable">CERTUSINE_HOME</Term>
       to be defined that points to the installation directory. See the documentation for the
       installation methods below for details.
     </Paragraph>
-  </Subsection>
-
-  <Subsection title="Podman/Docker" id="b0fb60ed-d24a-4d12-8f9d-6057b228ad7b">
-    <Paragraph>
-      The <Term type="package">certusine</Term> package can be installed from
-      <LinkExternal target="https://hub.docker.com/r/io7m/certusine">Docker Hub</LinkExternal>
-      using <Term type="command">docker</Term> or <Term type="command">podman</Term>.
-    </Paragraph>
-    <FormalItem title="Docker/Podman Pull">
-      <Verbatim><![CDATA[$ docker pull docker.io/io7m/certusine:${project.version}
-
-$ podman pull docker.io/io7m/certusine:${project.version}
-]]>
-      </Verbatim>
-    </FormalItem>
-    <Paragraph>
-      The image is configured such that <Term type="variable">CERTUSINE_HOME=/certusine</Term>,
-      with the <Term type="command">certusine</Term> command existing at
-      <Term type="expression">/certusine/bin/certusine</Term>. The image is configured with the
-      expectation that users will mount a volume at <Term type="expression">/certusine/etc</Term>
-      containing a configuration file and space for the certusine database file. The container can
-      otherwise be run without any privileges, and with a read-only root filesystem.
-    </Paragraph>
-    <FormalItem title="Run">
-      <Verbatim><![CDATA[$ podman run --read-only --volume /x/y/z:/certusine/etc:Z -i -t docker.io/io7m/certusine:${project.version} certusine
-info: Usage: certusine [options] [command] [command options]
-...
-]]></Verbatim>
-    </FormalItem>
   </Subsection>
 
   <Subsection title="Maven Central" id="0b57cdab-91a4-4930-b660-061239aabca5">
