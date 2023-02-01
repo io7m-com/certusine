@@ -155,7 +155,7 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecordsTest
     this.dnsQuery.txtRecordResponses.add(
       List.of(new CSDNSTXTRecord(
         "_acme-challenge.example.com",
-        "YW1vbmdzdCB0aGUgbGVhdmVzCg=="
+        "\"YW1vbmdzdCB0aGUgbGVhdmVzCg==\""
       ))
     );
 

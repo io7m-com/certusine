@@ -145,10 +145,13 @@ public final class CSDomainExecutor
   {
     LOG.debug("creating certificate task for {}", certificate.name());
 
+    final var fullyQualifiedDomainNames =
+      certificate.fullyQualifiedHostNames(taskContext.domain());
+
     try {
       final var order =
         account.newOrder()
-          .domains(certificate.hosts())
+          .domains(fullyQualifiedDomainNames)
           .create();
 
       return new CSCertificateTaskAuthorizeDNSInitial(taskContext, order);
@@ -251,7 +254,10 @@ public final class CSDomainExecutor
       for (final var dnsRecord : taskContext.dnsRecordsCreated()) {
         try {
           this.domain.dnsConfigurator()
-            .deleteTXTRecord(dnsRecord.name(), dnsRecord.value());
+            .deleteTXTRecord(
+              dnsRecord.name(),
+              dnsRecord.value()
+            );
         } catch (final IOException e) {
           LOG.error("failed to delete DNS record: ", e);
         }

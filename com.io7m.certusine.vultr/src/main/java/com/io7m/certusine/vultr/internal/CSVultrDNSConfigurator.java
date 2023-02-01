@@ -76,20 +76,20 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void createTXTRecord(
-    final String name,
-    final String text)
+    final String recordName,
+    final String recordValue)
     throws IOException, InterruptedException
   {
-    Objects.requireNonNull(name, "name");
-    Objects.requireNonNull(text, "text");
+    Objects.requireNonNull(recordName, "recordName");
+    Objects.requireNonNull(recordValue, "recordValue");
 
     final var targetURI =
       URI.create("%s/domains/%s/records".formatted(this.apiBase, this.domain));
 
     LOG.debug(
       "creating a TXT record {} = {} for domain {}",
-      name,
-      text,
+      recordName,
+      recordValue,
       this.domain
     );
     LOG.debug("POST {}", targetURI);
@@ -102,7 +102,7 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
         "ttl": 600,
         "priority": 0
       }
-      """.formatted(name, text);
+      """.formatted(recordName, recordValue);
 
     final var request =
       HttpRequest.newBuilder()
@@ -125,12 +125,11 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void deleteTXTRecord(
-    final String name,
-    final String text)
+    final String recordName,
+    final String recordValue)
   {
-    Objects.requireNonNull(name, "name");
-    Objects.requireNonNull(text, "text");
-
+    Objects.requireNonNull(recordName, "name");
+    Objects.requireNonNull(recordValue, "text");
 
   }
 }

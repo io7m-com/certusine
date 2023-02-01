@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         id="7f6561d5-2064-4f94-b28c-8dcc5c5d2cbb"
+         title="Gandi">
+
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="package">gandi-v5</Term>
+      - Support for the Gandi LiveDNS API
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Description">
+    <Paragraph>
+      The <Term type="package">gandi-v5</Term> DNS configurator supports creating and deleting DNS records using
+      the <LinkExternal target="https://api.gandi.net/docs/livedns/">Gandi DNS API</LinkExternal>.
+    </Paragraph>
+
+    <Paragraph>
+      The output accepts the following parameters:
+    </Paragraph>
+
+    <FormalItem title="Parameters">
+      <xi:include href="dns-gandi-v5-parameters.xml"/>
+    </FormalItem>
+  </Subsection>
+
+</Section>

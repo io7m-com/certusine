@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:c="urn:com.io7m.certusine:configuration:1"
+        targetNamespace="urn:com.io7m.certusine:configuration:1">
+
+  <element name="Options">
+    <complexType>
+      <attribute name="DNSWaitTime"
+                 type="duration"
+                 use="optional">
+        <annotation>
+          <documentation>
+            Specifies the amount of time that the client will wait between creating DNS records, and then notifying the
+            ACME servers that the records have been created. This wait time is necessary because DNS records sometimes
+            take time to propagate, and if the client instructs the ACME server to check the records before they have
+            had time to propagate, then the certificate authorization check will fail.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="CertificateStore"
+                 type="string"
+                 use="required">
+        <annotation>
+          <documentation>
+            Specifies the file that the client will use for its internal database of certificates. Relative paths are
+            resolved relative to the configuration file.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="CertificateExpirationThreshold"
+                 type="duration"
+                 use="optional">
+        <annotation>
+          <documentation>
+            specifies the maximum amount of time before expiration that the client will allow before it attempts to
+            renew a certificate. For example, a value of PT72H means that the client will start attempting to renew a
+            certificate when the certificate becomes due to expire in less than 72 hours.
+          </documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+
+  <element name="Account">
+    <complexType>
+      <attribute name="Name"
+                 type="string"
+                 use="required">
+        <annotation>
+          <documentation>
+            Specifies the name of that account. Names can be anything, but must be unique with respect to other
+            accounts. The names are purely used for organizational purposes internally.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="PublicKeyPath"
+                 type="string"
+                 use="required">
+        <annotation>
+          <documentation>
+            Specifies the location of the account's public key. Relative paths are resolved relative to the
+            configuration file.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="PrivateKeyPath"
+                 type="string"
+                 use="required">
+        <annotation>
+          <documentation>
+            Specifies the location of the account's private key. Relative paths are resolved relative to the
+            configuration file.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="AcmeURI"
+                 type="anyURI"
+                 use="required">
+        <annotation>
+          <documentation>
+            Specifies the base URI that will be used for ACME operations.
+          </documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+
+  <element name="Accounts">
+    <complexType>
+      <sequence minOccurs="0"
+                maxOccurs="unbounded">
+        <element ref="c:Account"/>
+      </sequence>
+    </complexType>
+
+    <key name="AccountKey">
+      <selector xpath="c:Account"/>
+      <field xpath="@Name"/>
+    </key>
+  </element>
+
+  <element name="Parameter">
+    <complexType>
+      <attribute name="Name"
+                 use="required"
+                 type="string"/>
+      <attribute name="Value"
+                 use="required"
+                 type="string"/>
+    </complexType>
+  </element>
+
+  <element name="Parameters">
+    <complexType>
+      <sequence minOccurs="0"
+                maxOccurs="unbounded">
+        <element ref="c:Parameter"/>
+      </sequence>
+    </complexType>
+
+    <key name="ParameterKey">
+      <selector xpath="c:Parameter"/>
+      <field xpath="@Name"/>
+    </key>
+  </element>
+
+  <element name="Output">
+    <annotation>
+      <documentation>
+        An output destination for signed certificates.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <sequence minOccurs="1"
+                maxOccurs="1">
+        <element ref="c:Parameters"/>
+      </sequence>
+      <attribute name="Type"
+                 type="string"
+                 use="required">
+        <annotation>
+          <documentation>
+            The type of the output. Must be one of the supported output types.
+          </documentation>
+        </annotation>
+      </attribute>
+      <attribute name="Name"
+                 type="string"
+                 use="required">
+        <annotation>
+          <documentation>
+            The (unique) name of the output.
+          </documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+
+  <element name="Outputs">
+    <annotation>
+      <documentation>
+        A set of output destinations for signed certificates.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <sequence minOccurs="0"
+                maxOccurs="unbounded">
+        <element ref="c:Output"/>
+      </sequence>
+    </complexType>
+
+    <key name="OutputKey">
+      <selector xpath="c:Output"/>
+      <field xpath="@Name"/>
+    </key>
+  </element>
+
+  <element name="DNSConfigurator">
+    <annotation>
+      <documentation>
+        A DNS configurator used to create and delete DNS records in response to ACME challenges.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <sequence minOccurs="1"
+                maxOccurs="1">
+        <element ref="c:Parameters"/>
+      </sequence>
+      <attribute name="Type"
+                 type="string"
+                 use="required"/>
+      <attribute name="Name"
+                 type="string"
+                 use="required"/>
+    </complexType>
+  </element>
+
+  <element name="DNSConfigurators">
+    <annotation>
+      <documentation>
+        A set of DNS configurators.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <sequence minOccurs="0"
+                maxOccurs="unbounded">
+        <element ref="c:DNSConfigurator"/>
+      </sequence>
+    </complexType>
+
+    <key name="DNSConfiguratorKey">
+      <selector xpath="c:DNSConfigurator"/>
+      <field xpath="@Name"/>
+    </key>
+  </element>
+
+  <element name="Host">
+    <annotation>
+      <documentation>
+        A hostname. Note that this is not a fully-qualified domain name.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <attribute name="Name"
+                 use="required"
+                 type="string"/>
+    </complexType>
+  </element>
+
+  <element name="Hosts">
+    <annotation>
+      <documentation>
+        A set of hostnames.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <sequence minOccurs="0"
+                maxOccurs="unbounded">
+        <element ref="c:Host"/>
+      </sequence>
+    </complexType>
+
+    <unique name="HostsUnique">
+      <selector xpath="c:Host"/>
+      <field xpath="@Name"/>
+    </unique>
+  </element>
+
+  <element name="Certificate">
+    <annotation>
+      <documentation>
+        A set of definitions that describe a certificate that will be created and signed.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <sequence>
+        <element ref="c:Hosts"/>
+      </sequence>
+
+      <attribute name="Name"
+                 use="required"
+                 type="string">
+        <annotation>
+          <documentation>
+            The certificate name.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="PublicKeyPath"
+                 type="string"
+                 use="required">
+        <annotation>
+          <documentation>
+            Specifies the location of the certificate's public key. Relative paths are resolved relative to the
+            configuration file.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="PrivateKeyPath"
+                 type="string"
+                 use="required">
+        <annotation>
+          <documentation>
+            Specifies the location of the certificate's private key. Relative paths are resolved relative to the
+            configuration file.
+          </documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+
+  <element name="Certificates">
+    <annotation>
+      <documentation>
+        A set of certificate definitions.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <sequence minOccurs="0"
+                maxOccurs="unbounded">
+        <element ref="c:Certificate"/>
+      </sequence>
+    </complexType>
+
+    <key name="CertificateKey">
+      <selector xpath="c:Certificate"/>
+      <field xpath="@Name"/>
+    </key>
+  </element>
+
+  <element name="OutputReference">
+    <annotation>
+      <documentation>
+        A reference to an output definition.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <attribute name="Name"
+                 use="required"
+                 type="string"/>
+    </complexType>
+  </element>
+
+  <element name="OutputReferences">
+    <annotation>
+      <documentation>
+        A set of references to output definitions.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <sequence minOccurs="1"
+                maxOccurs="unbounded">
+        <element ref="c:OutputReference"/>
+      </sequence>
+    </complexType>
+
+    <unique name="OutputReferencesUnique">
+      <selector xpath="c:OutputReference"/>
+      <field xpath="@Name"/>
+    </unique>
+  </element>
+
+  <element name="Domain">
+    <annotation>
+      <documentation>
+        A set of definitions that define a domain.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <sequence>
+        <element ref="c:Certificates"/>
+        <element ref="c:OutputReferences"/>
+      </sequence>
+
+      <attribute name="Name"
+                 use="required"
+                 type="string">
+        <annotation>
+          <documentation>
+            The fully qualified domain name.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="Account"
+                 use="required"
+                 type="string">
+        <annotation>
+          <documentation>
+            The account to which this domain belongs.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="DNSConfigurator"
+                 use="required"
+                 type="string">
+        <annotation>
+          <documentation>
+            The DNS configurator that will be used for this domain.
+          </documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+
+  <element name="Domains">
+    <annotation>
+      <documentation>
+        A set of domain definitions.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <sequence minOccurs="0"
+                maxOccurs="unbounded">
+        <element ref="c:Domain"/>
+      </sequence>
+    </complexType>
+
+    <key name="DomainKey">
+      <selector xpath="c:Domain"/>
+      <field xpath="@Name"/>
+    </key>
+  </element>
+
+  <element name="Configuration">
+    <annotation>
+      <documentation>
+        The configuration information for the certusine client.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <sequence>
+        <element ref="c:Options"/>
+        <element ref="c:Accounts"/>
+        <element ref="c:Outputs"/>
+        <element ref="c:DNSConfigurators"/>
+        <element ref="c:Domains"/>
+      </sequence>
+    </complexType>
+
+    <keyref name="DomainAccountsExist"
+            refer="c:AccountKey">
+      <selector xpath="c:Domains/c:Domain"/>
+      <field xpath="@Account"/>
+    </keyref>
+
+    <keyref name="DomainDNSConfiguratorsExist"
+            refer="c:DNSConfiguratorKey">
+      <selector xpath="c:Domains/c:Domain"/>
+      <field xpath="@DNSConfigurator"/>
+    </keyref>
+  </element>
+
+</schema>

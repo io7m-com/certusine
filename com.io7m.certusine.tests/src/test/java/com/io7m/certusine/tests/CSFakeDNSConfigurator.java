@@ -45,9 +45,9 @@ public final class CSFakeDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void deleteTXTRecord(
-    final String name,
-    final String text)
+    final String recordName,
+    final String recordValue)
   {
-    this.requests.add("DELETE " + name);
+    this.requests.add("DELETE " + recordName);
   }
 }

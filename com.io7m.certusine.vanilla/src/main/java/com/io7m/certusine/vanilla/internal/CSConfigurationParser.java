@@ -17,10 +17,6 @@
 
 package com.io7m.certusine.vanilla.internal;
 
-import com.fasterxml.jackson.databind.DatabindException;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.module.SimpleDeserializers;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.io7m.anethum.common.ParseException;
 import com.io7m.anethum.common.ParseStatus;
 import com.io7m.certusine.api.CSAccount;
@@ -36,27 +32,37 @@ import com.io7m.certusine.api.CSDNSConfiguratorProviderType;
 import com.io7m.certusine.api.CSDNSConfiguratorType;
 import com.io7m.certusine.api.CSDomain;
 import com.io7m.certusine.api.CSOptions;
-import com.io7m.certusine.vanilla.internal.dto.CS1Account;
-import com.io7m.certusine.vanilla.internal.dto.CS1Certificate;
-import com.io7m.certusine.vanilla.internal.dto.CS1Configuration;
-import com.io7m.certusine.vanilla.internal.dto.CS1DNSConfigurator;
-import com.io7m.certusine.vanilla.internal.dto.CS1Domain;
-import com.io7m.certusine.vanilla.internal.dto.CS1Options;
-import com.io7m.certusine.vanilla.internal.dto.CS1Output;
-import com.io7m.certusine.vanilla.internal.dto.CS1Parameter;
-import com.io7m.dixmont.core.DmJsonRestrictedDeserializers;
+import com.io7m.certusine.vanilla.internal.jaxb.Accounts;
+import com.io7m.certusine.vanilla.internal.jaxb.Certificate;
+import com.io7m.certusine.vanilla.internal.jaxb.Certificates;
+import com.io7m.certusine.vanilla.internal.jaxb.Configuration;
+import com.io7m.certusine.vanilla.internal.jaxb.DNSConfigurators;
+import com.io7m.certusine.vanilla.internal.jaxb.Domains;
+import com.io7m.certusine.vanilla.internal.jaxb.Host;
+import com.io7m.certusine.vanilla.internal.jaxb.Options;
+import com.io7m.certusine.vanilla.internal.jaxb.Outputs;
+import com.io7m.certusine.vanilla.internal.jaxb.Parameters;
 import com.io7m.jlexing.core.LexicalPosition;
 import com.io7m.jlexing.core.LexicalPositions;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.ValidationEventLocator;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyPair;
@@ -72,10 +78,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_INTEGER_FOR_INTS;
-import static com.fasterxml.jackson.databind.MapperFeature.SORT_PROPERTIES_ALPHABETICALLY;
-import static com.fasterxml.jackson.databind.SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS;
 import static com.io7m.anethum.common.ParseSeverity.PARSE_ERROR;
+import static com.io7m.anethum.common.ParseSeverity.PARSE_WARNING;
+import static jakarta.xml.bind.ValidationEvent.ERROR;
+import static jakarta.xml.bind.ValidationEvent.FATAL_ERROR;
+import static jakarta.xml.bind.ValidationEvent.WARNING;
 
 /**
  * A certificate pipeline parser.
@@ -84,6 +91,9 @@ import static com.io7m.anethum.common.ParseSeverity.PARSE_ERROR;
 public final class CSConfigurationParser
   implements CSConfigurationParserType
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(CSConfigurationParser.class);
+
   private final CSStrings strings;
   private final Map<String, CSCertificateOutputProviderType> outputProviders;
   private final Map<String, CSDNSConfiguratorProviderType> dnsProviders;
@@ -96,8 +106,6 @@ public final class CSConfigurationParser
   private final HashMap<String, CSCertificateOutputType> outputs;
   private final HashMap<String, CSDNSConfiguratorType> dns;
   private final HashMap<String, CSDomain> domains;
-  private final SimpleDeserializers serializers;
-  private final JsonMapper mapper;
   private final URI source;
   private boolean failed;
   private CSOptions options;
@@ -142,62 +150,11 @@ public final class CSConfigurationParser
     this.statusConsumer =
       Objects.requireNonNull(inStatusConsumer, "statusConsumer");
 
-    this.serializers =
-      DmJsonRestrictedDeserializers.builder()
-        .allowClass(CS1Account.class)
-        .allowClass(CS1Certificate.class)
-        .allowClass(CS1Configuration.class)
-        .allowClass(CS1DNSConfigurator.class)
-        .allowClass(CS1Domain.class)
-        .allowClass(CS1Output.class)
-        .allowClass(CS1Parameter.class)
-        .allowClass(CS1Options.class)
-        .allowClass(String.class)
-        .allowClass(URI.class)
-        .allowClassName(
-          "java.util.List<com.io7m.certusine.vanilla.internal.dto.CS1Account>")
-        .allowClassName(
-          "java.util.List<com.io7m.certusine.vanilla.internal.dto.CS1Certificate>")
-        .allowClassName(
-          "java.util.List<com.io7m.certusine.vanilla.internal.dto.CS1DNSConfigurator>")
-        .allowClassName(
-          "java.util.List<com.io7m.certusine.vanilla.internal.dto.CS1Domain>")
-        .allowClassName(
-          "java.util.List<com.io7m.certusine.vanilla.internal.dto.CS1Output>")
-        .allowClassName(
-          "java.util.List<com.io7m.certusine.vanilla.internal.dto.CS1Parameter>")
-        .allowClassName("java.util.List<java.lang.String>")
-        .build();
-
-    this.mapper =
-      JsonMapper.builder()
-        .enable(USE_BIG_INTEGER_FOR_INTS)
-        .enable(ORDER_MAP_ENTRIES_BY_KEYS)
-        .enable(SORT_PROPERTIES_ALPHABETICALLY)
-        .build();
-
-    final var simpleModule = new SimpleModule();
-    simpleModule.setDeserializers(this.serializers);
-    this.mapper.registerModule(simpleModule);
-
     this.accounts = new HashMap<>();
     this.dns = new HashMap<>();
     this.domains = new HashMap<>();
     this.outputs = new HashMap<>();
     this.statusValues = new ArrayList<>();
-  }
-
-  private static ParseStatus createParseError(
-    final String errorCode,
-    final LexicalPosition<URI> lexical,
-    final String message)
-  {
-    return ParseStatus.builder()
-      .setSeverity(PARSE_ERROR)
-      .setErrorCode(errorCode)
-      .setLexical(lexical)
-      .setMessage(message)
-      .build();
   }
 
   @Override
@@ -218,41 +175,102 @@ public final class CSConfigurationParser
     this.statusValues.clear();
     this.options = null;
 
-    final CS1Configuration configuration;
     try {
-      configuration =
-        this.mapper.readValue(this.stream, CS1Configuration.class);
-    } catch (final DatabindException e) {
+      final var schemas =
+        SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+      final var schema =
+        schemas.newSchema(
+          CSConfigurationParser.class.getResource(
+            "/com/io7m/certusine/vanilla/internal/config-1.xsd")
+        );
+
+      final var context =
+        JAXBContext.newInstance(
+          "com.io7m.certusine.vanilla.internal.jaxb");
+      final var unmarshaller =
+        context.createUnmarshaller();
+
+      unmarshaller.setEventHandler(event -> {
+        final var locator = event.getLocator();
+        switch (event.getSeverity()) {
+          case WARNING -> {
+            this.publishWarning(
+              "warn-xml",
+              locatorLexical(locator),
+              event.getMessage()
+            );
+          }
+          case ERROR, FATAL_ERROR -> {
+            this.publishError(
+              "error-xml-validation",
+              locatorLexical(locator),
+              event.getMessage()
+            );
+          }
+        }
+        return true;
+      });
+
+      unmarshaller.setSchema(schema);
+
+      final var streamSource =
+        new StreamSource(this.stream, this.source.toString());
+
+      return this.processConfiguration(
+        (Configuration) unmarshaller.unmarshal(streamSource)
+      );
+    } catch (final JAXBException e) {
+      LOG.debug("jaxb exception: ", e);
+
       this.publishError(
-        "error-json",
-        LexicalPosition.of(
-          e.getLocation().getLineNr(),
-          e.getLocation().getColumnNr(),
-          Optional.of(this.source)
-        ),
-        e.getMessage()
+        createParseError(
+          "error-jaxb",
+          LexicalPositions.zero(),
+          this.strings.format("parseFailed"))
       );
       throw new ParseException(
         this.strings.format("parseFailed"),
         List.copyOf(this.statusValues)
       );
-    } catch (final IOException e) {
+    } catch (final Exception e) {
+      LOG.debug("exception: ", e);
+
       this.publishError(
-        "error-io",
-        LexicalPositions.zero(),
-        e.getMessage()
+        createParseError(
+          "error-parse",
+          LexicalPositions.zero(),
+          this.strings.format("parseFailed"))
       );
       throw new ParseException(
         this.strings.format("parseFailed"),
         List.copyOf(this.statusValues)
       );
     }
+  }
 
-    this.buildOptions(configuration);
-    this.buildOutputs(configuration);
-    this.buildDNSConfigurators(configuration);
-    this.buildAccounts(configuration);
-    this.buildDomains(configuration);
+  private static LexicalPosition<URI> locatorLexical(
+    final ValidationEventLocator locator)
+  {
+    try {
+      return LexicalPosition.of(
+        locator.getLineNumber(),
+        locator.getColumnNumber(),
+        Optional.of(locator.getURL().toURI())
+      );
+    } catch (final URISyntaxException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  private CSConfiguration processConfiguration(
+    final Configuration configuration)
+    throws ParseException
+  {
+    this.buildOptions(configuration.getOptions());
+    this.buildOutputs(configuration.getOutputs());
+    this.buildDNSConfigurators(configuration.getDNSConfigurators());
+    this.buildAccounts(configuration.getAccounts());
+    this.buildDomains(configuration.getDomains());
 
     if (this.failed) {
       throw new ParseException(
@@ -267,16 +285,136 @@ public final class CSConfigurationParser
     );
   }
 
+  private void buildDomains(
+    final Domains domainsRaw)
+  {
+    for (final var domain : domainsRaw.getDomain()) {
+      final var domainName =
+        domain.getName();
+      final var domainOutputs =
+        new HashMap<String, CSCertificateOutputType>();
+
+      final var outputReferences =
+        domain.getOutputReferences();
+
+      for (final var outputReference : outputReferences.getOutputReference()) {
+        final var outputName =
+          outputReference.getName();
+        final var output =
+          this.outputs.get(outputName);
+
+        domainOutputs.put(outputName, output);
+      }
+
+      final var account =
+        this.accounts.get(domain.getAccount());
+
+      final var dnsConfigurator =
+        this.dns.get(domain.getDNSConfigurator());
+
+      final var certificates =
+        this.buildCertificates(
+          domainName,
+          domain.getCertificates()
+        );
+
+      final var newDomain =
+        new CSDomain(
+          account,
+          domainName,
+          certificates,
+          dnsConfigurator,
+          domainOutputs
+        );
+
+      if (!this.domains.containsKey(domainName)) {
+        this.domains.put(domainName, newDomain);
+      }
+    }
+  }
+
+  private Map<String, CSCertificate> buildCertificates(
+    final String domainName,
+    final Certificates certificates)
+  {
+    final var results = new HashMap<String, CSCertificate>();
+
+    for (final var certificate : certificates.getCertificate()) {
+      try {
+        final var name =
+          certificate.getName();
+
+        final var publicKey =
+          this.loadPublicKey(
+            LexicalPositions.zero(),
+            this.baseDirectory.resolve(certificate.getPublicKeyPath())
+          );
+        final var privateKey =
+          this.loadPrivateKey(
+            LexicalPositions.zero(),
+            this.baseDirectory.resolve(certificate.getPrivateKeyPath())
+          );
+
+        final var hostNames =
+          certificate.getHosts()
+            .getHost()
+            .stream()
+            .map(Host::getName)
+            .toList();
+
+        for (final var hostName : hostNames) {
+          if (hostName.contains(domainName)) {
+            this.publishWarning(
+              "warn-host-contains-domain",
+              LexicalPositions.zero(),
+              this.strings.format(
+                "warnHostContainsDomain",
+                hostName,
+                domainName)
+            );
+          }
+        }
+
+        final var newCertificate =
+          new CSCertificate(
+            this.parseCertificateName(certificate),
+            new KeyPair(publicKey, privateKey),
+            hostNames
+          );
+
+        results.put(name, newCertificate);
+      } catch (final CSInternalParseException e) {
+        // Ignore and continue
+      }
+    }
+
+    return results;
+  }
+
+  private CSCertificateName parseCertificateName(
+    final Certificate certificate)
+    throws CSInternalParseException
+  {
+    final var name = certificate.getName();
+    try {
+      return new CSCertificateName(name);
+    } catch (final Exception e) {
+      throw this.publishError(
+        "error-certificate-name-invalid",
+        LexicalPositions.zero(),
+        this.strings.format("errorCertificateName", name, e.getMessage())
+      );
+    }
+  }
+
   private void buildOptions(
-    final CS1Configuration configuration)
+    final Options optionsRaw)
   {
     try {
-      final var existingOptions =
-        configuration.options();
       this.options = new CSOptions(
-        this.baseDirectory.resolve(existingOptions.certificateStore()),
-        Duration.parse(existingOptions.dnsWaitTime()),
-        Duration.parse(existingOptions.certificateExpirationThreshold())
+        this.baseDirectory.resolve(optionsRaw.getCertificateStore()),
+        Duration.parse(optionsRaw.getDNSWaitTime().toString()),
+        Duration.parse(optionsRaw.getCertificateExpirationThreshold().toString())
       );
     } catch (final DateTimeParseException e) {
       this.publishError(
@@ -291,176 +429,81 @@ public final class CSConfigurationParser
     }
   }
 
-  private void buildDomains(
-    final CS1Configuration configuration)
+  private void buildDNSConfigurators(
+    final DNSConfigurators dnsConfigurators)
   {
-    for (final var domain : configuration.domains()) {
-      final var domainName =
-        domain.name();
+    for (final var dnsConfigurator : dnsConfigurators.getDNSConfigurator()) {
+      final var provider =
+        this.dnsProviders.get(dnsConfigurator.getType());
 
-      final var domainOutputs = new HashMap<String, CSCertificateOutputType>();
-      for (final var outputName : domain.outputs()) {
-        final var output = this.outputs.get(outputName);
-        if (output == null) {
-          this.publishError(
-            "error-domain-output-nonexistent",
-            LexicalPositions.zero(),
-            this.strings.format(
-              "errorDomainOutputNonexistent",
-              domainName,
-              outputName,
-              this.outputs.keySet()
-            )
-          );
-          continue;
-        }
-        domainOutputs.put(outputName, output);
-      }
+      final var parameters =
+        this.toConfigurationParameters(dnsConfigurator.getParameters());
 
-      final var account =
-        this.accounts.get(domain.account());
-
-      if (account == null) {
-        this.publishError(
-          "error-domain-account-nonexistent",
-          LexicalPositions.zero(),
-          this.strings.format(
-            "errorDomainAccountNonexistent",
-            domainName,
-            domain.account()
-          )
-        );
-        continue;
-      }
-
-      final var dnsConfigurator =
-        this.dns.get(domain.dnsConfigurator());
-
-      if (dnsConfigurator == null) {
-        this.publishError(
-          "error-domain-dnsconfigurator-nonexistent",
-          LexicalPositions.zero(),
-          this.strings.format(
-            "errorDomainDNSConfiguratorNonexistent",
-            domainName,
-            domain.dnsConfigurator(),
-            this.dns.keySet()
-          )
-        );
-        continue;
-      }
-
-      final var certificates =
-        this.buildCertificates(domainName, domain.certificates());
-
-      final var newDomain =
-        new CSDomain(
-          account,
-          domainName,
-          certificates,
-          dnsConfigurator,
-          domainOutputs
-        );
-
-      if (!this.domains.containsKey(domainName)) {
-        this.domains.put(domainName, newDomain);
-        continue;
-      }
-
-      this.publishError(
-        "error-domain-duplicate",
-        LexicalPositions.zero(),
-        this.strings.format("errorDomainDuplicate", domainName)
-      );
-    }
-  }
-
-  private Map<String, CSCertificate> buildCertificates(
-    final String domainName,
-    final List<CS1Certificate> certificates)
-  {
-    final var results = new HashMap<String, CSCertificate>();
-
-    for (final var certificate : certificates) {
+      final var dnsName = dnsConfigurator.getName();
       try {
-        final var name =
-          certificate.name();
-
-        final var publicKey =
-          this.loadPublicKey(
-            LexicalPositions.zero(),
-            this.baseDirectory.resolve(certificate.publicKeyPath())
-          );
-        final var privateKey =
-          this.loadPrivateKey(
-            LexicalPositions.zero(),
-            this.baseDirectory.resolve(certificate.privateKeyPath())
-          );
-
-        final var newCertificate =
-          new CSCertificate(
-            this.parseCertificateName(certificate),
-            new KeyPair(publicKey, privateKey),
-            certificate.hosts()
-          );
-
-        if (results.containsKey(name)) {
-          this.publishError(
-            "error-domain-certificate-duplicate",
-            LexicalPositions.zero(),
-            this.strings.format(
-              "errorDomainCertificateDuplicate",
-              domainName,
-              name)
-          );
-          continue;
-        }
-        results.put(name, newCertificate);
-      } catch (final CSInternalParseException e) {
-        // Ignore and continue
+        this.dns.put(dnsName, provider.create(parameters));
+      } catch (final CSConfigurationException ex) {
+        ex.errors().forEach(this::publishError);
       }
     }
-
-    return results;
   }
 
-  private CSCertificateName parseCertificateName(
-    final CS1Certificate certificate)
-    throws CSInternalParseException
+  private CSConfigurationParameters toConfigurationParameters(
+    final Parameters parametersRaw)
   {
-    final var name = certificate.name();
-    try {
-      return new CSCertificateName(name);
-    } catch (final Exception e) {
-      throw this.publishError(
-        "error-certificate-name-invalid",
-        LexicalPositions.zero(),
-        this.strings.format("errorCertificateName", name, e.getMessage())
-      );
+    final var stringParameters = new HashMap<String, String>();
+    for (final var parameter : parametersRaw.getParameter()) {
+      stringParameters.put(parameter.getName(), parameter.getValue());
+    }
+
+    return new CSConfigurationParameters(
+      this.baseDirectory,
+      LexicalPositions.zero(),
+      Map.copyOf(stringParameters)
+    );
+  }
+
+  private void buildOutputs(
+    final Outputs outputsRaw)
+  {
+    for (final var output : outputsRaw.getOutput()) {
+      final var provider =
+        this.outputProviders.get(output.getType());
+      final var parameters =
+        this.toConfigurationParameters(output.getParameters());
+
+      final var outputName = output.getName();
+      if (!this.outputs.containsKey(outputName)) {
+        try {
+          this.outputs.put(outputName, provider.create(outputName, parameters));
+        } catch (final CSConfigurationException ex) {
+          ex.errors().forEach(this::publishError);
+        }
+      }
     }
   }
 
   private void buildAccounts(
-    final CS1Configuration configuration)
+    final Accounts accountsRaw)
   {
-    for (final var account : configuration.accounts()) {
+    for (final var account : accountsRaw.getAccount()) {
       try {
         final var publicKey =
           this.loadPublicKey(
             LexicalPositions.zero(),
-            this.baseDirectory.resolve(account.publicKeyPath())
+            this.baseDirectory.resolve(account.getPublicKeyPath())
           );
         final var privateKey =
           this.loadPrivateKey(
             LexicalPositions.zero(),
-            this.baseDirectory.resolve(account.privateKeyPath())
+            this.baseDirectory.resolve(account.getPrivateKeyPath())
           );
 
         final CSAccount newAccount;
         try {
           newAccount = new CSAccount(
             new KeyPair(publicKey, privateKey),
-            account.acmeURI()
+            URI.create(account.getAcmeURI())
           );
         } catch (final IllegalArgumentException e) {
           this.publishError(
@@ -471,126 +514,12 @@ public final class CSConfigurationParser
           continue;
         }
 
-        final var accountName = account.name();
-        if (!this.accounts.containsKey(accountName)) {
-          this.accounts.put(accountName, newAccount);
-          continue;
-        }
-
-        this.publishError(
-          "error-account-duplicate",
-          LexicalPositions.zero(),
-          this.strings.format("errorAccountDuplicate", accountName)
-        );
+        final var accountName = account.getName();
+        this.accounts.put(accountName, newAccount);
       } catch (final CSInternalParseException e) {
         // Ignore and continue!
       }
     }
-  }
-
-  private void buildDNSConfigurators(
-    final CS1Configuration configuration)
-  {
-    for (final var dnsConfigurator : configuration.dnsConfigurators()) {
-      final var provider =
-        this.dnsProviders.get(dnsConfigurator.type());
-
-      if (provider == null) {
-        this.publishError(
-          "error-dns-provider-nonexistent",
-          LexicalPositions.zero(),
-          this.strings.format(
-            "errorDNSProviderNonexistent",
-            dnsConfigurator.type(),
-            this.dnsProviders.keySet())
-        );
-        continue;
-      }
-
-      final var parameters =
-        this.toConfigurationParameters(dnsConfigurator.parameters());
-
-      final var dnsName = dnsConfigurator.name();
-      if (!this.dns.containsKey(dnsName)) {
-        try {
-          this.dns.put(dnsName, provider.create(parameters));
-        } catch (final CSConfigurationException ex) {
-          ex.errors().forEach(this::publishError);
-        }
-        continue;
-      }
-
-      this.publishError(
-        "error-dns-duplicate",
-        LexicalPositions.zero(),
-        this.strings.format("errorDNSDuplicate", dnsName)
-      );
-    }
-  }
-
-  private void buildOutputs(
-    final CS1Configuration configuration)
-  {
-    for (final var output : configuration.outputs()) {
-      final var provider =
-        this.outputProviders.get(output.type());
-
-      if (provider == null) {
-        this.publishError(
-          "error-output-provider-nonexistent",
-          LexicalPositions.zero(),
-          this.strings.format(
-            "errorOutputProviderNonexistent",
-            output.type(),
-            this.outputProviders.keySet())
-        );
-        continue;
-      }
-
-      final var parameters =
-        this.toConfigurationParameters(output.parameters());
-
-      final var outputName = output.name();
-      if (!this.outputs.containsKey(outputName)) {
-        try {
-          this.outputs.put(outputName, provider.create(outputName, parameters));
-        } catch (final CSConfigurationException ex) {
-          ex.errors().forEach(this::publishError);
-        }
-        continue;
-      }
-
-      this.publishError(
-        "error-output-duplicate",
-        LexicalPositions.zero(),
-        this.strings.format("errorOutputDuplicate", outputName)
-      );
-    }
-  }
-
-  private CSConfigurationParameters toConfigurationParameters(
-    final List<CS1Parameter> parameters)
-  {
-    final var stringParameters = new HashMap<String, String>();
-    for (final var parameter : parameters) {
-      if (stringParameters.containsKey(parameter.name())) {
-        this.publishError(
-          "error-parameter-duplicate",
-          LexicalPositions.zero(),
-          this.strings.format(
-            "errorParameterDuplicate",
-            parameter.name())
-        );
-        continue;
-      }
-      stringParameters.put(parameter.name(), parameter.value());
-    }
-
-    return new CSConfigurationParameters(
-      this.baseDirectory,
-      LexicalPositions.zero(),
-      Map.copyOf(stringParameters)
-    );
   }
 
   private void publishError(
@@ -602,6 +531,45 @@ public final class CSConfigurationParser
 
     this.statusValues.add(status);
     this.statusConsumer.accept(status);
+  }
+
+  private CSInternalParseException publishError(
+    final String errorCode,
+    final LexicalPosition<URI> lex,
+    final String message)
+  {
+    this.publishError(createParseError(errorCode, lex, message));
+    return new CSInternalParseException();
+  }
+
+  private void publishWarning(
+    final String errorCode,
+    final LexicalPosition<URI> lex,
+    final String message)
+  {
+    final var status =
+      ParseStatus.builder()
+        .setErrorCode(errorCode)
+        .setLexical(lex)
+        .setSeverity(PARSE_WARNING)
+        .setMessage(message)
+        .build();
+
+    this.statusValues.add(status);
+    this.statusConsumer.accept(status);
+  }
+
+  private static ParseStatus createParseError(
+    final String errorCode,
+    final LexicalPosition<URI> lexical,
+    final String message)
+  {
+    return ParseStatus.builder()
+      .setSeverity(PARSE_ERROR)
+      .setErrorCode(errorCode)
+      .setLexical(lexical)
+      .setMessage(message)
+      .build();
   }
 
   private PrivateKey loadPrivateKey(
@@ -622,7 +590,7 @@ public final class CSConfigurationParser
         throw this.publishError(
           "error-private-key-corrupt",
           lexical,
-          this.strings.format("errorPrivateKeyCorrupt", object)
+          this.strings.format("errorPrivateKeyCorrupt", privateFile)
         );
       }
     } catch (final IOException e) {
@@ -631,8 +599,8 @@ public final class CSConfigurationParser
         lexical,
         this.strings.format(
           "errorIOFile",
-          e.getClass().getSimpleName(),
-          privateFile)
+          privateFile,
+          e.getClass().getSimpleName())
       );
     }
   }
@@ -655,7 +623,7 @@ public final class CSConfigurationParser
         throw this.publishError(
           "error-public-key-corrupt",
           lexical,
-          this.strings.format("errorPublicKeyCorrupt", object)
+          this.strings.format("errorPublicKeyCorrupt", publicFile)
         );
       }
     } catch (final IOException e) {
@@ -664,18 +632,9 @@ public final class CSConfigurationParser
         lexical,
         this.strings.format(
           "errorIOFile",
-          e.getClass().getSimpleName(),
-          publicFile)
+          publicFile,
+          e.getClass().getSimpleName())
       );
     }
-  }
-
-  private CSInternalParseException publishError(
-    final String errorCode,
-    final LexicalPosition<URI> e,
-    final String message)
-  {
-    this.publishError(createParseError(errorCode, e, message));
-    return new CSInternalParseException();
   }
 }

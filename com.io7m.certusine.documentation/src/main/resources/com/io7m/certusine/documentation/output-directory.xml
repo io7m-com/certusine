@@ -61,16 +61,11 @@
   <Subsection title="Example">
     <FormalItem title="Example Configuration">
       <Verbatim><![CDATA[
-{
-  "Type": "directory",
-  "Name": "an-example-output",
-  "Parameters": [
-    {
-      "Name": "path",
-      "Value": "/tmp"
-    }
-  ]
-}
+<Output Type="directory" Name="an-example-output">
+  <Parameters>
+    <Parameter Name="path" Value="/tmp"/>
+  </Parameters>
+</Output>
 ]]></Verbatim>
     </FormalItem>
   </Subsection>

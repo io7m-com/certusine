@@ -34,19 +34,17 @@ module com.io7m.certusine.vanilla
   requires transitive com.io7m.certusine.api;
   requires transitive com.io7m.certusine.certstore.api;
 
-  requires com.fasterxml.jackson.annotation;
-  requires com.fasterxml.jackson.core;
-  requires com.fasterxml.jackson.databind;
   requires com.h2database.mvstore;
-  requires com.io7m.dixmont.core;
   requires com.io7m.jaffirm.core;
   requires com.io7m.jdeferthrow.core;
   requires com.io7m.jxtrand.vanilla;
+  requires jakarta.xml.bind;
   requires org.bouncycastle.pkix;
   requires org.bouncycastle.provider;
   requires org.dnsjava;
   requires org.shredzone.acme4j.utils;
   requires org.shredzone.acme4j;
+  requires org.slf4j;
 
   exports com.io7m.certusine.vanilla;
 
@@ -61,8 +59,8 @@ module com.io7m.certusine.vanilla
   opens com.io7m.certusine.vanilla.internal
     to com.io7m.jxtrand.vanilla;
 
-  opens com.io7m.certusine.vanilla.internal.dto
-    to com.fasterxml.jackson.databind;
+  opens com.io7m.certusine.vanilla.internal.jaxb
+    to jakarta.xml.bind;
 
   exports com.io7m.certusine.vanilla.internal
     to com.io7m.certusine.tests;

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Configuration xmlns="urn:com.io7m.certusine:configuration:1">
+
+  <Options DNSWaitTime="PT5M"
+           CertificateExpirationThreshold="PT72H"/>
+
+  <Accounts>
+    <Account Name="main"
+             PublicKeyPath="fake.pub"
+             PrivateKeyPath="fake.pri"
+             AcmeURI="acme://localhost:20000/"/>
+
+    <Account Name="main"
+             PublicKeyPath="fake.pub"
+             PrivateKeyPath="fake.pri"
+             AcmeURI="acme://localhost:20000/"/>
+
+    <Account Name="corrupt-public"
+             PublicKeyPath="fake.txt"
+             PrivateKeyPath="fake.pri"
+             AcmeURI="acme://localhost:20000/"/>
+
+    <Account Name="corrupt-private"
+             PublicKeyPath="fake.pub"
+             PrivateKeyPath="fake.txt"
+             AcmeURI="acme://localhost:20000/"/>
+
+    <Account Name="missing-public"
+             PublicKeyPath="nonexistent"
+             PrivateKeyPath="fake.pri"
+             AcmeURI="acme://localhost:20000/"/>
+
+    <Account Name="missing-private"
+             PublicKeyPath="fake.pub"
+             PrivateKeyPath="nonexistent"
+             AcmeURI="acme://localhost:20000/"/>
+  </Accounts>
+
+  <Outputs>
+    <Output Type="directory"
+            Name="main">
+      <Parameters>
+        <Parameter Name="path"
+                   Value="/tmp"/>
+      </Parameters>
+    </Output>
+
+    <Output Type="directory"
+            Name="main">
+      <Parameters>
+        <Parameter Name="path"
+                   Value="/tmp"/>
+      </Parameters>
+    </Output>
+
+    <Output Type="directory"
+            Name="missing-path">
+      <Parameters/>
+    </Output>
+
+    <Output Type="nonexistent"
+            Name="nonexistent">
+      <Parameters/>
+    </Output>
+
+    <Output Type="directory"
+            Name="duplicate-parameters">
+      <Parameters>
+        <Parameter Name="path"
+                   Value="/tmp"/>
+        <Parameter Name="path"
+                   Value="/tmp"/>
+      </Parameters>
+    </Output>
+  </Outputs>
+
+  <DNSConfigurators>
+    <DNSConfigurator Type="vultr"
+                     Name="vultr-dns">
+      <Parameters>
+        <Parameter Name="api-key"
+                   Value="abcd"/>
+        <Parameter Name="domain"
+                   Value="example.com"/>
+      </Parameters>
+    </DNSConfigurator>
+
+    <DNSConfigurator Type="vultr"
+                     Name="vultr-dns">
+      <Parameters>
+        <Parameter Name="api-key"
+                   Value="abcd"/>
+        <Parameter Name="domain"
+                   Value="example.com"/>
+      </Parameters>
+    </DNSConfigurator>
+
+    <DNSConfigurator Type="vultr"
+                     Name="vultr-missing-parameters">
+      <Parameters/>
+    </DNSConfigurator>
+
+    <DNSConfigurator Type="nonexistent"
+                     Name="nonexistent">
+      <Parameters/>
+    </DNSConfigurator>
+  </DNSConfigurators>
+
+  <Domains>
+    <Domain Name="example.com"
+            Account="main"
+            DNSConfigurator="vultr-dns">
+      <Certificates>
+        <Certificate Name="www"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="www0"/>
+            <Host Name="www1"/>
+            <Host Name="www2"/>
+          </Hosts>
+        </Certificate>
+        <Certificate Name="mail"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="mail0"/>
+            <Host Name="mail1"/>
+          </Hosts>
+        </Certificate>
+        <Certificate Name="wildcard"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="*"/>
+          </Hosts>
+        </Certificate>
+      </Certificates>
+      <OutputReferences>
+        <OutputReference Name="main-output"/>
+      </OutputReferences>
+    </Domain>
+
+    <Domain Name="example.com"
+            Account="main"
+            DNSConfigurator="vultr-dns">
+      <Certificates>
+        <Certificate Name="www"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="www0"/>
+            <Host Name="www1"/>
+            <Host Name="www2"/>
+          </Hosts>
+        </Certificate>
+        <Certificate Name="mail"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="mail0"/>
+            <Host Name="mail1"/>
+          </Hosts>
+        </Certificate>
+        <Certificate Name="wildcard"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="*"/>
+          </Hosts>
+        </Certificate>
+      </Certificates>
+      <OutputReferences>
+        <OutputReference Name="main-output"/>
+      </OutputReferences>
+    </Domain>
+
+    <Domain Name="nonexistent0.example.com"
+            Account="nonexistent"
+            DNSConfigurator="vultr-dns">
+      <Certificates>
+        <Certificate Name="wildcard"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="*"/>
+          </Hosts>
+        </Certificate>
+      </Certificates>
+      <OutputReferences>
+        <OutputReference Name="main-output"/>
+      </OutputReferences>
+    </Domain>
+
+    <Domain Name="nonexistent1.example.com"
+            Account="main"
+            DNSConfigurator="nonexistent">
+      <Certificates>
+        <Certificate Name="wildcard"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="*"/>
+          </Hosts>
+        </Certificate>
+      </Certificates>
+      <OutputReferences>
+        <OutputReference Name="main-output"/>
+      </OutputReferences>
+    </Domain>
+
+    <Domain Name="nonexistent2.example.com"
+            Account="main"
+            DNSConfigurator="vultr-dns">
+      <Certificates>
+        <Certificate Name="wildcard"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="*"/>
+          </Hosts>
+        </Certificate>
+      </Certificates>
+      <OutputReferences>
+        <OutputReference Name="nonexistent"/>
+      </OutputReferences>
+    </Domain>
+  </Domains>
+
+</Configuration>

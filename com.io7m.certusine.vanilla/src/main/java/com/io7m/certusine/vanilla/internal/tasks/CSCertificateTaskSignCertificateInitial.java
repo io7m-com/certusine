@@ -123,7 +123,7 @@ public final class CSCertificateTaskSignCertificateInitial
         LOG.info("certificates require reissuing, sending a signing request...");
 
         final var csrb = new CSRBuilder();
-        csrb.addDomains(certificate.hosts());
+        csrb.addDomains(certificate.fullyQualifiedHostNames(domain));
         csrb.sign(certificate.keyPair());
         this.order.execute(csrb.getEncoded());
 

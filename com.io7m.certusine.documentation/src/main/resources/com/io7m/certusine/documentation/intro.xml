@@ -5,8 +5,8 @@
          title="Introduction">
 
   <Paragraph>
-    The <Term type="package">looseleaf</Term> server is an HTTP-accessible key/value store with a focus on minimalism, a
-    small footprint, and reliability. The server has the following notable features:
+    The <Term type="package">certusine</Term> client is an ACME client with a focus on minimalism, a
+    small footprint, and reliability. The client has the following notable features:
   </Paragraph>
 
   <FormalItem title="Features">
@@ -37,6 +37,10 @@
         <LinkExternal target="https://www.vultr.com/pt/docs/introduction-to-vultr-dns/">Vultr DNS</LinkExternal>.
       </Item>
       <Item>
+        Supports
+        <LinkExternal target="https://api.gandi.net/docs/livedns/">Gandi LiveDNS</LinkExternal>.
+      </Item>
+      <Item>
         Supports writing certificates to
         <LinkExternal target="https://www.io7m.com/software/looseleaf/">looseleaf</LinkExternal>
         servers.
@@ -45,7 +49,7 @@
         An extensive automated test suite with high coverage.
       </Item>
       <Item>
-        A small footprint; the server is designed to run in tiny 16-32mb JVM heap configurations.
+        A small footprint; the client is designed to run in tiny 16-32mb JVM heap configurations.
       </Item>
       <Item>
         Platform independence. No platform-dependent code is included in any form, and installations can largely be

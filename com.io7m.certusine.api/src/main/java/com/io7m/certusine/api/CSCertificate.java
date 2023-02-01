@@ -51,4 +51,18 @@ public record CSCertificate(
     Objects.requireNonNull(keyPair, "keyPair");
     Objects.requireNonNull(hosts, "hosts");
   }
+
+  /**
+   * @param domain The domain
+   *
+   * @return The fully-qualified hostnames for this certificate
+   */
+
+  public List<String> fullyQualifiedHostNames(
+    final CSDomain domain)
+  {
+    return this.hosts.stream()
+      .map(host -> "%s.%s".formatted(host, domain.domain()))
+      .toList();
+  }
 }

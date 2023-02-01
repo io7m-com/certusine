@@ -7,15 +7,12 @@
 
   <Subsection title="Overview">
     <Paragraph>
-      The <Term type="package">certusine</Term> client accepts a JSON configuration file with a very strictly-defined
-      format. The configuration file is a JSON object with the following properties:
+      The <Term type="package">certusine</Term> client accepts a XML configuration file with a very strictly-defined
+      schema. The configuration file is an XML element with the following properties:
     </Paragraph>
 
     <FormalItem title="Properties">
       <ListUnordered>
-        <Item>
-          <Link target="c361dd52-36d5-4dfe-b873-090a6d679d1a">%schema</Link>
-        </Item>
         <Item>
           <Link target="bc26c6cd-dcab-49bd-8e50-02cd4ff85c1f">Options</Link>
         </Item>
@@ -45,22 +42,22 @@
     </Paragraph>
   </Subsection>
 
-  <Subsection title="%schema"
+  <Subsection title="Namespace"
               id="c361dd52-36d5-4dfe-b873-090a6d679d1a">
     <Paragraph>
-      The <Term type="expression">%schema</Term> property must be present and set to the value
-      <Term type="expression">"https://www.io7m.com/software/certusine/config-1.json"</Term>.
+      The <Term type="expression">xmlns</Term> attribute must be present and set to the value
+      <Term type="expression">"urn:com.io7m.certusine:configuration:1"</Term>.
     </Paragraph>
   </Subsection>
 
   <Subsection title="Options"
               id="bc26c6cd-dcab-49bd-8e50-02cd4ff85c1f">
     <Paragraph>
-      The <Term type="expression">Options</Term> property specifies global options for the client.
+      The <Term type="expression">Options</Term> element specifies global options for the client.
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">DNSWaitTime</Term> property specifies the amount of time that the client will wait
+      The <Term type="expression">DNSWaitTime</Term> attribute specifies the amount of time that the client will wait
       between creating DNS records, and then notifying the ACME servers that the records have been created. This wait
       time is necessary because DNS records sometimes take time to propagate, and if the client instructs the ACME
       server to check the records before they have had time to propagate, then the certificate authorization check will
@@ -68,12 +65,12 @@
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">CertificateStore</Term> property specifies the file that the client will use for its
+      The <Term type="expression">CertificateStore</Term> attribute specifies the file that the client will use for its
       internal database of certificates. Relative paths are resolved relative to the configuration file.
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">CertificateExpirationThreshold</Term> property specifies the maximum amount of time
+      The <Term type="expression">CertificateExpirationThreshold</Term> attribute specifies the maximum amount of time
       before expiration that the client will allow before it attempts to renew a certificate. For example, a value of <Term type="expression">
       PT72H
     </Term> means that the client will start attempting to renew a certificate when the certificate becomes due to
@@ -82,11 +79,9 @@
 
     <FormalItem title="Example Options">
       <Verbatim><![CDATA[
-"Options": {
-  "DNSWaitTime": "PT5M",
-  "CertificateStore": "store.db",
-  "CertificateExpirationThreshold": "PT72H"
-}
+<Options DNSWaitTime="PT5M"
+         CertificateStore="store.db"
+         CertificateExpirationThreshold="PT72H"/>
 ]]></Verbatim>
     </FormalItem>
   </Subsection>
@@ -94,28 +89,28 @@
   <Subsection title="Accounts"
               id="bb6c2929-7462-4ce3-bcb8-50eb59e61036">
     <Paragraph>
-      The <Term type="expression">Accounts</Term> property specifies a set of ACME accounts. Most installations will
+      The <Term type="expression">Accounts</Term> element specifies a set of ACME accounts. Most installations will
       only use a single account.
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">Name</Term> property for a given account specifies the name of that account. Names can
-      be anything, but must be unique with respect to other accounts. The names are purely used for organizational
+      The <Term type="expression">Name</Term> attribute for a given account specifies the name of that account. Names
+      can be anything, but must be unique with respect to other accounts. The names are purely used for organizational
       purposes internally.
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">PublicKeyPath</Term> property for a given account specifies the location of the
+      The <Term type="expression">PublicKeyPath</Term> attribute for a given account specifies the location of the
       account's public key. Relative paths are resolved relative to the configuration file.
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">PrivateKeyPath</Term> property for a given account specifies the location of the
+      The <Term type="expression">PrivateKeyPath</Term> attribute for a given account specifies the location of the
       account's private key. Relative paths are resolved relative to the configuration file.
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">AcmeURI</Term> property for a given account specifies the base URI that will be used
+      The <Term type="expression">AcmeURI</Term> attribute for a given account specifies the base URI that will be used
       for ACME operations.
     </Paragraph>
 
@@ -127,25 +122,23 @@
         </Columns>
         <Row>
           <Cell><Term type="expression">https://acme-staging-v02.api.letsencrypt.org/directory</Term></Cell>
-          <Cell>Let'sEncrypt staging server</Cell>
+          <Cell>Let's Encrypt staging server</Cell>
         </Row>
         <Row>
           <Cell><Term type="expression">https://acme-v02.api.letsencrypt.org/directory</Term></Cell>
-          <Cell>Let'sEncrypt sroduction server</Cell>
+          <Cell>Let's Encrypt production server</Cell>
         </Row>
       </Table>
     </FormalItem>
 
     <FormalItem title="Example Accounts">
       <Verbatim><![CDATA[
-"Accounts": [
-  {
-    "Name": "main",
-    "PublicKeyPath": "example.pub",
-    "PrivateKeyPath": "example.pri",
-    "AcmeURI": "https://acme-staging-v02.api.letsencrypt.org/directory"
-  }
-]
+<Accounts>
+  <Account Name="main"
+           PublicKeyPath="example.pub"
+           PrivateKeyPath="example.pri"
+           AcmeURI="https://acme-staging-v02.api.letsencrypt.org/directory"/>
+</Accounts>
 ]]></Verbatim>
     </FormalItem>
   </Subsection>
@@ -153,7 +146,7 @@
   <Subsection title="Outputs"
               id="f91541cb-7b44-4ace-af3d-47dd3fa93d90">
     <Paragraph>
-      The <Term type="expression">Outputs</Term> property specifies a series of outputs to which issued certificates
+      The <Term type="expression">Outputs</Term> element specifies a series of outputs to which issued certificates
       will be written. Each output has a name, a type, and a set of parameters. Names must be unique with respect to
       other outputs, and the type must be one of the
       <Link target="de1d01c0-1dbe-4e86-a1d1-29a0cf5afbc3">supported types</Link>.
@@ -161,18 +154,14 @@
 
     <FormalItem title="Example Outputs">
       <Verbatim><![CDATA[
-"Outputs": [
-  {
-    "Type": "directory",
-    "Name": "main-output",
-    "Parameters": [
-      {
-        "Name": "path",
-        "Value": "/tmp"
-      }
-    ]
-  }
-]
+<Outputs>
+  <Output Type="directory"
+          Name="main-output">
+    <Parameters>
+      <Parameter Name="path" Value="/tmp"/>
+    </Parameters>
+  </Output>
+</Outputs>
 ]]></Verbatim>
     </FormalItem>
   </Subsection>
@@ -180,31 +169,23 @@
   <Subsection title="DNSConfigurators"
               id="cd8c8956-7c20-4387-83c8-0dc74825a295">
     <Paragraph>
-      The <Term type="expression">DNSConfigurators</Term> property specifies a series of external DNS systems in which
+      The <Term type="expression">DNSConfigurators</Term> element specifies a series of external DNS systems in which
       the <Term type="package">certusine</Term> client will create records in order to satisfy the DNS challenges posed
       by the ACME server. Each configurator has a name, a type, and a set of parameters. Names must be unique with
-      respect to other configurator, and the type must be one of the
+      respect to other configurators, and the type must be one of the
       <Link target="16a79f45-e27b-45ee-8787-13616109176f">supported types</Link>.
     </Paragraph>
 
     <FormalItem title="Example DNSConfigurators">
       <Verbatim><![CDATA[
-"DNSConfigurators": [
-  {
-    "Type": "vultr",
-    "Name": "vultr-dns",
-    "Parameters": [
-      {
-        "Name": "api-key",
-        "Value": "25DDk6MT+2JI5KBABMysYLPFEOge+MZE3/GiBgrR+CU="
-      },
-      {
-        "Name": "domain",
-        "Value": "example.com"
-      }
-    ]
-  }
-]
+<DNSConfigurators>
+  <DNSConfigurator Type="vultr" Name="vultr-dns">
+    <Parameters>
+      <Parameter Name="api-key" Value="25DDk6MT+2JI5KBABMysYLPFEOge+MZE3/GiBgrR+CU="/>
+      <Parameter Name="domain" Value="example.com"/>
+    </Parameters>
+  </DNSConfigurator>
+</DNSConfigurators>
 ]]></Verbatim>
     </FormalItem>
   </Subsection>
@@ -212,8 +193,8 @@
   <Subsection title="Domains"
               id="966f04c2-65df-4a6b-8fd6-066c5434015e">
     <Paragraph>
-      The <Term type="expression">Domains</Term> property specifies the certificates within domains that the
-      <Term type="package">certusine</Term> client will attempt to issue and/or renew. A domains has exactly one
+      The <Term type="expression">Domains</Term> element specifies the certificates within domains that the
+      <Term type="package">certusine</Term> client will attempt to issue and/or renew. A domain has exactly one
       <Link target="bb6c2929-7462-4ce3-bcb8-50eb59e61036">account</Link>, a set of
       <Link target="f91541cb-7b44-4ace-af3d-47dd3fa93d90">certificate outputs</Link>, and
       exactly one <Link target="cd8c8956-7c20-4387-83c8-0dc74825a295">dns configurator</Link>. A domain
@@ -221,62 +202,76 @@
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">Name</Term> property for a given certificate specifies the name of that certificate.
+      The <Term type="expression">Name</Term> attribute for a given certificate specifies the name of that certificate.
       Names can be anything, but must be unique with respect to other certificates. The names are used for
       organizational purposes internally, and may be used as file names in <Link
       target="f91541cb-7b44-4ace-af3d-47dd3fa93d90">outputs</Link>.
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">PublicKeyPath</Term> property for a given certificate specifies the location of the
+      The <Term type="expression">PublicKeyPath</Term> attribute for a given certificate specifies the location of the
       certificate's public key. Relative paths are resolved relative to the configuration file.
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">PrivateKeyPath</Term> property for a given certificate specifies the location of the
+      The <Term type="expression">PrivateKeyPath</Term> attribute for a given certificate specifies the location of the
       certificate's private key. Relative paths are resolved relative to the configuration file.
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">Hosts</Term> property for a given certificate specifies the hosts within the domain
-      to which the certificate applies. Hosts may include wildcards, so for example a certificate may declare a host
-      such as <Term type="expression">*.example.com</Term>.
+      The <Term type="expression">Hosts</Term> element for a given certificate specifies the hosts within the domain
+      to which the certificate applies. Note that these are <Term type="term">not</Term> fully-qualified names.
+      Hosts may include wildcards, so for example a certificate may declare a host
+      such as <Term type="expression">*</Term>.
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">Outputs</Term> property for a domain specifies the names of the
+      The <Term type="expression">OutputReferences</Term> element for a domain specifies the names of the
       <Link target="f91541cb-7b44-4ace-af3d-47dd3fa93d90">outputs</Link> to which certificates will be written.
       It is an error to specify the name of an undeclared output.
     </Paragraph>
 
     <Paragraph>
-      The <Term type="expression">DNSConfigurator</Term> property for a domain specifies the name of the
+      The <Term type="expression">DNSConfigurator</Term> element for a domain specifies the name of the
       <Link target="cd8c8956-7c20-4387-83c8-0dc74825a295">DNS configurator</Link> that will be used to complete
       DNS challenges by the ACME server. It is an error to specify the name of an undeclared DNS configurator.
     </Paragraph>
 
     <FormalItem title="Example Domains">
       <Verbatim><![CDATA[
-"Domains": [
-  {
-    "Name": "example.com",
-    "Account": "main",
-    "Certificates": [
-      {
-        "Name": "www",
-        "PublicKeyPath": "www.pub",
-        "PrivateKeyPath": "www.pri",
-        "Hosts": [
-          "www.example.com"
-        ]
-      }
-    ],
-    "Outputs": [
-      "main-output"
-    ],
-    "DNSConfigurator": "vultr-dns"
-  }
-]
+<Domain Name="example.com"
+        Account="main"
+        DNSConfigurator="vultr-dns">
+  <Certificates>
+    <Certificate Name="www"
+                 PublicKeyPath="fake.pub"
+                 PrivateKeyPath="fake.pri">
+      <Hosts>
+        <Host Name="www0"/>
+        <Host Name="www1"/>
+        <Host Name="www2"/>
+      </Hosts>
+    </Certificate>
+    <Certificate Name="mail"
+                 PublicKeyPath="fake.pub"
+                 PrivateKeyPath="fake.pri">
+      <Hosts>
+        <Host Name="mail0"/>
+        <Host Name="mail1"/>
+      </Hosts>
+    </Certificate>
+    <Certificate Name="wildcard"
+                 PublicKeyPath="fake.pub"
+                 PrivateKeyPath="fake.pri">
+      <Hosts>
+        <Host Name="*"/>
+      </Hosts>
+    </Certificate>
+  </Certificates>
+  <OutputReferences>
+    <OutputReference Name="main-output"/>
+  </OutputReferences>
+</Domain>
 ]]></Verbatim>
     </FormalItem>
   </Subsection>
@@ -287,7 +282,7 @@
     </Paragraph>
     <FormalItem title="Example">
       <Verbatim>
-        <xi:include href="config.json"
+        <xi:include href="config.xml"
                     parse="text"/>
       </Verbatim>
     </FormalItem>
@@ -295,12 +290,12 @@
 
   <Subsection title="Schema">
     <Paragraph>
-      The <LinkExternal target="https://json-schema.org/">JSON schema</LinkExternal> that defines the configuration file
+      The <LinkExternal target="https://www.w3.org/TR/xmlschema11-1/">XML schema</LinkExternal> that defines the configuration file
       format is as follows:
     </Paragraph>
     <FormalItem title="Schema">
       <Verbatim>
-        <xi:include href="com/io7m/certusine/vanilla/internal/config-1.schema.json"
+        <xi:include href="com/io7m/certusine/vanilla/internal/config-1.xsd"
                     parse="text"/>
       </Verbatim>
     </FormalItem>

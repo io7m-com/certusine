@@ -55,24 +55,14 @@
 
   <Subsection title="Example">
     <FormalItem title="Example Configuration">
-      <Verbatim><![CDATA[{
-  "Type": "etcd",
-  "Name": "an-example-etcd-output",
-  "Parameters": [
-    {
-      "Name": "endpoint",
-      "Value": "http://etcd.example.com:2379/"
-    },
-    {
-      "Name": "username",
-      "Value": "grouch"
-    },
-    {
-      "Name": "password",
-      "Value": "12345678"
-    }
-  ]
-}
+      <Verbatim><![CDATA[
+<Output Type="etcd" Name="an-example-etcd-output">
+  <Parameters>
+    <Parameter Name="endpoint" Value="http://etcd.example.com:2379/"/>
+    <Parameter Name="username" Value="grouch"/>
+    <Parameter Name="password" Value="12345678"/>
+  </Parameters>
+</Output>
 ]]></Verbatim>
     </FormalItem>
   </Subsection>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+  <entry key="errorDNSConfiguration">DNS configurator is misconfigured.</entry>
+  <entry key="errorServer">Could not create a DNS record: HTTP status: {0}</entry>
+  <entry key="parameterApiKey">The Gandi API key.</entry>
+  <entry key="parameterDomain">The domain name.</entry>
+  <entry key="parameterApiBase">The Gandi API base address.</entry>
+</properties>

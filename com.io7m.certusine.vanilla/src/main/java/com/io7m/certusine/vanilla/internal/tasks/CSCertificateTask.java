@@ -83,4 +83,37 @@ public abstract class CSCertificateTask
       MDC.remove("attemptMax");
     }
   }
+
+  /**
+   * Determine the TXT record name for the given FQDN.
+   *
+   * @param fullyQualifiedDomainName The fully-qualified domain name
+   *
+   * @return The TXT record name
+   */
+
+  protected final String txtRecordNameToSet(
+    final String fullyQualifiedDomainName)
+  {
+    Objects.requireNonNull(
+      fullyQualifiedDomainName,
+      "fullyQualifiedDomainName"
+    );
+
+    return "_acme-challenge.%s".formatted(fullyQualifiedDomainName);
+  }
+
+  /**
+   * Determine the TXT record (query) name for the given FQDN.
+   *
+   * @param fullyQualifiedDomainName The fully-qualified domain name
+   *
+   * @return The TXT record name
+   */
+
+  protected final String txtRecordNameToQuery(
+    final String fullyQualifiedDomainName)
+  {
+    return "%s.".formatted(this.txtRecordNameToSet(fullyQualifiedDomainName));
+  }
 }
