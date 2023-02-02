@@ -18,6 +18,7 @@
 package com.io7m.certusine.gandi.internal;
 
 import com.io7m.certusine.api.CSDNSConfiguratorType;
+import com.io7m.certusine.api.CSDNSRecordNameType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +77,7 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void createTXTRecord(
-    final String recordName,
+    final CSDNSRecordNameType recordName,
     final String recordValue)
     throws IOException, InterruptedException
   {
@@ -137,7 +138,7 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void deleteTXTRecord(
-    final String recordName,
+    final CSDNSRecordNameType recordName,
     final String recordValue)
     throws IOException, InterruptedException
   {

@@ -35,7 +35,7 @@ public interface CSDNSConfiguratorType
    */
 
   void createTXTRecord(
-    String recordName,
+    CSDNSRecordNameType recordName,
     String recordValue)
     throws IOException, InterruptedException;
 
@@ -50,7 +50,7 @@ public interface CSDNSConfiguratorType
    */
 
   void deleteTXTRecord(
-    String recordName,
+    CSDNSRecordNameType recordName,
     String recordValue)
     throws IOException, InterruptedException;
 }

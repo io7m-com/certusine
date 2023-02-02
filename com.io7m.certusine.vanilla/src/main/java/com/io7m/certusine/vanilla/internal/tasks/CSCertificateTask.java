@@ -17,6 +17,7 @@
 
 package com.io7m.certusine.vanilla.internal.tasks;
 
+import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameAbsolute;
 import org.slf4j.MDC;
 
 import java.util.Objects;
@@ -92,7 +93,7 @@ public abstract class CSCertificateTask
    * @return The TXT record name
    */
 
-  protected final String txtRecordNameToSet(
+  protected final CSDNSRecordNameAbsolute txtRecordNameToSet(
     final String fullyQualifiedDomainName)
   {
     Objects.requireNonNull(
@@ -100,7 +101,9 @@ public abstract class CSCertificateTask
       "fullyQualifiedDomainName"
     );
 
-    return "_acme-challenge.%s".formatted(fullyQualifiedDomainName);
+    return new CSDNSRecordNameAbsolute(
+      "_acme-challenge.%s.".formatted(fullyQualifiedDomainName)
+    );
   }
 
   /**

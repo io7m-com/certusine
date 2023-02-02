@@ -17,6 +17,7 @@
 package com.io7m.certusine.tests;
 
 import com.io7m.certusine.api.CSDNSConfiguratorType;
+import com.io7m.certusine.api.CSDNSRecordNameType;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -37,7 +38,7 @@ public final class CSFakeDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void createTXTRecord(
-    final String name,
+    final CSDNSRecordNameType name,
     final String text)
   {
     this.requests.add("CREATE " + name);
@@ -45,7 +46,7 @@ public final class CSFakeDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void deleteTXTRecord(
-    final String recordName,
+    final CSDNSRecordNameType recordName,
     final String recordValue)
   {
     this.requests.add("DELETE " + recordName);
