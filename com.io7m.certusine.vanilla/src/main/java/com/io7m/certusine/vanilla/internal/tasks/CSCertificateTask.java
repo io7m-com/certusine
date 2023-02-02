@@ -117,6 +117,6 @@ public abstract class CSCertificateTask
   protected final String txtRecordNameToQuery(
     final String fullyQualifiedDomainName)
   {
-    return "%s.".formatted(this.txtRecordNameToSet(fullyQualifiedDomainName));
+    return this.txtRecordNameToSet(fullyQualifiedDomainName).name();
   }
 }
