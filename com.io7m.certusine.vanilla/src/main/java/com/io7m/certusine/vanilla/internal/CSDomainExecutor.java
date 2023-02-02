@@ -18,6 +18,9 @@ package com.io7m.certusine.vanilla.internal;
 
 import com.io7m.certusine.api.CSAccount;
 import com.io7m.certusine.api.CSCertificate;
+import com.io7m.certusine.api.CSDNSRecordNameType;
+import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameAbsolute;
+import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameRelative;
 import com.io7m.certusine.api.CSDomain;
 import com.io7m.certusine.api.CSOptions;
 import com.io7m.certusine.certstore.api.CSCertificateStoreType;
@@ -253,11 +256,15 @@ public final class CSDomainExecutor
     for (final var taskContext : taskContexts) {
       for (final var dnsRecord : taskContext.dnsRecordsCreated()) {
         try {
+          final CSDNSRecordNameType name;
+          if (dnsRecord.name().endsWith(".")) {
+            name = new CSDNSRecordNameAbsolute(dnsRecord.name());
+          } else {
+            name = new CSDNSRecordNameRelative(dnsRecord.name());
+          }
+
           this.domain.dnsConfigurator()
-            .deleteTXTRecord(
-              dnsRecord.name(),
-              dnsRecord.value()
-            );
+            .deleteTXTRecord(name, dnsRecord.value());
         } catch (final IOException e) {
           LOG.error("failed to delete DNS record: ", e);
         }

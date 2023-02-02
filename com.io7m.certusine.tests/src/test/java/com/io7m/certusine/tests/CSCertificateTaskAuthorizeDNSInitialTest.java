@@ -193,7 +193,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
     );
 
     final var dnsRequests = this.dns.requests();
-    assertEquals("CREATE _acme-challenge.example.com", dnsRequests.poll());
+    assertEquals("CREATE _acme-challenge.example.com.", dnsRequests.poll());
     assertEquals(0, dnsRequests.size());
   }
 
@@ -311,9 +311,9 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
     }
 
     final var dnsRequests = dnsCrashing.requests();
-    assertEquals("CREATE _acme-challenge.example.com", dnsRequests.poll());
-    assertEquals("CREATE _acme-challenge.example.com", dnsRequests.poll());
-    assertEquals("CREATE _acme-challenge.example.com", dnsRequests.poll());
+    assertEquals("CREATE _acme-challenge.example.com.", dnsRequests.poll());
+    assertEquals("CREATE _acme-challenge.example.com.", dnsRequests.poll());
+    assertEquals("CREATE _acme-challenge.example.com.", dnsRequests.poll());
     assertEquals(0, dnsRequests.size());
   }
 

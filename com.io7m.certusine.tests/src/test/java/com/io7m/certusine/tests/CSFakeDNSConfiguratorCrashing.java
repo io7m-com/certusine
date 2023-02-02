@@ -17,6 +17,7 @@
 package com.io7m.certusine.tests;
 
 import com.io7m.certusine.api.CSDNSConfiguratorType;
+import com.io7m.certusine.api.CSDNSRecordNameType;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -38,7 +39,7 @@ public final class CSFakeDNSConfiguratorCrashing implements CSDNSConfiguratorTyp
 
   @Override
   public void createTXTRecord(
-    final String name,
+    final CSDNSRecordNameType name,
     final String text)
     throws IOException
   {
@@ -48,7 +49,7 @@ public final class CSFakeDNSConfiguratorCrashing implements CSDNSConfiguratorTyp
 
   @Override
   public void deleteTXTRecord(
-    final String recordName,
+    final CSDNSRecordNameType recordName,
     final String recordValue)
     throws IOException
   {

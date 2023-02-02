@@ -18,6 +18,8 @@ package com.io7m.certusine.tests;
 
 import com.io7m.certusine.api.CSConfigurationException;
 import com.io7m.certusine.api.CSConfigurationParameters;
+import com.io7m.certusine.api.CSDNSRecordNameType;
+import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameRelative;
 import com.io7m.certusine.gandi.CSGandiDNSConfigurators;
 import com.io7m.jlexing.core.LexicalPositions;
 import org.junit.jupiter.api.AfterEach;
@@ -82,7 +84,7 @@ public final class CSGandiDNSTests
       );
 
     this.fakeServer.setResponseCode(200);
-    v.createTXTRecord("a", "b");
+    v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
   }
 
   /**
@@ -115,7 +117,7 @@ public final class CSGandiDNSTests
 
       this.fakeServer.setResponseCode(code);
       assertThrows(IOException.class, () -> {
-        v.createTXTRecord("a", "b");
+        v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
       });
     }
   }
