@@ -3,6 +3,7 @@ $ certusine looseleaf-download               \
   --output-directory /certificates           \
   --domain example.com                       \
   --certificate-name www                     \
+  --certificate-name mail                    \
   --username somebody                        \
   --password 12345678                        \
   --schedule PT1H

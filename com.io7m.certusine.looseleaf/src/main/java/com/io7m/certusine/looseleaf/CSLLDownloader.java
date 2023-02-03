@@ -61,6 +61,15 @@ public final class CSLLDownloader
   private final String nameCert;
   private final String nameCertFullChain;
 
+  /**
+   * @return The certificate name
+   */
+
+  public CSCertificateName certificateName()
+  {
+    return this.certificateName;
+  }
+
   private CSLLDownloader(
     final LLv1Messages inMessages,
     final Path inDirectory,

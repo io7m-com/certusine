@@ -61,10 +61,10 @@
          <Term type="parameter">--certificate-name</Term>
       </Cell>
       <Cell>
-         <Term type="constant">String</Term>
+         <Term type="constant">List&lt;String&gt;</Term>
       </Cell>
       <Cell>true</Cell>
-      <Cell>The certificate name.</Cell>
+      <Cell>The certificate name(s). May be specified multiple times.</Cell>
    </Row>
    <Row>
       <Cell>
