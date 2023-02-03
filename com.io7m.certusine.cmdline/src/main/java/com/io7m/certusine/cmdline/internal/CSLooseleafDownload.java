@@ -27,6 +27,8 @@ import com.io7m.claypot.core.CLPCommandContextType;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
@@ -74,10 +76,10 @@ public final class CSLooseleafDownload extends CLPAbstractCommand
 
   @Parameter(
     names = "--certificate-name",
-    description = "The certificate name.",
+    description = "The certificate name(s). May be specified multiple times.",
     required = true
   )
-  private String certificateName;
+  private List<String> certificateNames;
 
   @Parameter(
     names = "--only-once",
@@ -95,7 +97,7 @@ public final class CSLooseleafDownload extends CLPAbstractCommand
   )
   private Duration schedule = Duration.ofHours(1L);
 
-  private CSLLDownloader downloader;
+  private List<CSLLDownloader> downloaders;
 
   /**
    * Construct a command.
@@ -116,27 +118,40 @@ public final class CSLooseleafDownload extends CLPAbstractCommand
     this.outputDirectory =
       this.outputDirectory.toAbsolutePath();
 
-    this.downloader =
-      CSLLDownloader.create(
-        this.outputDirectory,
-        this.endpoint,
-        new CSLLCredentials(this.userName, this.password),
-        this.domain,
-        new CSCertificateName(this.certificateName)
+    this.downloaders =
+      new ArrayList<>(this.certificateNames.size());
+
+    for (final var certificateName : this.certificateNames) {
+      this.downloaders.add(
+        CSLLDownloader.create(
+          this.outputDirectory,
+          this.endpoint,
+          new CSLLCredentials(this.userName, this.password),
+          this.domain,
+          new CSCertificateName(certificateName)
+        )
       );
+    }
 
     while (true) {
-      this.logger().info("downloading certificates from {}", this.endpoint);
+      for (final var downloader : this.downloaders) {
+        this.logger()
+          .info(
+            "downloading '{}' certificates from '{}'",
+            downloader.certificateName().value(),
+            this.endpoint
+          );
 
-      try {
-        this.downloader.execute();
-      } catch (final IOException e) {
-        this.logger().error("i/o error: ", e);
-        if (this.onlyOnce) {
-          throw e;
+        try {
+          downloader.execute();
+        } catch (final IOException e) {
+          this.logger().error("i/o error: ", e);
+          if (this.onlyOnce) {
+            throw e;
+          }
+        } catch (final InterruptedException e) {
+          Thread.currentThread().interrupt();
         }
-      } catch (final InterruptedException e) {
-        Thread.currentThread().interrupt();
       }
 
       if (this.onlyOnce) {

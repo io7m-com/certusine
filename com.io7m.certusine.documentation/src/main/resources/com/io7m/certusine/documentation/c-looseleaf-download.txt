@@ -2,7 +2,7 @@ info: Usage: looseleaf-download [options]
 
   Options:
   * --certificate-name
-      The certificate name.
+      The certificate name(s). May be specified multiple times.
   * --domain
       The domain name.
   * --endpoint
