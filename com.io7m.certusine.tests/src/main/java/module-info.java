@@ -29,10 +29,13 @@ module com.io7m.certusine.tests
   requires com.io7m.certusine.vultr;
 
   requires ch.qos.logback.classic;
+  requires com.fasterxml.jackson.core;
+  requires com.fasterxml.jackson.databind;
   requires com.io7m.jaffirm.core;
   requires com.io7m.looseleaf.protocol.v1;
   requires com.io7m.looseleaf.server.api;
   requires com.io7m.looseleaf.server;
+  requires com.io7m.quixote.core;
   requires java.net.http;
   requires org.bouncycastle.pkix;
   requires org.dnsjava;

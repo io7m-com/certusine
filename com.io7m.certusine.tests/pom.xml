@@ -60,6 +60,10 @@
     </dependency>
 
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.io7m.looseleaf</groupId>
       <artifactId>com.io7m.looseleaf.server</artifactId>
     </dependency>
@@ -102,6 +106,10 @@
     <dependency>
       <groupId>io.etcd</groupId>
       <artifactId>jetcd-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.quixote</groupId>
+      <artifactId>com.io7m.quixote.core</artifactId>
     </dependency>
   </dependencies>
 

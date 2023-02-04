@@ -311,6 +311,11 @@
         <artifactId>jaxb-impl</artifactId>
         <version>4.0.1</version>
       </dependency>
+      <dependency>
+        <groupId>com.io7m.quixote</groupId>
+        <artifactId>com.io7m.quixote.core</artifactId>
+        <version>0.0.2</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

@@ -18,26 +18,29 @@ package com.io7m.certusine.tests;
 
 import com.io7m.certusine.api.CSConfigurationException;
 import com.io7m.certusine.api.CSConfigurationParameters;
-import com.io7m.certusine.api.CSDNSRecordNameType;
 import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameRelative;
 import com.io7m.certusine.gandi.CSGandiDNSConfigurators;
 import com.io7m.jlexing.core.LexicalPositions;
+import com.io7m.quixote.core.QWebServerType;
+import com.io7m.quixote.core.QWebServers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Map;
 
 import static java.util.Map.entry;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class CSGandiDNSTests
 {
-  private CSFakeGandiServer fakeServer;
   private CSGandiDNSConfigurators provider;
   private Path directory;
+  private QWebServerType webServer;
 
   @BeforeEach
   public void setup()
@@ -45,10 +48,10 @@ public final class CSGandiDNSTests
   {
     this.directory =
       CSTestDirectories.createTempDirectory();
-    this.fakeServer =
-      CSFakeGandiServer.create(20000);
     this.provider =
       new CSGandiDNSConfigurators();
+    this.webServer =
+      QWebServers.createServer(20000);
   }
 
   @AfterEach
@@ -57,7 +60,7 @@ public final class CSGandiDNSTests
   {
     CSTestDirectories.deleteDirectory(this.directory);
 
-    this.fakeServer.close();
+    this.webServer.close();
   }
 
   /**
@@ -67,7 +70,7 @@ public final class CSGandiDNSTests
    */
 
   @Test
-  public void testGandiOK()
+  public void testGandiCreateNonexistent0()
     throws Exception
   {
     final var v =
@@ -83,8 +86,194 @@ public final class CSGandiDNSTests
         )
       );
 
-    this.fakeServer.setResponseCode(200);
+    this.webServer.addResponse()
+      .forMethod("GET")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(404)
+      .withContentLength(0L);
+
+    this.webServer.addResponse()
+      .forMethod("PUT")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withContentLength(0L);
+
     v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+
+    final var received = new ArrayList<>(this.webServer.requestsReceived());
+    {
+      final var req = received.remove(0);
+      assertEquals("GET", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    {
+      final var req = received.remove(0);
+      assertEquals("PUT", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    assertEquals(0, received.size());
+  }
+
+  /**
+   * If the server returns all the right responses, the execution succeeds.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testGandiCreateNonexistent1()
+    throws Exception
+  {
+    final var v =
+      this.provider.create(
+        new CSConfigurationParameters(
+          this.directory,
+          LexicalPositions.zero(),
+          Map.ofEntries(
+            entry("api-key", "abcd"),
+            entry("api-base", "http://localhost:20000/"),
+            entry("domain", "example.com")
+          )
+        )
+      );
+
+    this.webServer.addResponse()
+      .forMethod("GET")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withFixedText("[]");
+
+    this.webServer.addResponse()
+      .forMethod("PUT")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withContentLength(0L);
+
+    v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+
+    final var received = new ArrayList<>(this.webServer.requestsReceived());
+    {
+      final var req = received.remove(0);
+      assertEquals("GET", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    {
+      final var req = received.remove(0);
+      assertEquals("PUT", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    assertEquals(0, received.size());
+  }
+
+  /**
+   * If the server returns all the right responses, the execution succeeds.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testGandiCreateExisting0()
+    throws Exception
+  {
+    final var v =
+      this.provider.create(
+        new CSConfigurationParameters(
+          this.directory,
+          LexicalPositions.zero(),
+          Map.ofEntries(
+            entry("api-key", "abcd"),
+            entry("api-base", "http://localhost:20000/"),
+            entry("domain", "example.com")
+          )
+        )
+      );
+
+    this.webServer.addResponse()
+      .forMethod("GET")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withFixedText("""
+                       [
+                          {
+                            "rrset_type": "TXT",
+                            "rrset_values": []
+                          }
+                       ]
+                       """);
+
+    this.webServer.addResponse()
+      .forMethod("PUT")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withContentLength(0L);
+
+    v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+
+    final var received = new ArrayList<>(this.webServer.requestsReceived());
+    {
+      final var req = received.remove(0);
+      assertEquals("GET", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    {
+      final var req = received.remove(0);
+      assertEquals("PUT", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    assertEquals(0, received.size());
+  }
+
+  /**
+   * If the server returns all the right responses, the execution succeeds.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testGandiCreateExisting1()
+    throws Exception
+  {
+    final var v =
+      this.provider.create(
+        new CSConfigurationParameters(
+          this.directory,
+          LexicalPositions.zero(),
+          Map.ofEntries(
+            entry("api-key", "abcd"),
+            entry("api-base", "http://localhost:20000/"),
+            entry("domain", "example.com")
+          )
+        )
+      );
+
+    this.webServer.addResponse()
+      .forMethod("GET")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withFixedText("""
+                       [
+                          {
+                            "rrset_type": "TXT",
+                            "rrset_values": ["b"]
+                          }
+                       ]
+                       """);
+
+    this.webServer.addResponse()
+      .forMethod("PUT")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withContentLength(0L);
+
+    v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+
+    final var received = new ArrayList<>(this.webServer.requestsReceived());
+    {
+      final var req = received.remove(0);
+      assertEquals("GET", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    assertEquals(0, received.size());
   }
 
   /**
@@ -115,7 +304,12 @@ public final class CSGandiDNSTests
         continue;
       }
 
-      this.fakeServer.setResponseCode(code);
+      this.webServer.addResponse()
+        .forMethod("GET")
+        .forPath("/v5/livedns/domains/example.com/records/a")
+        .withStatus(200)
+        .withFixedText("");
+
       assertThrows(IOException.class, () -> {
         v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
       });
@@ -168,5 +362,214 @@ public final class CSGandiDNSTests
         )
       );
     });
+  }
+
+  /**
+   * If the server returns all the right responses, the execution succeeds.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testGandiDeleteNonexistent0()
+    throws Exception
+  {
+    final var v =
+      this.provider.create(
+        new CSConfigurationParameters(
+          this.directory,
+          LexicalPositions.zero(),
+          Map.ofEntries(
+            entry("api-key", "abcd"),
+            entry("api-base", "http://localhost:20000/"),
+            entry("domain", "example.com")
+          )
+        )
+      );
+
+    this.webServer.addResponse()
+      .forMethod("GET")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(404)
+      .withContentLength(0L);
+
+    this.webServer.addResponse()
+      .forMethod("PUT")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withContentLength(0L);
+
+    v.deleteTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+
+    final var received = new ArrayList<>(this.webServer.requestsReceived());
+    {
+      final var req = received.remove(0);
+      assertEquals("GET", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    assertEquals(0, received.size());
+  }
+
+  /**
+   * If the server returns all the right responses, the execution succeeds.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testGandiDeleteNonexistent1()
+    throws Exception
+  {
+    final var v =
+      this.provider.create(
+        new CSConfigurationParameters(
+          this.directory,
+          LexicalPositions.zero(),
+          Map.ofEntries(
+            entry("api-key", "abcd"),
+            entry("api-base", "http://localhost:20000/"),
+            entry("domain", "example.com")
+          )
+        )
+      );
+
+    this.webServer.addResponse()
+      .forMethod("GET")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withFixedText("[]");
+
+    this.webServer.addResponse()
+      .forMethod("PUT")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withContentLength(0L);
+
+    v.deleteTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+
+    final var received = new ArrayList<>(this.webServer.requestsReceived());
+    {
+      final var req = received.remove(0);
+      assertEquals("GET", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    assertEquals(0, received.size());
+  }
+
+  /**
+   * If the server returns all the right responses, the execution succeeds.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testGandiDeleteExists0()
+    throws Exception
+  {
+    final var v =
+      this.provider.create(
+        new CSConfigurationParameters(
+          this.directory,
+          LexicalPositions.zero(),
+          Map.ofEntries(
+            entry("api-key", "abcd"),
+            entry("api-base", "http://localhost:20000/"),
+            entry("domain", "example.com")
+          )
+        )
+      );
+
+    this.webServer.addResponse()
+      .forMethod("GET")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withFixedText("""
+                       [
+                          {
+                            "rrset_type": "TXT",
+                            "rrset_values": ["b"]
+                          }
+                       ]
+                       """);
+
+    this.webServer.addResponse()
+      .forMethod("DELETE")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withContentLength(0L);
+
+    v.deleteTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+
+    final var received = new ArrayList<>(this.webServer.requestsReceived());
+    {
+      final var req = received.remove(0);
+      assertEquals("GET", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    {
+      final var req = received.remove(0);
+      assertEquals("DELETE", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    assertEquals(0, received.size());
+  }
+
+
+  /**
+   * If the server returns all the right responses, the execution succeeds.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testGandiDeleteExists1()
+    throws Exception
+  {
+    final var v =
+      this.provider.create(
+        new CSConfigurationParameters(
+          this.directory,
+          LexicalPositions.zero(),
+          Map.ofEntries(
+            entry("api-key", "abcd"),
+            entry("api-base", "http://localhost:20000/"),
+            entry("domain", "example.com")
+          )
+        )
+      );
+
+    this.webServer.addResponse()
+      .forMethod("GET")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withFixedText("""
+                       [
+                          {
+                            "rrset_type": "TXT",
+                            "rrset_values": ["a", "b"]
+                          }
+                       ]
+                       """);
+
+    this.webServer.addResponse()
+      .forMethod("PUT")
+      .forPath("/v5/livedns/domains/example.com/records/a")
+      .withStatus(200)
+      .withContentLength(0L);
+
+    v.deleteTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+
+    final var received = new ArrayList<>(this.webServer.requestsReceived());
+    {
+      final var req = received.remove(0);
+      assertEquals("GET", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    {
+      final var req = received.remove(0);
+      assertEquals("PUT", req.method());
+      assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
+    }
+    assertEquals(0, received.size());
   }
 }

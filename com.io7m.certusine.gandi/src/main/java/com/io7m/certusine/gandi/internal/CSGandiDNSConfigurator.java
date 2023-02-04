@@ -17,17 +17,24 @@
 
 package com.io7m.certusine.gandi.internal;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.io7m.certusine.api.CSDNSConfiguratorType;
 import com.io7m.certusine.api.CSDNSRecordNameType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -45,6 +52,7 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
   private final String apiBase;
   private final String apiKey;
   private final String domain;
+  private final ObjectMapper mapper;
 
   /**
    * A Gandi DNS configurator.
@@ -73,6 +81,93 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
 
     this.client =
       HttpClient.newHttpClient();
+    this.mapper =
+      new ObjectMapper();
+  }
+
+  private Optional<TXTRecord> fetchTXTRecord(
+    final CSDNSRecordNameType recordName)
+    throws IOException, InterruptedException
+  {
+    LOG.debug(
+      "retrieving TXT record {} for domain {}",
+      recordName,
+      this.domain
+    );
+
+    final var targetURI =
+      URI.create(
+        "%s/v5/livedns/domains/%s/records/%s"
+          .formatted(
+            this.apiBase,
+            this.domain,
+            recordName
+          )
+      );
+
+    final var request =
+      HttpRequest.newBuilder()
+        .uri(targetURI)
+        .GET()
+        .header("Authorization", "Apikey " + this.apiKey)
+        .build();
+
+    final var r =
+      this.client.send(request, BodyHandlers.ofInputStream());
+
+    final var statusCode = r.statusCode();
+    return switch (statusCode) {
+      case 404 -> {
+        LOG.debug("no TXT record {} exists for domain {}", recordName, this.domain);
+        yield Optional.empty();
+      }
+      case 200 -> {
+        LOG.debug("a TXT record {} exists for domain {}", recordName, this.domain);
+        yield this.parseTXTRecord(r.body());
+      }
+      default -> {
+        throw new IOException(
+          this.strings.format("errorServer", statusCode)
+        );
+      }
+    };
+  }
+
+  private Optional<TXTRecord> parseTXTRecord(
+    final InputStream body)
+    throws IOException
+  {
+    final var node = this.mapper.readTree(body);
+
+    if (node instanceof ArrayNode arrayNode) {
+      if (arrayNode.isEmpty()) {
+        return Optional.empty();
+      }
+
+      final var first = arrayNode.get(0);
+      if (first instanceof ObjectNode object) {
+        final var values = object.get("rrset_values");
+        if (values instanceof ArrayNode existingArray) {
+          final var arrayValues = new ArrayList<String>(existingArray.size());
+          for (int index = 0; index < existingArray.size(); ++index) {
+            arrayValues.add(existingArray.get(index).asText());
+          }
+          return Optional.of(new TXTRecord(List.copyOf(arrayValues)));
+        }
+
+        throw new IOException(
+          this.strings.format(
+            "errorParse",
+            "rrset_values is not an array")
+        );
+      }
+    }
+
+    throw new IOException(
+      this.strings.format(
+        "errorParse",
+        "Did not receive a parseable JSON object")
+    );
   }
 
   @Override
@@ -100,26 +195,74 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
       recordValue,
       this.domain
     );
-    LOG.debug("POST {}", targetURI);
 
-    final var json = """
-      {
-        "rrset_type": "TXT",
-        "rrset_values": [
-          "%s"
-        ]
+    /*
+     * First, fetch any existing TXT record. If a record already exists
+     * that contains the required value, then do nothing.
+     */
+
+    final var existingRecordOpt =
+      this.fetchTXTRecord(recordName);
+
+    if (existingRecordOpt.isPresent()) {
+      final var existingRecord = existingRecordOpt.get();
+      if (existingRecord.values.contains(recordValue)) {
+        LOG.debug("a record already exists with value {}", recordValue);
+        return;
       }
-      """.formatted(recordValue);
+    }
+
+    /*
+     * We need to either create a new record with the given value, or append
+     * the value to the existing record.
+     */
+
+    final var values = new ArrayList<String>();
+    existingRecordOpt.ifPresent(txt -> values.addAll(txt.values));
+    values.add(recordValue);
+
+    this.postUpdate(
+      targetURI,
+      this.mapper.writeValueAsString(this.constructPutRequest(values))
+    );
+  }
+
+  private ObjectNode constructPutRequest(
+    final List<String> values)
+  {
+    final var newRecord = this.mapper.createObjectNode();
+    newRecord.put("rrset_type", "TXT");
+
+    final var newValues = this.mapper.createArrayNode();
+    for (final var value : values) {
+      newValues.add(value);
+    }
+    newRecord.set("rrset_values", newValues);
+
+    final var newItemsArray = this.mapper.createArrayNode();
+    newItemsArray.add(newRecord);
+
+    final var newItemsContainer = this.mapper.createObjectNode();
+    newItemsContainer.set("items", newItemsArray);
+    return newItemsContainer;
+  }
+
+  private void postUpdate(
+    final URI targetURI,
+    final String text)
+    throws IOException, InterruptedException
+  {
+    LOG.debug("PUT {}", targetURI);
 
     final var request =
       HttpRequest.newBuilder()
         .uri(targetURI)
-        .POST(HttpRequest.BodyPublishers.ofString(json, UTF_8))
+        .PUT(HttpRequest.BodyPublishers.ofString(text, UTF_8))
         .header("Authorization", "Apikey " + this.apiKey)
         .build();
 
     final var r =
-      this.client.send(request, HttpResponse.BodyHandlers.ofString());
+      this.client.send(request, BodyHandlers.ofString());
 
     LOG.debug("response: {}", r.body());
 
@@ -161,6 +304,43 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
       recordValue,
       this.domain
     );
+
+    /*
+     * First, fetch any existing TXT record. If a record doesn't exist,
+     * then do nothing.
+     */
+
+    final var existingRecordOpt =
+      this.fetchTXTRecord(recordName);
+
+    if (existingRecordOpt.isEmpty()) {
+      LOG.debug("no record exists");
+      return;
+    }
+
+    /*
+     * We need to either create a new record with the given value removed, or
+     * delete the record entirely if the new record would be empty.
+     */
+
+    final var existingRecord = existingRecordOpt.get();
+    final var newValueList = new ArrayList<>(existingRecord.values);
+    newValueList.remove(recordValue);
+
+    if (newValueList.isEmpty()) {
+      this.executeDeleteRequest(targetURI);
+      return;
+    }
+
+    this.postUpdate(
+      targetURI,
+      this.mapper.writeValueAsString(this.constructPutRequest(newValueList))
+    );
+  }
+
+  private void executeDeleteRequest(final URI targetURI)
+    throws IOException, InterruptedException
+  {
     LOG.debug("DELETE {}", targetURI);
 
     final var request =
@@ -171,7 +351,7 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
         .build();
 
     final var r =
-      this.client.send(request, HttpResponse.BodyHandlers.ofString());
+      this.client.send(request, BodyHandlers.ofString());
 
     LOG.debug("response: {}", r.body());
 
@@ -185,6 +365,14 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
           this.strings.format("errorServer", statusCode)
         );
       }
+    }
+  }
+
+  private record TXTRecord(List<String> values)
+  {
+    TXTRecord
+    {
+      Objects.requireNonNull(values, "values");
     }
   }
 }
