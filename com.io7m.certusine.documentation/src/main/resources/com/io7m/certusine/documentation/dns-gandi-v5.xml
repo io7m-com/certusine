@@ -25,6 +25,11 @@
     <FormalItem title="Parameters">
       <xi:include href="dns-gandi-v5-parameters.xml"/>
     </FormalItem>
+
+    <Paragraph>
+      To use the production Gandi API, use the base URI
+      <LinkExternal target="https://api.gandi.net">https://api.gandi.net</LinkExternal>.
+    </Paragraph>
   </Subsection>
 
 </Section>

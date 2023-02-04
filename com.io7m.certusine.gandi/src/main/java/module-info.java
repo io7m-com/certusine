@@ -28,6 +28,7 @@ module com.io7m.certusine.gandi
 
   requires transitive com.io7m.certusine.api;
 
+  requires com.fasterxml.jackson.databind;
   requires com.io7m.jxtrand.vanilla;
   requires java.net.http;
   requires org.slf4j;
