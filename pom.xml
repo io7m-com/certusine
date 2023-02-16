@@ -11,7 +11,7 @@
 
   <groupId>com.io7m.certusine</groupId>
   <artifactId>com.io7m.certusine</artifactId>
-  <version>0.0.9</version>
+  <version>0.0.10</version>
 
   <packaging>pom</packaging>
   <name>com.io7m.certusine</name>
