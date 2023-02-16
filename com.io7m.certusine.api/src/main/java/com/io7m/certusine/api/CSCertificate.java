@@ -62,7 +62,12 @@ public record CSCertificate(
     final CSDomain domain)
   {
     return this.hosts.stream()
-      .map(host -> "%s.%s".formatted(host, domain.domain()))
-      .toList();
+      .map(host -> {
+        final var trimmed = host.trim();
+        if (trimmed.isEmpty()) {
+          return domain.domain();
+        }
+        return "%s.%s".formatted(trimmed, domain.domain());
+      }).toList();
   }
 }

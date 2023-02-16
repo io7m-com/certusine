@@ -222,7 +222,8 @@
       The <Term type="expression">Hosts</Term> element for a given certificate specifies the hosts within the domain
       to which the certificate applies. Note that these are <Term type="term">not</Term> fully-qualified names.
       Hosts may include wildcards, so for example a certificate may declare a host
-      such as <Term type="expression">*</Term>.
+      such as <Term type="expression">*</Term>. To issue a certificate without an explicit hostname (so, for example,
+      to issue a certificate for <Term type="expression">example.com</Term>), simply specify an empty hostname.
     </Paragraph>
 
     <Paragraph>
