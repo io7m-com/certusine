@@ -17,8 +17,8 @@
 
 package com.io7m.certusine.vanilla.internal;
 
-import com.io7m.anethum.common.ParseException;
-import com.io7m.anethum.common.ParseStatus;
+import com.io7m.anethum.api.ParseStatus;
+import com.io7m.anethum.api.ParsingException;
 import com.io7m.certusine.api.CSAccount;
 import com.io7m.certusine.api.CSCertificate;
 import com.io7m.certusine.api.CSCertificateName;
@@ -83,8 +83,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static com.io7m.anethum.common.ParseSeverity.PARSE_ERROR;
-import static com.io7m.anethum.common.ParseSeverity.PARSE_WARNING;
+import static com.io7m.anethum.api.ParseSeverity.PARSE_ERROR;
+import static com.io7m.anethum.api.ParseSeverity.PARSE_WARNING;
 import static com.io7m.certusine.api.CSOpenTelemetryConfiguration.CSLogs;
 import static com.io7m.certusine.api.CSOpenTelemetryConfiguration.CSMetrics;
 import static com.io7m.certusine.api.CSOpenTelemetryConfiguration.CSOTLPProtocol;
@@ -176,7 +176,7 @@ public final class CSConfigurationParser
 
   @Override
   public CSConfiguration execute()
-    throws ParseException
+    throws ParsingException
   {
     this.accounts.clear();
     this.dns.clear();
@@ -231,7 +231,7 @@ public final class CSConfigurationParser
         (Configuration) unmarshaller.unmarshal(streamSource);
 
       if (this.failed) {
-        throw new ParseException(
+        throw new ParsingException(
           this.strings.format("parseFailed"),
           List.copyOf(this.statusValues)
         );
@@ -247,7 +247,7 @@ public final class CSConfigurationParser
           LexicalPositions.zero(),
           this.strings.format("parseFailed"))
       );
-      throw new ParseException(
+      throw new ParsingException(
         this.strings.format("parseFailed"),
         List.copyOf(this.statusValues)
       );
@@ -260,7 +260,7 @@ public final class CSConfigurationParser
           LexicalPositions.zero(),
           this.strings.format("parseFailed"))
       );
-      throw new ParseException(
+      throw new ParsingException(
         this.strings.format("parseFailed"),
         List.copyOf(this.statusValues)
       );
@@ -283,7 +283,7 @@ public final class CSConfigurationParser
 
   private CSConfiguration processConfiguration(
     final Configuration configuration)
-    throws ParseException
+    throws ParsingException
   {
     this.buildOptions(
       configuration.getOptions(),
@@ -296,7 +296,7 @@ public final class CSConfigurationParser
     this.buildDomains(configuration.getDomains());
 
     if (this.failed) {
-      throw new ParseException(
+      throw new ParsingException(
         this.strings.format("parseFailed"),
         List.copyOf(this.statusValues)
       );
@@ -647,11 +647,9 @@ public final class CSConfigurationParser
     final String message)
   {
     final var status =
-      ParseStatus.builder()
-        .setErrorCode(errorCode)
-        .setLexical(lex)
-        .setSeverity(PARSE_WARNING)
-        .setMessage(message)
+      ParseStatus.builder(errorCode, message)
+        .withLexical(lex)
+        .withSeverity(PARSE_WARNING)
         .build();
 
     this.statusValues.add(status);
@@ -663,11 +661,9 @@ public final class CSConfigurationParser
     final LexicalPosition<URI> lexical,
     final String message)
   {
-    return ParseStatus.builder()
-      .setSeverity(PARSE_ERROR)
-      .setErrorCode(errorCode)
-      .setLexical(lexical)
-      .setMessage(message)
+    return ParseStatus.builder(errorCode, message)
+      .withSeverity(PARSE_ERROR)
+      .withLexical(lexical)
       .build();
   }
 

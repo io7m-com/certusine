@@ -17,8 +17,8 @@
 
 package com.io7m.certusine.cmdline.internal;
 
-import com.io7m.anethum.common.ParseException;
-import com.io7m.anethum.common.ParseStatus;
+import com.io7m.anethum.api.ParseStatusType;
+import com.io7m.anethum.api.ParsingException;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -37,7 +37,7 @@ public final class CSParseErrorLogging
   static void logError(
     final Logger logger,
     final Path file,
-    final ParseStatus status)
+    final ParseStatusType status)
   {
     switch (status.severity()) {
       case PARSE_ERROR -> {
@@ -73,7 +73,7 @@ public final class CSParseErrorLogging
   static void logParseErrors(
     final Logger logger,
     final Path file,
-    final ParseException e)
+    final ParsingException e)
   {
     for (final var error : e.statusValues()) {
       logError(logger, file, error);

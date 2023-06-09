@@ -40,10 +40,6 @@
     </dependency>
     <dependency>
       <groupId>com.io7m.anethum</groupId>
-      <artifactId>com.io7m.anethum.common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.io7m.anethum</groupId>
       <artifactId>com.io7m.anethum.api</artifactId>
     </dependency>
     <dependency>

@@ -24,7 +24,6 @@ module com.io7m.certusine.api
   requires static org.osgi.annotation.versioning;
 
   requires transitive com.io7m.anethum.api;
-  requires transitive com.io7m.anethum.common;
   requires transitive com.io7m.repetoir.core;
 
   requires com.io7m.jxtrand.vanilla;

@@ -4,16 +4,6 @@
 
 <properties>
   <entry key="errorProviderConfiguration">Provider is misconfigured.</entry>
-  <entry key="errorMissingRequiredParameter"><![CDATA[
-Missing a required parameter.
-  Parameter: {0}
-  Required parameters: {1}
-]]>
-  </entry>
-  <entry key="errorUnrecognizedParameter"><![CDATA[
-Received an unrecognized parameter
-  Parameter: {0}
-  Recognized parameters: {1}
-]]>
-  </entry>
+  <entry key="errorMissingRequiredParameter">Missing one or more required parameters.</entry>
+  <entry key="errorUnrecognizedParameter">Received one or more unrecognized parameters.</entry>
 </properties>

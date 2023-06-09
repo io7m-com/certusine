@@ -9,12 +9,7 @@
   <entry key="errorReportFormat">{0}</entry>
   <entry key="parseFailed">Parsing failed</entry>
   <entry key="errorOutputConfiguration">Output is misconfigured</entry>
-  <entry key="errorMissingRequiredParameter"><![CDATA[
-Missing a required parameter.
-  Parameter: {0}
-  Required parameters: {1}
-]]>
-  </entry>
+  <entry key="errorMissingRequiredParameter">Missing a required parameter.</entry>
   <entry key="errorAccountURI">Problematic ACME URI: {0}</entry>
   <entry key="challengeFailed">Server challenge failed</entry>
   <entry key="errorReport"><![CDATA[{0}

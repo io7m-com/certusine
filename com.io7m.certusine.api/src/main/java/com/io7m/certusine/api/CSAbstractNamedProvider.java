@@ -16,13 +16,15 @@
 
 package com.io7m.certusine.api;
 
-import com.io7m.anethum.common.ParseSeverity;
-import com.io7m.anethum.common.ParseStatus;
+
+import com.io7m.anethum.api.ParseStatus;
 import com.io7m.jxtrand.vanilla.JXTAbstractStrings;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -95,40 +97,85 @@ public abstract class CSAbstractNamedProvider implements CSNamedProviderType
         .map(CSConfigurationParameterDescription::name)
         .collect(Collectors.toSet());
 
-    for (final var required : requiredParameters) {
-      if (!parameterMap.containsKey(required.name())) {
-        errors.add(
-          ParseStatus.builder()
-            .setSeverity(ParseSeverity.PARSE_ERROR)
-            .setMessage(this.strings.format(
-              "errorMissingRequiredParameter",
-              required, requiredParameterNames))
-            .setLexical(parameters.lexical())
-            .setErrorCode("error-parameter-required")
-            .build()
-        );
-      }
-    }
+    this.checkRequiredParameters(
+      parameters,
+      errors,
+      parameterMap,
+      requiredParameters
+    );
 
-    for (final var specified : parameterMap.keySet()) {
-      if (!recognizedParameterNames.contains(specified)) {
-        errors.add(
-          ParseStatus.builder()
-            .setSeverity(ParseSeverity.PARSE_ERROR)
-            .setMessage(this.strings.format(
-              "errorUnrecognizedParameter",
-              specified, recognizedParameterNames))
-            .setLexical(parameters.lexical())
-            .setErrorCode("error-parameter-unrecognized")
-            .build()
-        );
-      }
-    }
+    this.checkRecognizedParameters(
+      parameters,
+      errors,
+      parameterMap,
+      recognizedParameterNames
+    );
 
     if (!errors.isEmpty()) {
       throw new CSConfigurationException(
         errors, this.strings.format("errorProviderConfiguration")
       );
+    }
+  }
+
+  private void checkRecognizedParameters(
+    final CSConfigurationParameters parameters,
+    final Collection<ParseStatus> errors,
+    final Map<String, String> parameterMap,
+    final Collection<String> recognizedParameterNames)
+  {
+    final var builder =
+      ParseStatus.builder(
+          "error-parameter-unrecognized",
+          this.strings.format("errorUnrecognizedParameter"))
+        .withLexical(parameters.lexical());
+
+    var failed = false;
+    var unrecognizedIndex = 0;
+
+    for (final var specified : parameterMap.keySet()) {
+      if (!recognizedParameterNames.contains(specified)) {
+        failed = true;
+        builder.withAttribute(
+          "Unrecognized (%d)".formatted(Integer.valueOf(unrecognizedIndex)),
+          specified
+        );
+        ++unrecognizedIndex;
+      }
+    }
+
+    if (failed) {
+      errors.add(builder.build());
+    }
+  }
+
+  private void checkRequiredParameters(
+    final CSConfigurationParameters parameters,
+    final Collection<ParseStatus> errors,
+    final Map<String, String> parameterMap,
+    final Iterable<CSConfigurationParameterDescription> requiredParameters)
+  {
+    final var builder =
+      ParseStatus.builder(
+          "error-parameter-required",
+          this.strings.format("errorMissingRequiredParameter"))
+        .withLexical(parameters.lexical());
+
+    var failed = false;
+    var missingIndex = 0;
+    for (final var required : requiredParameters) {
+      if (!parameterMap.containsKey(required.name())) {
+        failed = true;
+        builder.withAttribute(
+          "Missing (%d)".formatted(Integer.valueOf(missingIndex)),
+          required.name()
+        );
+        ++missingIndex;
+      }
+    }
+
+    if (failed) {
+      errors.add(builder.build());
     }
   }
 

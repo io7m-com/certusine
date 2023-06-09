@@ -35,7 +35,7 @@
   <properties>
     <acme4j.version>2.16</acme4j.version>
     <bouncycastle.version>1.73</bouncycastle.version>
-    <com.io7m.anethum.version>0.0.2</com.io7m.anethum.version>
+    <com.io7m.anethum.version>1.0.0-beta0001</com.io7m.anethum.version>
     <com.io7m.jsx.version>3.0.1</com.io7m.jsx.version>
     <com.io7m.looseleaf.version>0.0.4</com.io7m.looseleaf.version>
     <com.io7m.quarrel.version>1.1.0</com.io7m.quarrel.version>
@@ -187,11 +187,6 @@
       <dependency>
         <groupId>com.io7m.anethum</groupId>
         <artifactId>com.io7m.anethum.api</artifactId>
-        <version>${com.io7m.anethum.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.io7m.anethum</groupId>
-        <artifactId>com.io7m.anethum.common</artifactId>
         <version>${com.io7m.anethum.version}</version>
       </dependency>
       <dependency>

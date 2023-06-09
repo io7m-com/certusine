@@ -17,7 +17,7 @@
 
 package com.io7m.certusine.cmdline.internal;
 
-import com.io7m.anethum.common.ParseException;
+import com.io7m.anethum.api.ParsingException;
 import com.io7m.certusine.vanilla.CSConfigurationParsers;
 import com.io7m.quarrel.core.QCommandContextType;
 import com.io7m.quarrel.core.QCommandMetadata;
@@ -92,7 +92,7 @@ public final class CSCheckConfiguration implements QCommandType
     } catch (final IOException e) {
       LOG.error("i/o error: {}", e.getMessage());
       return QCommandStatus.FAILURE;
-    } catch (final ParseException e) {
+    } catch (final ParsingException e) {
       CSParseErrorLogging.logParseErrors(LOG, file, e);
       return QCommandStatus.FAILURE;
     }

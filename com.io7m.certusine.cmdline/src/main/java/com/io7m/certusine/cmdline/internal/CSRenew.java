@@ -17,7 +17,7 @@
 
 package com.io7m.certusine.cmdline.internal;
 
-import com.io7m.anethum.common.ParseException;
+import com.io7m.anethum.api.ParsingException;
 import com.io7m.certusine.api.CSConfiguration;
 import com.io7m.certusine.certstore.api.CSCertificateStoreFactoryType;
 import com.io7m.certusine.vanilla.CSConfigurationParsers;
@@ -193,7 +193,7 @@ public final class CSRenew implements QCommandType
           return QCommandStatus.FAILURE;
         }
         pauseOnError();
-      } catch (final ParseException e) {
+      } catch (final ParsingException e) {
         logParseErrors(LOG, file, e);
         if (onlyOnce) {
           return QCommandStatus.FAILURE;
@@ -206,7 +206,7 @@ public final class CSRenew implements QCommandType
   private static CSConfiguration loadConfiguration(
     final Path file,
     final CSConfigurationParsers parsers)
-    throws IOException, ParseException
+    throws IOException, ParsingException
   {
     final var baseDirectory = file.toAbsolutePath().getParent();
     return parsers.parseFileWithContext(baseDirectory, file);

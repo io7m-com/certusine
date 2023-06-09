@@ -16,7 +16,7 @@
 
 package com.io7m.certusine.vanilla;
 
-import com.io7m.anethum.common.ParseStatus;
+import com.io7m.anethum.api.ParseStatus;
 import com.io7m.certusine.api.CSCertificateOutputProviderType;
 import com.io7m.certusine.api.CSConfigurationParserType;
 import com.io7m.certusine.api.CSConfigurationParsersType;
