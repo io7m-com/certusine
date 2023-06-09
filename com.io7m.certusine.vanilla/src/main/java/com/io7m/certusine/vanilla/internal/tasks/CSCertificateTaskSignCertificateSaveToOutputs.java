@@ -17,15 +17,17 @@
 package com.io7m.certusine.vanilla.internal.tasks;
 
 import com.io7m.certusine.api.CSCertificateOutputData;
+import com.io7m.certusine.vanilla.internal.events.CSEventCertificateStoreFailed;
+import com.io7m.certusine.vanilla.internal.events.CSEventCertificateStored;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
 import com.io7m.jdeferthrow.core.ExceptionTracker;
-import org.shredzone.acme4j.Order;
+import io.opentelemetry.api.trace.Span;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.OptionalLong;
 
@@ -38,26 +40,25 @@ import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.IO_RETRY_PAU
  */
 
 public final class CSCertificateTaskSignCertificateSaveToOutputs
-  extends CSCertificateTask
+  extends CSCertificateTaskSignCertificate
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(CSCertificateTaskSignCertificateSaveToOutputs.class);
 
-  private final Order order;
+  private final HashSet<String> outputsFailed;
 
   /**
    * A task that saves signed certificates.
    *
    * @param inContext The task execution context
-   * @param inOrder   The certificate order
    */
 
   public CSCertificateTaskSignCertificateSaveToOutputs(
-    final CSCertificateTaskContext inContext,
-    final Order inOrder)
+    final CSCertificateTaskContext inContext)
   {
-    super(inContext);
-    this.order = Objects.requireNonNull(inOrder, "order");
+    super("SignCertificateSaveToOutputs", inContext);
+
+    this.outputsFailed = new HashSet<String>();
   }
 
   @Override
@@ -106,8 +107,18 @@ public final class CSCertificateTaskSignCertificateSaveToOutputs
             output.type(),
             output.name()
           );
-          output.write(outputData);
+          output.write(this.context().telemetry(), outputData);
+
+          context.events()
+            .emit(new CSEventCertificateStored(
+              domain,
+              certificate.name(),
+              output.name()
+            ));
+
+          this.outputsFailed.remove(output.name());
         } catch (final IOException e) {
+          this.outputsFailed.add(output.name());
           tracker.addException(e);
         }
       }
@@ -118,6 +129,7 @@ public final class CSCertificateTaskSignCertificateSaveToOutputs
     try {
       tracker.throwIfNecessary();
     } catch (final IOException e) {
+      Span.current().recordException(e);
       LOG.error("failed to save certificates to one or more outputs: ", e);
       return new CSCertificateTaskFailedButCanBeRetried(IO_RETRY_PAUSE_TIME, e);
     }
@@ -126,5 +138,19 @@ public final class CSCertificateTaskSignCertificateSaveToOutputs
       OptionalLong.empty(),
       Optional.empty()
     );
+  }
+
+  @Override
+  void executeOnTaskCompletelyFailed()
+  {
+    final CSCertificateTaskContext context = this.context();
+    final var events = context.events();
+    for (final var failed : this.outputsFailed) {
+      events.emit(new CSEventCertificateStoreFailed(
+        context.domain(),
+        context.certificate().name(),
+        failed
+      ));
+    }
   }
 }

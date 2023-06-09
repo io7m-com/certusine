@@ -116,7 +116,7 @@ public final class CSGandiDNSConfigurators
   @Override
   public String name()
   {
-    return "gandi-v5";
+    return "Gandi-v5";
   }
 
   @Override
@@ -157,5 +157,12 @@ public final class CSGandiDNSConfigurators
         )
       )
     );
+  }
+
+  @Override
+  public String toString()
+  {
+    return "[CSGandiDNSConfigurators 0x%s]"
+      .formatted(Long.toUnsignedString(this.hashCode(), 16));
   }
 }

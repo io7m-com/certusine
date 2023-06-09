@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.io7m.certusine.api.CSDNSConfiguratorType;
 import com.io7m.certusine.api.CSDNSRecordNameType;
+import com.io7m.certusine.api.CSTelemetryServiceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,6 +173,7 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void createTXTRecord(
+    final CSTelemetryServiceType telemetry,
     final CSDNSRecordNameType recordName,
     final String recordValue)
     throws IOException, InterruptedException
@@ -179,52 +181,62 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
     Objects.requireNonNull(recordName, "recordName");
     Objects.requireNonNull(recordValue, "recordValue");
 
-    final var targetURI =
-      URI.create(
-        "%s/v5/livedns/domains/%s/records/%s"
-          .formatted(
-            this.apiBase,
-            this.domain,
-            recordName
-          )
+    final var span =
+      telemetry.tracer()
+        .spanBuilder("CreateTXTRecord")
+        .setAttribute("certusine.record.name", recordName.name())
+        .startSpan();
+
+    try (var ignored = span.makeCurrent()) {
+      final var targetURI =
+        URI.create(
+          "%s/v5/livedns/domains/%s/records/%s"
+            .formatted(
+              this.apiBase,
+              this.domain,
+              recordName
+            )
+        );
+
+      LOG.debug(
+        "creating a TXT record {} = {} for domain {}",
+        recordName,
+        recordValue,
+        this.domain
       );
 
-    LOG.debug(
-      "creating a TXT record {} = {} for domain {}",
-      recordName,
-      recordValue,
-      this.domain
-    );
+      /*
+       * First, fetch any existing TXT record. If a record already exists
+       * that contains the required value, then do nothing.
+       */
 
-    /*
-     * First, fetch any existing TXT record. If a record already exists
-     * that contains the required value, then do nothing.
-     */
+      final var existingRecordOpt =
+        this.fetchTXTRecord(recordName);
 
-    final var existingRecordOpt =
-      this.fetchTXTRecord(recordName);
-
-    if (existingRecordOpt.isPresent()) {
-      final var existingRecord = existingRecordOpt.get();
-      if (existingRecord.values.contains(recordValue)) {
-        LOG.debug("a record already exists with value {}", recordValue);
-        return;
+      if (existingRecordOpt.isPresent()) {
+        final var existingRecord = existingRecordOpt.get();
+        if (existingRecord.values.contains(recordValue)) {
+          LOG.debug("a record already exists with value {}", recordValue);
+          return;
+        }
       }
+
+      /*
+       * We need to either create a new record with the given value, or append
+       * the value to the existing record.
+       */
+
+      final var values = new ArrayList<String>();
+      existingRecordOpt.ifPresent(txt -> values.addAll(txt.values));
+      values.add(recordValue);
+
+      this.postUpdate(
+        targetURI,
+        this.mapper.writeValueAsString(this.constructPutRequest(values))
+      );
+    } finally {
+      span.end();
     }
-
-    /*
-     * We need to either create a new record with the given value, or append
-     * the value to the existing record.
-     */
-
-    final var values = new ArrayList<String>();
-    existingRecordOpt.ifPresent(txt -> values.addAll(txt.values));
-    values.add(recordValue);
-
-    this.postUpdate(
-      targetURI,
-      this.mapper.writeValueAsString(this.constructPutRequest(values))
-    );
   }
 
   private ObjectNode constructPutRequest(
@@ -281,6 +293,7 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void deleteTXTRecord(
+    final CSTelemetryServiceType telemetry,
     final CSDNSRecordNameType recordName,
     final String recordValue)
     throws IOException, InterruptedException
@@ -288,54 +301,64 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
     Objects.requireNonNull(recordName, "recordName");
     Objects.requireNonNull(recordValue, "recordValue");
 
-    final var targetURI =
-      URI.create(
-        "%s/v5/livedns/domains/%s/records/%s"
-          .formatted(
-            this.apiBase,
-            this.domain,
-            recordName
-          )
+    final var span =
+      telemetry.tracer()
+        .spanBuilder("DeleteTXTRecord")
+        .setAttribute("certusine.record.name", recordName.name())
+        .startSpan();
+
+    try (var ignored = span.makeCurrent()) {
+      final var targetURI =
+        URI.create(
+          "%s/v5/livedns/domains/%s/records/%s"
+            .formatted(
+              this.apiBase,
+              this.domain,
+              recordName
+            )
+        );
+
+      LOG.debug(
+        "deleting a TXT record {} = {} for domain {}",
+        recordName,
+        recordValue,
+        this.domain
       );
 
-    LOG.debug(
-      "deleting a TXT record {} = {} for domain {}",
-      recordName,
-      recordValue,
-      this.domain
-    );
+      /*
+       * First, fetch any existing TXT record. If a record doesn't exist,
+       * then do nothing.
+       */
 
-    /*
-     * First, fetch any existing TXT record. If a record doesn't exist,
-     * then do nothing.
-     */
+      final var existingRecordOpt =
+        this.fetchTXTRecord(recordName);
 
-    final var existingRecordOpt =
-      this.fetchTXTRecord(recordName);
+      if (existingRecordOpt.isEmpty()) {
+        LOG.debug("no record exists");
+        return;
+      }
 
-    if (existingRecordOpt.isEmpty()) {
-      LOG.debug("no record exists");
-      return;
+      /*
+       * We need to either create a new record with the given value removed, or
+       * delete the record entirely if the new record would be empty.
+       */
+
+      final var existingRecord = existingRecordOpt.get();
+      final var newValueList = new ArrayList<>(existingRecord.values);
+      newValueList.remove(recordValue);
+
+      if (newValueList.isEmpty()) {
+        this.executeDeleteRequest(targetURI);
+        return;
+      }
+
+      this.postUpdate(
+        targetURI,
+        this.mapper.writeValueAsString(this.constructPutRequest(newValueList))
+      );
+    } finally {
+      span.end();
     }
-
-    /*
-     * We need to either create a new record with the given value removed, or
-     * delete the record entirely if the new record would be empty.
-     */
-
-    final var existingRecord = existingRecordOpt.get();
-    final var newValueList = new ArrayList<>(existingRecord.values);
-    newValueList.remove(recordValue);
-
-    if (newValueList.isEmpty()) {
-      this.executeDeleteRequest(targetURI);
-      return;
-    }
-
-    this.postUpdate(
-      targetURI,
-      this.mapper.writeValueAsString(this.constructPutRequest(newValueList))
-    );
   }
 
   private void executeDeleteRequest(final URI targetURI)

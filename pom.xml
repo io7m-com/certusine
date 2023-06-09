@@ -26,6 +26,7 @@
     <module>com.io7m.certusine.etcd</module>
     <module>com.io7m.certusine.gandi</module>
     <module>com.io7m.certusine.looseleaf</module>
+    <module>com.io7m.certusine.oci</module>
     <module>com.io7m.certusine.tests</module>
     <module>com.io7m.certusine.vanilla</module>
     <module>com.io7m.certusine.vultr</module>
@@ -37,6 +38,7 @@
     <com.io7m.anethum.version>0.0.2</com.io7m.anethum.version>
     <com.io7m.jsx.version>3.0.1</com.io7m.jsx.version>
     <com.io7m.looseleaf.version>0.0.4</com.io7m.looseleaf.version>
+    <com.io7m.quarrel.version>1.1.0</com.io7m.quarrel.version>
     <com.io7m.xstructural.version>1.8.0</com.io7m.xstructural.version>
     <io7m.api.previousVersion>0.0.5-SNAPSHOT</io7m.api.previousVersion>
     <jackson.version>2.15.2</jackson.version>
@@ -44,6 +46,7 @@
     <jetty.version>11.0.15</jetty.version>
     <junit.version>5.9.3</junit.version>
     <logback.version>1.4.7</logback.version>
+    <opentelemetry.version>1.26.0</opentelemetry.version>
   </properties>
 
   <dependencyManagement>
@@ -84,25 +87,12 @@
         <version>3.0.0</version>
       </dependency>
       <dependency>
-        <groupId>com.io7m.jsx</groupId>
-        <artifactId>com.io7m.jsx.core</artifactId>
-        <version>${com.io7m.jsx.version}</version>
+        <groupId>com.io7m.repetoir</groupId>
+        <artifactId>com.io7m.repetoir.core</artifactId>
+        <version>0.0.1</version>
       </dependency>
-      <dependency>
-        <groupId>com.io7m.jsx</groupId>
-        <artifactId>com.io7m.jsx.parser.api</artifactId>
-        <version>${com.io7m.jsx.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.io7m.jsx</groupId>
-        <artifactId>com.io7m.jsx.parser</artifactId>
-        <version>${com.io7m.jsx.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.io7m.jsx</groupId>
-        <artifactId>com.io7m.jsx.prettyprint</artifactId>
-        <version>${com.io7m.jsx.version}</version>
-      </dependency>
+
+      <!-- ACME -->
       <dependency>
         <groupId>org.shredzone.acme4j</groupId>
         <artifactId>acme4j-client</artifactId>
@@ -141,6 +131,8 @@
           </exclusion>
         </exclusions>
       </dependency>
+
+      <!-- Test suite -->
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-api</artifactId>
@@ -156,6 +148,7 @@
         <artifactId>mockito-core</artifactId>
         <version>5.3.1</version>
       </dependency>
+
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-server</artifactId>
@@ -217,19 +210,9 @@
         <version>${bouncycastle.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.io7m.claypot</groupId>
-        <artifactId>com.io7m.claypot.core</artifactId>
-        <version>0.0.8</version>
-      </dependency>
-      <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>2.0.7</version>
-      </dependency>
-      <dependency>
-        <groupId>com.beust</groupId>
-        <artifactId>jcommander</artifactId>
-        <version>1.82</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
@@ -316,6 +299,58 @@
         <artifactId>com.io7m.quixote.core</artifactId>
         <version>0.0.2</version>
       </dependency>
+
+      <!-- CLI -->
+      <dependency>
+        <groupId>com.io7m.quarrel</groupId>
+        <artifactId>com.io7m.quarrel.ext.logback</artifactId>
+        <version>${com.io7m.quarrel.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.quarrel</groupId>
+        <artifactId>com.io7m.quarrel.core</artifactId>
+        <version>${com.io7m.quarrel.version}</version>
+      </dependency>
+
+      <!-- OpenTelemetry -->
+      <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-bom</artifactId>
+        <version>${opentelemetry.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-semconv</artifactId>
+        <version>1.18.0-alpha</version>
+      </dependency>
+      <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-api-logs</artifactId>
+        <version>1.26.0-alpha</version>
+      </dependency>
+      <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-sdk-logs</artifactId>
+        <version>1.26.0-alpha</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-stdlib</artifactId>
+        <version>1.8.22</version>
+      </dependency>
+      <dependency>
+        <groupId>com.squareup.okio</groupId>
+        <artifactId>okio-jvm</artifactId>
+        <version>3.3.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -328,6 +363,12 @@
           <configuration>
             <suppressionsLocation>checkstyle-filter.xml</suppressionsLocation>
           </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>com.io7m.stmp</groupId>
+          <artifactId>string-template-maven-plugin</artifactId>
+          <version>1.2.0</version>
         </plugin>
 
         <plugin>

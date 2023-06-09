@@ -19,6 +19,7 @@ package com.io7m.certusine.api;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The options associated with the ACME process.
@@ -34,12 +35,16 @@ import java.util.Objects;
  *                                       than or equal this time remaining
  *                                       before it expires, renewal should
  *                                       proceed
+ * @param openTelemetry                  The OpenTelemetry configuration
+ * @param faultInjection                 The fault injection configuration
  */
 
 public record CSOptions(
   Path certificateStore,
   Duration dnsWaitTime,
-  Duration certificateExpirationThreshold)
+  Duration certificateExpirationThreshold,
+  Optional<CSOpenTelemetryConfiguration> openTelemetry,
+  CSFaultInjectionConfiguration faultInjection)
 {
   /**
    * The options associated with the ACME process.
@@ -56,6 +61,8 @@ public record CSOptions(
    *                                       less than or equal this time
    *                                       remaining before it expires, renewal
    *                                       should proceed
+   * @param openTelemetry                  The OpenTelemetry configuration
+   * @param faultInjection                 The fault injection configuration
    */
 
   public CSOptions
@@ -66,5 +73,9 @@ public record CSOptions(
       dnsWaitTime, "dnsWaitTime");
     Objects.requireNonNull(
       certificateExpirationThreshold, "certificateExpirationThreshold");
+    Objects.requireNonNull(
+      openTelemetry, "openTelemetry");
+    Objects.requireNonNull(
+      faultInjection, "faultInjection");
   }
 }

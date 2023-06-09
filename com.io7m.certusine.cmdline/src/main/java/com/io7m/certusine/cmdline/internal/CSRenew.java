@@ -17,159 +17,214 @@
 
 package com.io7m.certusine.cmdline.internal;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
 import com.io7m.anethum.common.ParseException;
+import com.io7m.certusine.api.CSConfiguration;
 import com.io7m.certusine.certstore.api.CSCertificateStoreFactoryType;
 import com.io7m.certusine.vanilla.CSConfigurationParsers;
 import com.io7m.certusine.vanilla.CSDomains;
-import com.io7m.claypot.core.CLPAbstractCommand;
-import com.io7m.claypot.core.CLPCommandContextType;
+import com.io7m.certusine.vanilla.CSServices;
+import com.io7m.certusine.vanilla.CSTelemetryServices;
+import com.io7m.quarrel.core.QCommandContextType;
+import com.io7m.quarrel.core.QCommandMetadata;
+import com.io7m.quarrel.core.QCommandStatus;
+import com.io7m.quarrel.core.QCommandType;
+import com.io7m.quarrel.core.QParameterNamed1;
+import com.io7m.quarrel.core.QParameterNamedType;
+import com.io7m.quarrel.core.QStringType;
+import com.io7m.quarrel.ext.logback.QLogback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.ServiceLoader;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
-import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
-import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
+import static com.io7m.certusine.cmdline.internal.CSParseErrorLogging.logParseErrors;
+import static java.lang.Boolean.FALSE;
 
 /**
  * Renew certificates.
  */
 
-@Parameters(commandDescription = "Renew certificates.")
-public final class CSRenew extends CLPAbstractCommand
+public final class CSRenew implements QCommandType
 {
-  @Parameter(
-    names = "--file",
-    description = "The configuration file",
-    required = true
-  )
-  private Path file;
+  private static final Logger LOG =
+    LoggerFactory.getLogger(CSRenew.class);
 
-  @Parameter(
-    names = "--only-once",
-    arity = 1,
-    description = "Renew certificates once and then exit.",
-    required = false
-  )
-  private boolean onlyOnce;
+  private static final QParameterNamed1<Path> FILE =
+    new QParameterNamed1<>(
+      "--file",
+      List.of(),
+      new QStringType.QConstant("The configuration file"),
+      Optional.empty(),
+      Path.class
+    );
 
-  @Parameter(
-    names = "--schedule",
-    description = "Renew certificates repeatedly, waiting this duration between attempts.",
-    required = false,
-    converter = CSDurationConverter.class
-  )
-  private Duration schedule = Duration.ofHours(1L);
+  private static final QParameterNamed1<Boolean> ONLY_ONCE =
+    new QParameterNamed1<>(
+      "--only-once",
+      List.of(),
+      new QStringType.QConstant("Renew certificates once and then exit."),
+      Optional.of(FALSE),
+      Boolean.class
+    );
+
+  private static final QParameterNamed1<Duration> SCHEDULE =
+    new QParameterNamed1<>(
+      "--schedule",
+      List.of(),
+      new QStringType.QConstant(
+        "Renew certificates repeatedly, waiting this duration between attempts."),
+      Optional.of(Duration.ofHours(1L)),
+      Duration.class
+    );
+
+  private final QCommandMetadata metadata;
 
   /**
    * Construct a command.
-   *
-   * @param inContext The command context
    */
 
-  public CSRenew(
-    final CLPCommandContextType inContext)
+  public CSRenew()
   {
-    super(inContext);
+    this.metadata = new QCommandMetadata(
+      "renew",
+      new QStringType.QConstant("Renew certificates."),
+      Optional.empty()
+    );
   }
 
   @Override
-  protected Status executeActual()
+  public List<QParameterNamedType<?>> onListNamedParameters()
+  {
+    return QLogback.plusParameters(List.of(FILE, SCHEDULE, ONLY_ONCE));
+  }
+
+  @Override
+  public QCommandStatus onExecute(
+    final QCommandContextType context)
     throws Exception
   {
     final var parsers =
       new CSConfigurationParsers();
 
-    this.file =
-      this.file.toAbsolutePath();
+    final var file =
+      context.parameterValue(FILE)
+        .toAbsolutePath();
+    final var onlyOnce =
+      context.parameterValue(ONLY_ONCE)
+        .booleanValue();
+    final var schedule =
+      context.parameterValue(SCHEDULE);
 
-    final var logger = this.logger();
+    final var configurationInitial =
+      CSRenew.loadConfiguration(file, parsers);
+
+    final var telemetry =
+      CSTelemetryServices.createOptional(
+        configurationInitial.options()
+          .openTelemetry()
+      );
+    final var services =
+      CSServices.create(Locale.ROOT, telemetry);
 
     while (true) {
       try {
-        final var baseDirectory =
-          this.file.toAbsolutePath()
-            .getParent();
         final var configuration =
-          parsers.parseFileWithContext(baseDirectory, this.file);
+          CSRenew.loadConfiguration(file, parsers);
 
-        logger.debug(
+        LOG.debug(
           "loaded {} domains",
           Integer.valueOf(configuration.domains().size())
         );
 
         final var storeFactory =
-          ServiceLoader.load(CSCertificateStoreFactoryType.class)
-            .findFirst()
-            .orElseThrow(() -> {
-              return new IllegalStateException(
-                "No services available of type %s"
-                  .formatted(CSCertificateStoreFactoryType.class)
-              );
-            });
+          services.requireService(CSCertificateStoreFactoryType.class);
 
         final var storePath =
           configuration.options().certificateStore();
 
-        var result = SUCCESS;
+        var result = QCommandStatus.SUCCESS;
         try (var store = storeFactory.open(storePath)) {
           for (final var domain : configuration.domains().values()) {
             try {
               CSDomains.renew(
+                services,
                 configuration.options(),
                 domain,
                 Clock.systemUTC(),
                 store
               );
             } catch (final Exception e) {
-              logger.error("error executing domain: ", e);
-              result = FAILURE;
+              LOG.error("error executing domain: ", e);
+              result = QCommandStatus.FAILURE;
             }
           }
         }
 
-        if (this.onlyOnce) {
+        if (onlyOnce) {
           return result;
         }
 
         final var timeNow =
           OffsetDateTime.now(Clock.systemUTC());
         final var timeNext =
-          timeNow.plus(this.schedule);
+          timeNow.plus(schedule);
         final var timeNextClamp =
           timeNext.withNano(0);
 
-        logger.info(
+        LOG.info(
           "waiting until {} for the next renewal attempt ({})",
           timeNextClamp,
-          this.schedule
+          schedule
         );
-        Thread.sleep(this.schedule.toMillis());
+        Thread.sleep(schedule.toMillis());
 
       } catch (final InterruptedException e) {
         Thread.currentThread().interrupt();
       } catch (final IOException e) {
-        logger.error("i/o error: {}", e.getMessage());
-        if (this.onlyOnce) {
-          return FAILURE;
+        LOG.error("i/o error: {}", e.getMessage());
+        if (onlyOnce) {
+          return QCommandStatus.FAILURE;
         }
+        pauseOnError();
       } catch (final ParseException e) {
-        CSParseErrorLogging.logParseErrors(logger, this.file, e);
-        if (this.onlyOnce) {
-          return FAILURE;
+        logParseErrors(LOG, file, e);
+        if (onlyOnce) {
+          return QCommandStatus.FAILURE;
         }
+        pauseOnError();
       }
     }
   }
 
-  @Override
-  public String name()
+  private static CSConfiguration loadConfiguration(
+    final Path file,
+    final CSConfigurationParsers parsers)
+    throws IOException, ParseException
   {
-    return "renew";
+    final var baseDirectory = file.toAbsolutePath().getParent();
+    return parsers.parseFileWithContext(baseDirectory, file);
+  }
+
+  private static void pauseOnError()
+  {
+    try {
+      Thread.sleep(3_000L);
+    } catch (final InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+  }
+
+
+  @Override
+  public QCommandMetadata metadata()
+  {
+    return this.metadata;
   }
 }

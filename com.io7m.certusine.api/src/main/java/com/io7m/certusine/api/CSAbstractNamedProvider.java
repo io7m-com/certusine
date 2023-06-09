@@ -43,7 +43,8 @@ public abstract class CSAbstractNamedProvider implements CSNamedProviderType
   private CSAbstractNamedProvider(
     final CSNamedProviderStrings inStrings)
   {
-    this.strings = Objects.requireNonNull(inStrings, "strings");
+    this.strings =
+      Objects.requireNonNull(inStrings, "strings");
   }
 
   /**
@@ -59,18 +60,6 @@ public abstract class CSAbstractNamedProvider implements CSNamedProviderType
     throws IOException
   {
     this(new CSNamedProviderStrings(locale));
-  }
-
-  /**
-   * An abstract provider implementation.
-   *
-   * @throws IOException On I/O errors
-   */
-
-  protected CSAbstractNamedProvider()
-    throws IOException
-  {
-    this(Locale.getDefault());
   }
 
   protected final void checkParameters(

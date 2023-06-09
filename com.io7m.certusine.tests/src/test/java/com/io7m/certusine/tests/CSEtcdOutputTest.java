@@ -26,12 +26,10 @@ import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.Client;
 import io.etcd.jetcd.launcher.Etcd;
 import io.etcd.jetcd.launcher.EtcdCluster;
-import io.etcd.jetcd.test.EtcdClusterExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +39,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+import static com.io7m.certusine.api.CSTelemetryNoOp.noop;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -126,7 +125,9 @@ public final class CSEtcdOutputTest
         )
       );
 
-    output.write(new CSCertificateOutputData(
+    output.write(
+      noop(),
+      new CSCertificateOutputData(
       "example.com",
       new CSCertificateName("www"),
       "PUB",
@@ -226,7 +227,9 @@ public final class CSEtcdOutputTest
 
     this.createRootUserAndEnableAuthentication();
 
-    output.write(new CSCertificateOutputData(
+    output.write(
+      noop(),
+      new CSCertificateOutputData(
       "example.com",
       new CSCertificateName("www"),
       "PUB",
@@ -262,7 +265,9 @@ public final class CSEtcdOutputTest
     this.createRootUserAndEnableAuthentication();
 
     final var ex = assertThrows(IOException.class, () -> {
-      output.write(new CSCertificateOutputData(
+      output.write(
+        noop(),
+        new CSCertificateOutputData(
         "example.com",
         new CSCertificateName("www"),
         "PUB",

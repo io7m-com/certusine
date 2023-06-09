@@ -96,7 +96,7 @@ public final class CSCertificateOutputProviderDirectory
   @Override
   public String name()
   {
-    return "directory";
+    return "Directory";
   }
 
   @Override
@@ -138,5 +138,12 @@ public final class CSCertificateOutputProviderDirectory
         )
       )
     );
+  }
+
+  @Override
+  public String toString()
+  {
+    return "[CSCertificateOutputProviderDirectory 0x%s]"
+      .formatted(Long.toUnsignedString(this.hashCode(), 16));
   }
 }

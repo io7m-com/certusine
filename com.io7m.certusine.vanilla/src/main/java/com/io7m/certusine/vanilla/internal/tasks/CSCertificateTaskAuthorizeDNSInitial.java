@@ -16,9 +16,10 @@
 
 package com.io7m.certusine.vanilla.internal.tasks;
 
+import com.io7m.certusine.api.CSFaultInjectionConfiguration;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
+import io.opentelemetry.api.trace.Span;
 import org.shredzone.acme4j.Authorization;
 import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.Status;
@@ -43,7 +44,7 @@ import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_
  */
 
 public final class CSCertificateTaskAuthorizeDNSInitial
-  extends CSCertificateTask
+  extends CSCertificateTaskAuthorizeDNS
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(CSCertificateTaskAuthorizeDNSInitial.class);
@@ -62,7 +63,7 @@ public final class CSCertificateTaskAuthorizeDNSInitial
     final CSCertificateTaskContext inContext,
     final Order inOrder)
   {
-    super(inContext);
+    super("AuthorizeDNSInitial", inContext);
     this.order = Objects.requireNonNull(inOrder, "order");
   }
 
@@ -76,6 +77,22 @@ public final class CSCertificateTaskAuthorizeDNSInitial
     LOG.info("checking if domain is authorized");
 
     try {
+
+      /*
+       * Do any required fault injection.
+       */
+
+      final var faultInjection =
+        context.options().faultInjection();
+
+      injectFaultCrash(faultInjection);
+
+      if (faultInjection.failDNSChallenge()) {
+        return context.failedPermanently(
+          new RuntimeException("InjectedFaultDNSFailure")
+        );
+      }
+
       final var domainNames =
         new HashMap<String, String>();
       final var authorizations =
@@ -83,29 +100,12 @@ public final class CSCertificateTaskAuthorizeDNSInitial
       final var authorizationsValid =
         new HashSet<Authorization>();
 
-      for (final var auth : this.order.getAuthorizations()) {
-        authorizations.add(auth);
-
-        if (auth.getStatus() == Status.VALID) {
-          LOG.debug("authorization is already valid");
-          authorizationsValid.add(auth);
-          continue;
-        }
-
-        final var entry =
-          this.startDomainAuthorization(auth);
-        domainNames.put(entry.getKey(), entry.getValue());
-
-        final var timeNow =
-          context.now().toInstant();
-        final var timeExpires =
-          auth.getExpires();
-
-        LOG.debug(
-          "authorization will expire in {}",
-          Duration.between(timeNow, timeExpires)
-        );
-      }
+      this.checkAuthorizationsValidity(
+        context,
+        domainNames,
+        authorizations,
+        authorizationsValid
+      );
 
       /*
        * If all the authorizations are already valid, we can jump straight
@@ -143,11 +143,88 @@ public final class CSCertificateTaskAuthorizeDNSInitial
           e
         );
       }
-      return new CSCertificateTaskFailedPermanently(e);
+      return context.failedPermanently(e);
+    }
+  }
+
+  private static void injectFaultCrash(
+    final CSFaultInjectionConfiguration faultInjection)
+  {
+    if (faultInjection.crashDNSChallenge()) {
+      Span.current().addEvent("InjectedFaultDNSCrash");
+      throw new RuntimeException("InjectedFaultDNSCrash");
+    }
+  }
+
+  private void checkAuthorizationsValidity(
+    final CSCertificateTaskContext context,
+    final HashMap<String, String> domainNames,
+    final HashSet<Authorization> authorizations,
+    final HashSet<Authorization> authorizationsValid)
+    throws CSCertificateTaskException, InterruptedException
+  {
+    final var span =
+      context.telemetry()
+        .tracer()
+        .spanBuilder("CheckAuthorizationsValidity")
+        .startSpan();
+
+    try (var ignored = span.makeCurrent()) {
+      for (final var auth : this.order.getAuthorizations()) {
+        this.checkAuthorizationValidity(
+          context,
+          domainNames,
+          authorizations,
+          authorizationsValid,
+          auth);
+      }
+    } finally {
+      span.end();
+    }
+  }
+
+  private void checkAuthorizationValidity(
+    final CSCertificateTaskContext context,
+    final HashMap<String, String> domainNames,
+    final HashSet<Authorization> authorizations,
+    final HashSet<Authorization> authorizationsValid,
+    final Authorization auth)
+    throws CSCertificateTaskException, InterruptedException
+  {
+    final var span =
+      context.telemetry()
+        .tracer()
+        .spanBuilder("CheckAuthorizationValidity")
+        .startSpan();
+
+    try (var ignored = span.makeCurrent()) {
+      authorizations.add(auth);
+
+      if (auth.getStatus() == Status.VALID) {
+        LOG.debug("authorization is already valid");
+        authorizationsValid.add(auth);
+        return;
+      }
+
+      final var entry = this.startDomainAuthorization(context, auth);
+      domainNames.put(entry.getKey(), entry.getValue());
+
+      final var timeNow =
+        context.now().toInstant();
+      final var timeExpires =
+        auth.getExpires();
+
+      LOG.debug(
+        "authorization will expire in {}",
+        Duration.between(timeNow, timeExpires)
+      );
+    } finally {
+      span.end();
     }
   }
 
   private Map.Entry<String, String> startDomainAuthorization(
+    final CSCertificateTaskContext context,
     final Authorization auth)
     throws CSCertificateTaskException, InterruptedException
   {
@@ -155,35 +232,68 @@ public final class CSCertificateTaskAuthorizeDNSInitial
       auth.getIdentifier()
         .getDomain();
 
-    LOG.debug("executing authorization");
+    final var span =
+      context.telemetry()
+        .tracer()
+        .spanBuilder("StartDomainChallenge")
+        .setAttribute("certusine.domain", domainName)
+        .startSpan();
 
-    final Dns01Challenge challenge = auth.findChallenge(Dns01Challenge.TYPE);
-    if (challenge == null) {
-      throw new CSCertificateTaskException(
-        this.context().strings().format(
-          "challengeTypeUnavailable",
-          Dns01Challenge.TYPE),
-        false
-      );
-    }
+    try (var ignored = span.makeCurrent()) {
+      LOG.debug("executing authorization");
 
-    final var recordName =
-      this.txtRecordNameToSet(domainName);
-    final var recordText =
-      challenge.getDigest();
-
-    try {
-      LOG.info("creating required DNS TXT records");
-      this.context()
-        .domain()
-        .dnsConfigurator()
-        .createTXTRecord(
-          recordName,
-          recordText
+      final Dns01Challenge challenge = auth.findChallenge(Dns01Challenge.TYPE);
+      if (challenge == null) {
+        throw new CSCertificateTaskException(
+          this.context().strings().format(
+            "challengeTypeUnavailable",
+            Dns01Challenge.TYPE),
+          false
         );
-    } catch (final IOException e) {
-      throw new CSCertificateTaskException(e, true);
+      }
+
+      final var recordName =
+        this.txtRecordNameToSet(domainName);
+      final var recordText =
+        injectFault(context, challenge.getDigest());
+
+      try {
+        LOG.info("creating required DNS TXT records");
+        this.context()
+          .domain()
+          .dnsConfigurator()
+          .createTXTRecord(
+            this.context().telemetry(),
+            recordName,
+            recordText
+          );
+      } catch (final IOException e) {
+        throw new CSCertificateTaskException(e, true);
+      }
+
+      return Map.entry(domainName, recordText);
+    } catch (final Exception e) {
+      span.recordException(e);
+      throw e;
+    } finally {
+      span.end();
     }
-    return Map.entry(domainName, recordText);
+  }
+
+  private static String injectFault(
+    final CSCertificateTaskContext context,
+    final String digest)
+  {
+    if (isFaultInjectingFailingDNSChallenges(context)) {
+      Span.current().addEvent("InjectedFaultDNSCorruption");
+      return new StringBuilder(digest).reverse().toString();
+    }
+    return digest;
+  }
+
+  private static boolean isFaultInjectingFailingDNSChallenges(
+    final CSCertificateTaskContext context)
+  {
+    return context.options().faultInjection().failDNSChallenge();
   }
 }

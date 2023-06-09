@@ -19,10 +19,6 @@ package com.io7m.certusine.tests;
 import com.io7m.certusine.api.CSCertificateName;
 import com.io7m.certusine.api.CSCertificateOutputData;
 import com.io7m.certusine.vanilla.internal.CSCertificateOutputDirectory;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMParser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,10 +28,9 @@ import java.nio.file.Path;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.security.spec.ECGenParameterSpec;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static com.io7m.certusine.api.CSTelemetryNoOp.noop;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -81,6 +76,7 @@ public final class CSCertificateOutputDirectoryTest
       new CSCertificateOutputDirectory("out", this.directory);
 
     output.write(
+      noop(),
       new CSCertificateOutputData(
         "example.com",
         new CSCertificateName("www"),

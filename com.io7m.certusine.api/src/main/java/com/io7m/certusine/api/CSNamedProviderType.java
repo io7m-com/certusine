@@ -17,6 +17,8 @@
 
 package com.io7m.certusine.api;
 
+import com.io7m.repetoir.core.RPServiceType;
+
 import java.util.Map;
 
 /**
@@ -24,18 +26,13 @@ import java.util.Map;
  */
 
 public interface CSNamedProviderType
+  extends RPServiceType
 {
   /**
    * @return The provider name
    */
 
   String name();
-
-  /**
-   * @return A human-readable description of the provider
-   */
-
-  String description();
 
   /**
    * @return A map describing the parameters

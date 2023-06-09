@@ -36,7 +36,7 @@ public final class CSCertificateTaskEnd extends CSCertificateTask
   public CSCertificateTaskEnd(
     final CSCertificateTaskContext inContext)
   {
-    super(inContext);
+    super("End", inContext);
   }
 
   @Override
@@ -46,5 +46,11 @@ public final class CSCertificateTaskEnd extends CSCertificateTask
       OptionalLong.empty(),
       Optional.empty()
     );
+  }
+
+  @Override
+  void executeOnTaskCompletelyFailed()
+  {
+
   }
 }

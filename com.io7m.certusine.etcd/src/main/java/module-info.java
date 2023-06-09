@@ -28,6 +28,8 @@ module com.io7m.certusine.etcd
 
   requires transitive com.io7m.certusine.api;
 
+  requires io.opentelemetry.context;
+  requires io.opentelemetry.api;
   requires com.fasterxml.jackson.annotation;
   requires com.fasterxml.jackson.core;
   requires com.fasterxml.jackson.databind;

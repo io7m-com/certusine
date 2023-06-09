@@ -18,6 +18,7 @@ package com.io7m.certusine.tests;
 
 import com.io7m.certusine.api.CSCertificateOutputData;
 import com.io7m.certusine.api.CSCertificateOutputType;
+import com.io7m.certusine.api.CSTelemetryServiceType;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -50,7 +51,9 @@ public final class CSFakeCertificateOutput implements CSCertificateOutputType
   }
 
   @Override
-  public void write(final CSCertificateOutputData outputData)
+  public void write(
+    final CSTelemetryServiceType telemetry,
+    final CSCertificateOutputData outputData)
     throws IOException
   {
     this.requests.add(outputData.domainName());

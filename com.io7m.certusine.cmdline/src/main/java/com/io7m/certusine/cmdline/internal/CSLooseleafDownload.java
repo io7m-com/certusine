@@ -16,118 +16,179 @@
 
 package com.io7m.certusine.cmdline.internal;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
 import com.io7m.certusine.api.CSCertificateName;
 import com.io7m.certusine.looseleaf.CSLLCredentials;
 import com.io7m.certusine.looseleaf.CSLLDownloader;
-import com.io7m.claypot.core.CLPAbstractCommand;
-import com.io7m.claypot.core.CLPCommandContextType;
+import com.io7m.quarrel.core.QCommandContextType;
+import com.io7m.quarrel.core.QCommandMetadata;
+import com.io7m.quarrel.core.QCommandStatus;
+import com.io7m.quarrel.core.QCommandType;
+import com.io7m.quarrel.core.QParameterNamed0N;
+import com.io7m.quarrel.core.QParameterNamed1;
+import com.io7m.quarrel.core.QParameterNamedType;
+import com.io7m.quarrel.core.QStringType.QConstant;
+import com.io7m.quarrel.ext.logback.QLogback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
+import static java.lang.Boolean.FALSE;
 
 /**
  * Download certificates from looseleaf databases.
  */
 
-@Parameters(commandDescription = "Download certificates from looseleaf databases.")
-public final class CSLooseleafDownload extends CLPAbstractCommand
+public final class CSLooseleafDownload implements QCommandType
 {
-  @Parameter(
-    names = "--endpoint",
-    description = "The target looseleaf endpoint base.",
-    required = true
-  )
-  private String endpoint;
+  private static final Logger LOG =
+    LoggerFactory.getLogger(CSLooseleafDownload.class);
 
-  @Parameter(
-    names = "--output-directory",
-    description = "The output directory.",
-    required = true
-  )
-  private Path outputDirectory;
+  private static final QParameterNamed1<String> ENDPOINT =
+    new QParameterNamed1<>(
+      "--endpoint",
+      List.of(),
+      new QConstant("The target looseleaf endpoint base."),
+      Optional.empty(),
+      String.class
+    );
 
-  @Parameter(
-    names = "--domain",
-    description = "The domain name.",
-    required = true
-  )
-  private String domain;
+  private static final QParameterNamed1<Path> OUTPUT_DIRECTORY =
+    new QParameterNamed1<>(
+      "--output-directory",
+      List.of(),
+      new QConstant("The output directory."),
+      Optional.empty(),
+      Path.class
+    );
 
-  @Parameter(
-    names = "--username",
-    description = "The user name.",
-    required = true
-  )
-  private String userName;
+  private static final QParameterNamed1<String> DOMAIN =
+    new QParameterNamed1<>(
+      "--domain",
+      List.of(),
+      new QConstant("The domain name."),
+      Optional.empty(),
+      String.class
+    );
 
-  @Parameter(
-    names = "--password",
-    description = "The password.",
-    required = true
-  )
-  private String password;
+  private static final QParameterNamed1<String> USERNAME =
+    new QParameterNamed1<>(
+      "--username",
+      List.of(),
+      new QConstant("The user name."),
+      Optional.empty(),
+      String.class
+    );
 
-  @Parameter(
-    names = "--certificate-name",
-    description = "The certificate name(s). May be specified multiple times.",
-    required = true
-  )
-  private List<String> certificateNames;
+  private static final QParameterNamed1<String> PASSWORD =
+    new QParameterNamed1<>(
+      "--password",
+      List.of(),
+      new QConstant("The password."),
+      Optional.empty(),
+      String.class
+    );
 
-  @Parameter(
-    names = "--only-once",
-    arity = 1,
-    description = "Download certificates once and then exit.",
-    required = false
-  )
-  private boolean onlyOnce;
+  private static final QParameterNamed0N<String> CERTIFICATE_NAME =
+    new QParameterNamed0N<>(
+      "--certificate-name",
+      List.of(),
+      new QConstant("The certificate name(s). May be specified multiple times."),
+      List.of(),
+      String.class
+    );
 
-  @Parameter(
-    names = "--schedule",
-    description = "Download certificates repeatedly, waiting this duration between attempts.",
-    required = false,
-    converter = CSDurationConverter.class
-  )
-  private Duration schedule = Duration.ofHours(1L);
+  private static final QParameterNamed1<Boolean> ONLY_ONCE =
+    new QParameterNamed1<>(
+      "--only-once",
+      List.of(),
+      new QConstant("Download certificates once and then exit."),
+      Optional.of(FALSE),
+      Boolean.class
+    );
+
+  private static final QParameterNamed1<Duration> SCHEDULE =
+    new QParameterNamed1<>(
+      "--schedule",
+      List.of(),
+      new QConstant(
+        "Download certificates repeatedly, waiting this duration between attempts."),
+      Optional.of(Duration.ofHours(1L)),
+      Duration.class
+    );
 
   private List<CSLLDownloader> downloaders;
+  private final QCommandMetadata metadata;
 
   /**
    * Construct a command.
-   *
-   * @param inContext The command context
    */
 
-  public CSLooseleafDownload(
-    final CLPCommandContextType inContext)
+  public CSLooseleafDownload()
   {
-    super(inContext);
+    this.metadata = new QCommandMetadata(
+      "looseleaf-download",
+      new QConstant("Download certificates from looseleaf databases."),
+      Optional.empty()
+    );
   }
 
   @Override
-  protected Status executeActual()
+  public List<QParameterNamedType<?>> onListNamedParameters()
+  {
+    return QLogback.plusParameters(
+      List.of(
+        CERTIFICATE_NAME,
+        DOMAIN,
+        ENDPOINT,
+        ONLY_ONCE,
+        OUTPUT_DIRECTORY,
+        PASSWORD,
+        SCHEDULE,
+        USERNAME
+      )
+    );
+  }
+
+  @Override
+  public QCommandStatus onExecute(
+    final QCommandContextType context)
     throws Exception
   {
-    this.outputDirectory =
-      this.outputDirectory.toAbsolutePath();
+    final var outputDirectory =
+      context.parameterValue(OUTPUT_DIRECTORY)
+        .toAbsolutePath();
+    final var endpoint =
+      context.parameterValue(ENDPOINT);
+    final var domain =
+      context.parameterValue(DOMAIN);
+    final var userName =
+      context.parameterValue(USERNAME);
+    final var password =
+      context.parameterValue(PASSWORD);
+    final var certificateNames =
+      context.parameterValues(CERTIFICATE_NAME);
+    final var schedule =
+      context.parameterValue(SCHEDULE);
+    final var onlyOnce =
+      context.parameterValue(ONLY_ONCE)
+        .booleanValue();
 
     this.downloaders =
-      new ArrayList<>(this.certificateNames.size());
+      new ArrayList<>(certificateNames.size());
 
-    for (final var certificateName : this.certificateNames) {
+    for (final var certificateName : certificateNames) {
       this.downloaders.add(
         CSLLDownloader.create(
-          this.outputDirectory,
-          this.endpoint,
-          new CSLLCredentials(this.userName, this.password),
-          this.domain,
+          outputDirectory,
+          endpoint,
+          new CSLLCredentials(userName, password),
+          domain,
           new CSCertificateName(certificateName)
         )
       );
@@ -135,18 +196,17 @@ public final class CSLooseleafDownload extends CLPAbstractCommand
 
     while (true) {
       for (final var downloader : this.downloaders) {
-        this.logger()
-          .info(
-            "downloading '{}' certificates from '{}'",
-            downloader.certificateName().value(),
-            this.endpoint
-          );
+        LOG.info(
+          "downloading '{}' certificates from '{}'",
+          downloader.certificateName().value(),
+          endpoint
+        );
 
         try {
           downloader.execute();
         } catch (final IOException e) {
-          this.logger().error("i/o error: ", e);
-          if (this.onlyOnce) {
+          LOG.error("i/o error: ", e);
+          if (onlyOnce) {
             throw e;
           }
         } catch (final InterruptedException e) {
@@ -154,23 +214,23 @@ public final class CSLooseleafDownload extends CLPAbstractCommand
         }
       }
 
-      if (this.onlyOnce) {
+      if (onlyOnce) {
         break;
       }
 
       try {
-        Thread.sleep(this.schedule.toMillis());
+        Thread.sleep(schedule.toMillis());
       } catch (final InterruptedException e) {
         Thread.currentThread().interrupt();
       }
     }
 
-    return SUCCESS;
+    return QCommandStatus.SUCCESS;
   }
 
   @Override
-  public String name()
+  public QCommandMetadata metadata()
   {
-    return "looseleaf-download";
+    return this.metadata;
   }
 }

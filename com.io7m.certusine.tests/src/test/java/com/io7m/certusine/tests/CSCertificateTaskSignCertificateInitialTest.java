@@ -21,17 +21,18 @@ import com.io7m.certusine.api.CSAccount;
 import com.io7m.certusine.api.CSCertificate;
 import com.io7m.certusine.api.CSCertificateName;
 import com.io7m.certusine.api.CSDomain;
+import com.io7m.certusine.api.CSFaultInjectionConfiguration;
 import com.io7m.certusine.api.CSOptions;
+import com.io7m.certusine.api.CSTelemetryNoOp;
 import com.io7m.certusine.certstore.api.CSCertificateStored;
 import com.io7m.certusine.vanilla.internal.CSStrings;
+import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTask;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskContext;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskSignCertificateInitial;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskSignCertificateSaveToOutputs;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskSignCertificateUpdate;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,7 +105,13 @@ public final class CSCertificateTaskSignCertificateInitialTest
     this.strings =
       new CSStrings(Locale.getDefault());
     this.options =
-      new CSOptions(this.file, Duration.ofSeconds(1L), Duration.ofDays(1L));
+      new CSOptions(
+        this.file,
+        Duration.ofSeconds(1L),
+        Duration.ofDays(1L),
+        Optional.empty(),
+        CSFaultInjectionConfiguration.disabled()
+      );
     this.dns =
       new CSFakeDNSConfigurator();
     this.output =
@@ -115,7 +122,10 @@ public final class CSCertificateTaskSignCertificateInitialTest
     this.account =
       new CSAccount(this.accountKeyPair, URI.create("http://localhost:20000"));
     this.certificate0 =
-      new CSCertificate(new CSCertificateName("www"), this.domainKeyPair, List.of("www"));
+      new CSCertificate(
+        new CSCertificateName("www"),
+        this.domainKeyPair,
+        List.of("www"));
 
     this.order =
       Mockito.mock(Order.class);
@@ -148,6 +158,8 @@ public final class CSCertificateTaskSignCertificateInitialTest
     final var context =
       new CSCertificateTaskContext(
         this.strings,
+        Mockito.mock(CSEventServiceType.class),
+        CSTelemetryNoOp.noop(),
         this.options,
         this.certificates,
         this.clock,
@@ -216,6 +228,8 @@ public final class CSCertificateTaskSignCertificateInitialTest
     final var context =
       new CSCertificateTaskContext(
         this.strings,
+        Mockito.mock(CSEventServiceType.class),
+        CSTelemetryNoOp.noop(),
         this.options,
         this.certificates,
         this.clock,
@@ -269,6 +283,8 @@ public final class CSCertificateTaskSignCertificateInitialTest
     final var context =
       new CSCertificateTaskContext(
         this.strings,
+        Mockito.mock(CSEventServiceType.class),
+        CSTelemetryNoOp.noop(),
         this.options,
         this.certificates,
         this.clock,
@@ -337,6 +353,8 @@ public final class CSCertificateTaskSignCertificateInitialTest
     final var context =
       new CSCertificateTaskContext(
         this.strings,
+        Mockito.mock(CSEventServiceType.class),
+        CSTelemetryNoOp.noop(),
         this.options,
         this.certificates,
         this.clock,

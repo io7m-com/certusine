@@ -31,6 +31,8 @@ import com.io7m.certusine.api.CSConfigurationParserType;
 import com.io7m.certusine.api.CSDNSConfiguratorProviderType;
 import com.io7m.certusine.api.CSDNSConfiguratorType;
 import com.io7m.certusine.api.CSDomain;
+import com.io7m.certusine.api.CSFaultInjectionConfiguration;
+import com.io7m.certusine.api.CSOpenTelemetryConfiguration;
 import com.io7m.certusine.api.CSOptions;
 import com.io7m.certusine.vanilla.internal.jaxb.Accounts;
 import com.io7m.certusine.vanilla.internal.jaxb.Certificate;
@@ -38,7 +40,10 @@ import com.io7m.certusine.vanilla.internal.jaxb.Certificates;
 import com.io7m.certusine.vanilla.internal.jaxb.Configuration;
 import com.io7m.certusine.vanilla.internal.jaxb.DNSConfigurators;
 import com.io7m.certusine.vanilla.internal.jaxb.Domains;
+import com.io7m.certusine.vanilla.internal.jaxb.FaultInjection;
 import com.io7m.certusine.vanilla.internal.jaxb.Host;
+import com.io7m.certusine.vanilla.internal.jaxb.OpenTelemetry;
+import com.io7m.certusine.vanilla.internal.jaxb.OpenTelemetryProtocol;
 import com.io7m.certusine.vanilla.internal.jaxb.Options;
 import com.io7m.certusine.vanilla.internal.jaxb.Outputs;
 import com.io7m.certusine.vanilla.internal.jaxb.Parameters;
@@ -80,9 +85,14 @@ import java.util.function.Consumer;
 
 import static com.io7m.anethum.common.ParseSeverity.PARSE_ERROR;
 import static com.io7m.anethum.common.ParseSeverity.PARSE_WARNING;
+import static com.io7m.certusine.api.CSOpenTelemetryConfiguration.CSLogs;
+import static com.io7m.certusine.api.CSOpenTelemetryConfiguration.CSMetrics;
+import static com.io7m.certusine.api.CSOpenTelemetryConfiguration.CSOTLPProtocol;
+import static com.io7m.certusine.api.CSOpenTelemetryConfiguration.CSTraces;
 import static jakarta.xml.bind.ValidationEvent.ERROR;
 import static jakarta.xml.bind.ValidationEvent.FATAL_ERROR;
 import static jakarta.xml.bind.ValidationEvent.WARNING;
+import static java.lang.Boolean.FALSE;
 
 /**
  * A certificate pipeline parser.
@@ -201,6 +211,7 @@ public final class CSConfigurationParser
             );
           }
           case ERROR, FATAL_ERROR -> {
+            this.failed = true;
             this.publishError(
               "error-xml-validation",
               locatorLexical(locator),
@@ -216,9 +227,17 @@ public final class CSConfigurationParser
       final var streamSource =
         new StreamSource(this.stream, this.source.toString());
 
-      return this.processConfiguration(
-        (Configuration) unmarshaller.unmarshal(streamSource)
-      );
+      final var rawConfiguration =
+        (Configuration) unmarshaller.unmarshal(streamSource);
+
+      if (this.failed) {
+        throw new ParseException(
+          this.strings.format("parseFailed"),
+          List.copyOf(this.statusValues)
+        );
+      }
+
+      return this.processConfiguration(rawConfiguration);
     } catch (final JAXBException e) {
       LOG.debug("jaxb exception: ", e);
 
@@ -266,7 +285,11 @@ public final class CSConfigurationParser
     final Configuration configuration)
     throws ParseException
   {
-    this.buildOptions(configuration.getOptions());
+    this.buildOptions(
+      configuration.getOptions(),
+      configuration.getOpenTelemetry(),
+      configuration.getFaultInjection()
+    );
     this.buildOutputs(configuration.getOutputs());
     this.buildDNSConfigurators(configuration.getDNSConfigurators());
     this.buildAccounts(configuration.getAccounts());
@@ -408,13 +431,17 @@ public final class CSConfigurationParser
   }
 
   private void buildOptions(
-    final Options optionsRaw)
+    final Options optionsRaw,
+    final OpenTelemetry openTelemetry,
+    final FaultInjection faultInjection)
   {
     try {
       this.options = new CSOptions(
         this.baseDirectory.resolve(optionsRaw.getCertificateStore()),
         Duration.parse(optionsRaw.getDNSWaitTime().toString()),
-        Duration.parse(optionsRaw.getCertificateExpirationThreshold().toString())
+        Duration.parse(optionsRaw.getCertificateExpirationThreshold().toString()),
+        processOpenTelemetry(openTelemetry),
+        processFaultInjection(faultInjection)
       );
     } catch (final DateTimeParseException e) {
       this.publishError(
@@ -429,12 +456,71 @@ public final class CSConfigurationParser
     }
   }
 
+  private static CSFaultInjectionConfiguration processFaultInjection(
+    final FaultInjection faultInjection)
+  {
+    if (faultInjection == null) {
+      return CSFaultInjectionConfiguration.disabled();
+    }
+
+    final var failTasks =
+      Optional.ofNullable(faultInjection.isFailTasks())
+        .orElse(FALSE)
+        .booleanValue();
+
+    final var failDNS =
+      Optional.ofNullable(faultInjection.isFailDNSChallenge())
+        .orElse(FALSE)
+        .booleanValue();
+
+    final var failSigning =
+      Optional.ofNullable(faultInjection.isFailSigningCertificates())
+        .orElse(FALSE)
+        .booleanValue();
+
+    final var crashTasks =
+      Optional.ofNullable(faultInjection.isCrashTasks())
+        .orElse(FALSE)
+        .booleanValue();
+
+    final var crashDNS =
+      Optional.ofNullable(faultInjection.isCrashDNSChallenge())
+        .orElse(FALSE)
+        .booleanValue();
+
+    final var crashSigning =
+      Optional.ofNullable(faultInjection.isCrashSigningCertificates())
+        .orElse(FALSE)
+        .booleanValue();
+
+    return new CSFaultInjectionConfiguration(
+      failTasks,
+      failDNS,
+      failSigning,
+      crashTasks,
+      crashDNS,
+      crashSigning
+    );
+  }
+
   private void buildDNSConfigurators(
     final DNSConfigurators dnsConfigurators)
   {
     for (final var dnsConfigurator : dnsConfigurators.getDNSConfigurator()) {
       final var provider =
         this.dnsProviders.get(dnsConfigurator.getType());
+
+      if (provider == null) {
+        this.publishError(
+          "error-unrecognized-provider",
+          LexicalPositions.zero(),
+          this.strings.format(
+            "errorDNSProviderNonexistent",
+            dnsConfigurator.getType(),
+            this.dnsProviders.keySet())
+        );
+        continue;
+      }
 
       final var parameters =
         this.toConfigurationParameters(dnsConfigurator.getParameters());
@@ -469,6 +555,19 @@ public final class CSConfigurationParser
     for (final var output : outputsRaw.getOutput()) {
       final var provider =
         this.outputProviders.get(output.getType());
+
+      if (provider == null) {
+        this.publishError(
+          "error-unrecognized-provider",
+          LexicalPositions.zero(),
+          this.strings.format(
+            "errorOutputProviderNonexistent",
+            output.getType(),
+            this.outputProviders.keySet())
+        );
+        continue;
+      }
+
       final var parameters =
         this.toConfigurationParameters(output.getParameters());
 
@@ -580,10 +679,10 @@ public final class CSConfigurationParser
     try (var reader = Files.newBufferedReader(privateFile)) {
       try (var parser = new PEMParser(reader)) {
         final var object = parser.readObject();
-        if (object instanceof PEMKeyPair keyPair) {
+        if (object instanceof final PEMKeyPair keyPair) {
           return this.keyConverter.getPrivateKey(keyPair.getPrivateKeyInfo());
         }
-        if (object instanceof PrivateKeyInfo info) {
+        if (object instanceof final PrivateKeyInfo info) {
           return this.keyConverter.getPrivateKey(info);
         }
 
@@ -613,10 +712,10 @@ public final class CSConfigurationParser
     try (var reader = Files.newBufferedReader(publicFile)) {
       try (var parser = new PEMParser(reader)) {
         final var object = parser.readObject();
-        if (object instanceof SubjectPublicKeyInfo info) {
+        if (object instanceof final SubjectPublicKeyInfo info) {
           return this.keyConverter.getPublicKey(info);
         }
-        if (object instanceof X509CertificateHolder certificate) {
+        if (object instanceof final X509CertificateHolder certificate) {
           return this.keyConverter.getPublicKey(certificate.getSubjectPublicKeyInfo());
         }
 
@@ -636,5 +735,52 @@ public final class CSConfigurationParser
           e.getClass().getSimpleName())
       );
     }
+  }
+
+  private static Optional<CSOpenTelemetryConfiguration> processOpenTelemetry(
+    final OpenTelemetry openTelemetry)
+  {
+    if (openTelemetry == null) {
+      return Optional.empty();
+    }
+
+    final var metrics =
+      Optional.ofNullable(openTelemetry.getMetrics())
+        .map(m -> new CSMetrics(
+          URI.create(m.getEndpoint()),
+          processProtocol(m.getProtocol())
+        ));
+
+    final var traces =
+      Optional.ofNullable(openTelemetry.getTraces())
+        .map(m -> new CSTraces(
+          URI.create(m.getEndpoint()),
+          processProtocol(m.getProtocol())
+        ));
+
+    final var logs =
+      Optional.ofNullable(openTelemetry.getLogs())
+        .map(m -> new CSLogs(
+          URI.create(m.getEndpoint()),
+          processProtocol(m.getProtocol())
+        ));
+
+    return Optional.of(
+      new CSOpenTelemetryConfiguration(
+        openTelemetry.getLogicalServiceName(),
+        logs,
+        metrics,
+        traces
+      )
+    );
+  }
+
+  private static CSOTLPProtocol processProtocol(
+    final OpenTelemetryProtocol protocol)
+  {
+    return switch (protocol) {
+      case GRPC -> CSOTLPProtocol.GRPC;
+      case HTTP -> CSOTLPProtocol.HTTP;
+    };
   }
 }

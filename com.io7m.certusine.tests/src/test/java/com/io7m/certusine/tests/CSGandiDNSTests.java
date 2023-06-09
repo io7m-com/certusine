@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static com.io7m.certusine.api.CSTelemetryNoOp.noop;
 import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -98,7 +99,7 @@ public final class CSGandiDNSTests
       .withStatus(200)
       .withContentLength(0L);
 
-    v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+    v.createTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
 
     final var received = new ArrayList<>(this.webServer.requestsReceived());
     {
@@ -149,7 +150,7 @@ public final class CSGandiDNSTests
       .withStatus(200)
       .withContentLength(0L);
 
-    v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+    v.createTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
 
     final var received = new ArrayList<>(this.webServer.requestsReceived());
     {
@@ -207,7 +208,7 @@ public final class CSGandiDNSTests
       .withStatus(200)
       .withContentLength(0L);
 
-    v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+    v.createTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
 
     final var received = new ArrayList<>(this.webServer.requestsReceived());
     {
@@ -265,7 +266,7 @@ public final class CSGandiDNSTests
       .withStatus(200)
       .withContentLength(0L);
 
-    v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+    v.createTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
 
     final var received = new ArrayList<>(this.webServer.requestsReceived());
     {
@@ -311,7 +312,7 @@ public final class CSGandiDNSTests
         .withFixedText("");
 
       assertThrows(IOException.class, () -> {
-        v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+        v.createTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
       });
     }
   }
@@ -399,7 +400,7 @@ public final class CSGandiDNSTests
       .withStatus(200)
       .withContentLength(0L);
 
-    v.deleteTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+    v.deleteTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
 
     final var received = new ArrayList<>(this.webServer.requestsReceived());
     {
@@ -445,7 +446,7 @@ public final class CSGandiDNSTests
       .withStatus(200)
       .withContentLength(0L);
 
-    v.deleteTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+    v.deleteTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
 
     final var received = new ArrayList<>(this.webServer.requestsReceived());
     {
@@ -498,7 +499,7 @@ public final class CSGandiDNSTests
       .withStatus(200)
       .withContentLength(0L);
 
-    v.deleteTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+    v.deleteTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
 
     final var received = new ArrayList<>(this.webServer.requestsReceived());
     {
@@ -557,7 +558,7 @@ public final class CSGandiDNSTests
       .withStatus(200)
       .withContentLength(0L);
 
-    v.deleteTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+    v.deleteTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
 
     final var received = new ArrayList<>(this.webServer.requestsReceived());
     {

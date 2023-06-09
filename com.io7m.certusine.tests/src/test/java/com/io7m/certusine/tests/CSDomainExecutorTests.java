@@ -20,12 +20,16 @@ import com.io7m.certusine.api.CSAccount;
 import com.io7m.certusine.api.CSCertificate;
 import com.io7m.certusine.api.CSCertificateName;
 import com.io7m.certusine.api.CSDomain;
+import com.io7m.certusine.api.CSFaultInjectionConfiguration;
 import com.io7m.certusine.api.CSOptions;
+import com.io7m.certusine.api.CSTelemetryNoOp;
 import com.io7m.certusine.vanilla.internal.CSDomainExecutor;
 import com.io7m.certusine.vanilla.internal.CSStrings;
+import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.shredzone.acme4j.Session;
 
 import java.net.URI;
@@ -39,6 +43,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -157,11 +162,15 @@ public final class CSDomainExecutorTests
 
     final var executor =
       new CSDomainExecutor(
-        this.strings,
+        new CSStrings(Locale.ROOT),
+        CSTelemetryNoOp.noop(),
+        Mockito.mock(CSEventServiceType.class),
         new CSOptions(
           this.file,
           Duration.ofSeconds(1L),
-          Duration.ofDays(1L)
+          Duration.ofDays(1L),
+          Optional.empty(),
+          CSFaultInjectionConfiguration.disabled()
         ),
         domain,
         this.clock,

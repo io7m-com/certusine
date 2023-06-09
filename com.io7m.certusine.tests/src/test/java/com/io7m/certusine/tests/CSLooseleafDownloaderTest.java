@@ -45,6 +45,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+import static com.io7m.certusine.api.CSTelemetryNoOp.noop;
 import static com.io7m.looseleaf.server.api.LLServerAction.READ;
 import static com.io7m.looseleaf.server.api.LLServerAction.WRITE;
 import static java.util.Map.entry;
@@ -134,7 +135,9 @@ public final class CSLooseleafDownloaderTest
         )
       );
 
-    output.write(new CSCertificateOutputData(
+    output.write(
+      noop(),
+      new CSCertificateOutputData(
       "example.com",
       new CSCertificateName("www"),
       "PUB",
@@ -186,7 +189,9 @@ public final class CSLooseleafDownloaderTest
         )
       );
 
-    output.write(new CSCertificateOutputData(
+    output.write(
+      noop(),
+      new CSCertificateOutputData(
       "example.com",
       new CSCertificateName("www"),
       "PUB",

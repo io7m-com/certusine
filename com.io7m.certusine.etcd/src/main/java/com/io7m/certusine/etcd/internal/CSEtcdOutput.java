@@ -18,6 +18,7 @@ package com.io7m.certusine.etcd.internal;
 
 import com.io7m.certusine.api.CSCertificateOutputData;
 import com.io7m.certusine.api.CSCertificateOutputType;
+import com.io7m.certusine.api.CSTelemetryServiceType;
 import com.io7m.certusine.etcd.internal.dto.CSEMessageType.CSEAuthenticateResponse;
 import com.io7m.certusine.etcd.internal.dto.CSEMessageType.CSEError;
 import org.slf4j.Logger;
@@ -108,16 +109,31 @@ public final class CSEtcdOutput
 
   @Override
   public void write(
+    final CSTelemetryServiceType telemetry,
     final CSCertificateOutputData outputData)
     throws IOException, InterruptedException
   {
+    Objects.requireNonNull(telemetry, "telemetry");
     Objects.requireNonNull(outputData, "outputData");
 
-    if (this.credentials.isPresent()) {
-      this.authenticate(this.credentials.get());
-    }
+    final var span =
+      telemetry.tracer()
+        .spanBuilder("WriteEtcd")
+        .setAttribute("certusine.target", this.endpoint)
+        .startSpan();
 
-    this.sendData(outputData);
+    try (var ignored = span.makeCurrent()) {
+      if (this.credentials.isPresent()) {
+        this.authenticate(this.credentials.get());
+      }
+
+      this.sendData(outputData);
+    } catch (final Exception e) {
+      span.recordException(e);
+      throw e;
+    } finally {
+      span.end();
+    }
   }
 
   private void sendData(

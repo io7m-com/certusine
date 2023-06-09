@@ -19,10 +19,8 @@ package com.io7m.certusine.tests;
 
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Lookup;
-import org.xbill.DNS.Name;
 import org.xbill.DNS.TextParseException;
 import org.xbill.DNS.Type;
-import org.xbill.DNS.lookup.LookupSession;
 
 public final class CSDNSDemo
 {

@@ -33,6 +33,7 @@ public interface CSDNSConfiguratorProviderType
    * @throws CSConfigurationException On configuration errors
    */
 
-  CSDNSConfiguratorType create(CSConfigurationParameters parameters)
+  CSDNSConfiguratorType create(
+    CSConfigurationParameters parameters)
     throws CSConfigurationException;
 }

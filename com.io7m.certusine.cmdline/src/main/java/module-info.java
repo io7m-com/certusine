@@ -20,16 +20,17 @@
 
 module com.io7m.certusine.cmdline
 {
-  requires ch.qos.logback.classic;
-  requires ch.qos.logback.core;
   requires com.io7m.certusine.api;
   requires com.io7m.certusine.etcd;
   requires com.io7m.certusine.looseleaf;
   requires com.io7m.certusine.vanilla;
   requires com.io7m.certusine.vultr;
-  requires com.io7m.claypot.core;
+
+  requires ch.qos.logback.classic;
+  requires ch.qos.logback.core;
   requires com.io7m.junreachable.core;
-  requires jcommander;
+  requires com.io7m.quarrel.core;
+  requires com.io7m.quarrel.ext.logback;
   requires org.bouncycastle.pkix;
   requires org.bouncycastle.provider;
   requires org.slf4j;
@@ -37,9 +38,6 @@ module com.io7m.certusine.cmdline
   uses com.io7m.certusine.certstore.api.CSCertificateStoreFactoryType;
   uses com.io7m.certusine.api.CSDNSConfiguratorProviderType;
   uses com.io7m.certusine.api.CSCertificateOutputProviderType;
-
-  opens com.io7m.certusine.cmdline.internal
-    to jcommander;
 
   exports com.io7m.certusine.cmdline.internal
     to com.io7m.certusine.documentation;

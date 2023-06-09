@@ -129,7 +129,7 @@ public final class CSEtcdOutputProvider
   @Override
   public String name()
   {
-    return "etcd";
+    return "Etcd";
   }
 
   @Override
@@ -170,5 +170,12 @@ public final class CSEtcdOutputProvider
         )
       )
     );
+  }
+
+  @Override
+  public String toString()
+  {
+    return "[CSEtcdOutputProvider 0x%s]"
+      .formatted(Long.toUnsignedString(this.hashCode(), 16));
   }
 }

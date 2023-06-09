@@ -3,17 +3,17 @@
 <Section xmlns="urn:com.io7m.structural:8:0"
          xmlns:xi="http://www.w3.org/2001/XInclude"
          id="8a497644-1fa3-46e9-afb7-61055245c1f8"
-         title="etcd">
+         title="Etcd">
 
   <Subsection title="Name">
     <Paragraph>
-      <Term type="package">etcd</Term> - Write certificates to an etcd server
+      <Term type="package">Etcd</Term> - Write certificates to an etcd server
     </Paragraph>
   </Subsection>
 
   <Subsection title="Description">
     <Paragraph>
-      The <Term type="package">etcd</Term> output writes certificates to an external
+      The <Term type="package">Etcd</Term> output writes certificates to an external
       <LinkExternal target="https://etcd.io/">etcd</LinkExternal>
       server. For a given domain name <Term type="expression">d</Term> and certificate name
       <Term type="expression">c</Term>, certificates are written to the following database keys:
@@ -56,7 +56,7 @@
   <Subsection title="Example">
     <FormalItem title="Example Configuration">
       <Verbatim><![CDATA[
-<Output Type="etcd" Name="an-example-etcd-output">
+<Output Type="Etcd" Name="an-example-etcd-output">
   <Parameters>
     <Parameter Name="endpoint" Value="http://etcd.example.com:2379/"/>
     <Parameter Name="username" Value="grouch"/>

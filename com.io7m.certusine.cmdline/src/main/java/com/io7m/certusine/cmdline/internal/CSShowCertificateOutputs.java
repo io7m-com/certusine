@@ -17,52 +17,67 @@
 
 package com.io7m.certusine.cmdline.internal;
 
-import com.beust.jcommander.Parameters;
 import com.io7m.certusine.api.CSCertificateOutputProviderType;
-import com.io7m.claypot.core.CLPAbstractCommand;
-import com.io7m.claypot.core.CLPCommandContextType;
+import com.io7m.quarrel.core.QCommandContextType;
+import com.io7m.quarrel.core.QCommandMetadata;
+import com.io7m.quarrel.core.QCommandStatus;
+import com.io7m.quarrel.core.QCommandType;
+import com.io7m.quarrel.core.QParameterNamedType;
+import com.io7m.quarrel.core.QStringType.QConstant;
+import com.io7m.quarrel.ext.logback.QLogback;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.ServiceLoader;
-
-import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
 /**
  * Show supported certificate outputs.
  */
 
-@Parameters(commandDescription = "Show supported certificate outputs.")
-public final class CSShowCertificateOutputs extends CLPAbstractCommand
+public final class CSShowCertificateOutputs implements QCommandType
 {
+  private final QCommandMetadata metadata;
+
   /**
    * Construct a command.
-   *
-   * @param inContext The command context
    */
 
-  public CSShowCertificateOutputs(
-    final CLPCommandContextType inContext)
+  public CSShowCertificateOutputs()
   {
-    super(inContext);
+    this.metadata = new QCommandMetadata(
+      "show-certificate-outputs",
+      new QConstant("Show supported certificate outputs."),
+      Optional.empty()
+    );
   }
 
   @Override
-  protected Status executeActual()
+  public List<QParameterNamedType<?>> onListNamedParameters()
+  {
+    return QLogback.parameters();
+  }
+
+  @Override
+  public QCommandStatus onExecute(
+    final QCommandContextType context)
   {
     final var iter =
       ServiceLoader.load(CSCertificateOutputProviderType.class)
         .iterator();
 
+    final var output = context.output();
     while (iter.hasNext()) {
       final var dns = iter.next();
-      System.out.printf("%s : %s%n", dns.name(), dns.description());
+      output.printf("%s : %s%n", dns.name(), dns.description());
     }
 
-    return SUCCESS;
+    output.flush();
+    return QCommandStatus.SUCCESS;
   }
 
   @Override
-  public String name()
+  public QCommandMetadata metadata()
   {
-    return "show-certificate-outputs";
+    return this.metadata;
   }
 }

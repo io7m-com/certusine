@@ -21,13 +21,16 @@ import com.io7m.certusine.api.CSAccount;
 import com.io7m.certusine.api.CSCertificate;
 import com.io7m.certusine.api.CSCertificateName;
 import com.io7m.certusine.api.CSDomain;
+import com.io7m.certusine.api.CSFaultInjectionConfiguration;
 import com.io7m.certusine.api.CSOptions;
+import com.io7m.certusine.api.CSTelemetryNoOp;
+import com.io7m.certusine.vanilla.internal.CSStrings;
+import com.io7m.certusine.vanilla.internal.dns.CSDNSQueriesFactoryDJ;
+import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskAuthorizeDNSUpdateChallenges;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskContext;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskInProgress;
-import com.io7m.certusine.vanilla.internal.dns.CSDNSQueriesFactoryDJ;
-import com.io7m.certusine.vanilla.internal.CSStrings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -49,6 +52,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
 import static java.util.Map.entry;
@@ -103,7 +107,13 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallengesTest
     this.strings =
       new CSStrings(Locale.getDefault());
     this.options =
-      new CSOptions(this.file, Duration.ofSeconds(1L), Duration.ofDays(1L));
+      new CSOptions(
+        this.file,
+        Duration.ofSeconds(1L),
+        Duration.ofDays(1L),
+        Optional.empty(),
+        CSFaultInjectionConfiguration.disabled()
+      );
     this.dns =
       new CSFakeDNSConfigurator();
     this.output =
@@ -166,6 +176,8 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallengesTest
     final var context =
       new CSCertificateTaskContext(
         this.strings,
+        Mockito.mock(CSEventServiceType.class),
+        CSTelemetryNoOp.noop(),
         this.options,
         this.certificates,
         this.clock,
@@ -220,6 +232,8 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallengesTest
     final var context =
       new CSCertificateTaskContext(
         this.strings,
+        Mockito.mock(CSEventServiceType.class),
+        CSTelemetryNoOp.noop(),
         this.options,
         this.certificates,
         this.clock,

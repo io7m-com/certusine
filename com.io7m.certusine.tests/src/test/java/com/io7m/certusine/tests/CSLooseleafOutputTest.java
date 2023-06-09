@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.io7m.certusine.api.CSTelemetryNoOp.noop;
 import static com.io7m.looseleaf.server.api.LLServerAction.READ;
 import static com.io7m.looseleaf.server.api.LLServerAction.WRITE;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -166,14 +167,16 @@ public final class CSLooseleafOutputTest
         )
       );
 
-    output.write(new CSCertificateOutputData(
-      "example.com",
-      new CSCertificateName("www"),
-      "PUB",
-      "PRI",
-      "CERT",
-      "CERTFULL"
-    ));
+    output.write(
+      noop(),
+      new CSCertificateOutputData(
+        "example.com",
+        new CSCertificateName("www"),
+        "PUB",
+        "PRI",
+        "CERT",
+        "CERTFULL"
+      ));
 
     assertEquals("PUB", get("/certificates/example.com/www/public_key"));
     assertEquals("PRI", get("/certificates/example.com/www/private_key"));
@@ -203,14 +206,16 @@ public final class CSLooseleafOutputTest
       );
 
     final var ex = assertThrows(IOException.class, () -> {
-      output.write(new CSCertificateOutputData(
-        "example.com",
-        new CSCertificateName("www"),
-        "PUB",
-        "PRI",
-        "CERT",
-        "CERTFULL"
-      ));
+      output.write(
+        noop(),
+        new CSCertificateOutputData(
+          "example.com",
+          new CSCertificateName("www"),
+          "PUB",
+          "PRI",
+          "CERT",
+          "CERTFULL"
+        ));
     });
     assertEquals("Server returned an error status: 401", ex.getMessage());
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2023 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,30 +15,37 @@
  */
 
 
-package com.io7m.certusine.cmdline.internal;
+package com.io7m.certusine.vanilla.internal.events;
 
-import com.beust.jcommander.IStringConverter;
-
-import java.time.Duration;
+import java.util.Map;
 
 /**
- * A converter to produce {@link Duration} values from text.
+ * The base type of significant application events.
  */
 
-public final class CSDurationConverter implements IStringConverter<Duration>
+public sealed interface CSEventType
+  permits CSEventCertificateDNSChallengeFailed,
+  CSEventCertificateRenewalFailed,
+  CSEventCertificateRenewalSucceeded,
+  CSEventCertificateSigningFailed,
+  CSEventCertificateStoreFailed,
+  CSEventCertificateStored
 {
   /**
-   * A converter to produce {@link Duration} values from text.
+   * @return The event message
    */
 
-  public CSDurationConverter()
-  {
+  String message();
 
-  }
+  /**
+   * @return {@code true} if the event indicates that an operation failed
+   */
 
-  @Override
-  public Duration convert(final String s)
-  {
-    return Duration.parse(s);
-  }
+  boolean isFailure();
+
+  /**
+   * @return The event attributes for logging purposes
+   */
+
+  Map<String, String> attributes();
 }

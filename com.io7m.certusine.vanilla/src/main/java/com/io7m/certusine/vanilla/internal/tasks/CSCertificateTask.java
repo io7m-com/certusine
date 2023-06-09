@@ -18,8 +18,13 @@
 package com.io7m.certusine.vanilla.internal.tasks;
 
 import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameAbsolute;
+import com.io7m.certusine.api.CSFaultInjectionConfiguration;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
 import org.slf4j.MDC;
 
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -29,12 +34,17 @@ import java.util.Objects;
 public abstract class CSCertificateTask
 {
   private final CSCertificateTaskContext context;
+  private final String name;
   private int retryAttempts;
 
   protected CSCertificateTask(
+    final String inName,
     final CSCertificateTaskContext inContext)
   {
-    this.context = Objects.requireNonNull(inContext, "context");
+    this.name =
+      Objects.requireNonNull(inName, "inName");
+    this.context =
+      Objects.requireNonNull(inContext, "context");
     this.retryAttempts = 1;
   }
 
@@ -47,6 +57,13 @@ public abstract class CSCertificateTask
     throws InterruptedException;
 
   /**
+   * The task has completely failed. Either a previous attempt failed
+   * permanently, or the task ran out of retires.
+   */
+
+  abstract void executeOnTaskCompletelyFailed();
+
+  /**
    * Execute the task, tracking the number of retries on failure.
    *
    * @return The task result
@@ -57,31 +74,88 @@ public abstract class CSCertificateTask
   public final CSCertificateTaskStatusType execute()
     throws InterruptedException
   {
-    try {
+    final var span =
+      this.context.telemetry()
+        .tracer()
+        .spanBuilder(this.name)
+        .setAttribute("certusine.attempt", this.retryAttempts)
+        .setAttribute("certusine.attemptMax", this.context.retryAttemptsMax())
+        .startSpan();
+
+    try (var ignored = span.makeCurrent()) {
       MDC.put("domain", this.context().domain().domain());
       MDC.put("attempt", String.valueOf(this.retryAttempts));
       MDC.put("attemptMax", String.valueOf(this.context.retryAttemptsMax()));
 
+      /*
+       * Do any requested fault injection.
+       */
+
+      final var faultInjection =
+        this.context.options()
+          .faultInjection();
+
+      injectCrash(faultInjection);
+
+      if (faultInjection.failTasks()) {
+        Span.current().addEvent("InjectedFaultTaskFail");
+        return this.onCompletelyFailed(
+          span,
+          new CSCertificateTaskFailedPermanently(
+            new IOException("InjectedFaultTaskFail")
+          ));
+      }
+
       if (this.context.retryAttemptsExhausted(this.retryAttempts)) {
-        return new CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently(
-          new CSCertificateTaskException(
-            this.context().strings().format(
-              "errorExceededRetries",
-              Integer.valueOf(this.context.retryAttemptsMax())),
-            false
-          )
-        );
+        return this.onCompletelyFailed(
+          span,
+          new CSCertificateTaskFailedPermanently(
+            new CSCertificateTaskException(
+              this.context().strings().format(
+                "errorExceededRetries",
+                Integer.valueOf(this.context.retryAttemptsMax())),
+              false
+            )
+          ));
       }
 
       final var result = this.executeActual();
       if (result.isFailure()) {
+        if (result instanceof CSCertificateTaskFailedPermanently) {
+          return this.onCompletelyFailed(span, result);
+        }
         ++this.retryAttempts;
+      } else {
+        span.setStatus(StatusCode.OK);
       }
       return result;
+    } catch (final Exception e) {
+      span.setStatus(StatusCode.ERROR);
+      span.recordException(e);
+      return this.context.failedPermanently(e);
     } finally {
       MDC.remove("domain");
       MDC.remove("attempt");
       MDC.remove("attemptMax");
+      span.end();
+    }
+  }
+
+  private CSCertificateTaskStatusType onCompletelyFailed(
+    final Span span,
+    final CSCertificateTaskStatusType result)
+  {
+    span.setStatus(StatusCode.ERROR);
+    this.executeOnTaskCompletelyFailed();
+    return result;
+  }
+
+  private static void injectCrash(
+    final CSFaultInjectionConfiguration faultInjection)
+  {
+    if (faultInjection.crashTasks()) {
+      Span.current().addEvent("InjectedFaultTaskCrash");
+      throw new RuntimeException("Injected I/O exception!");
     }
   }
 
