@@ -91,6 +91,15 @@ public final class CSEventService implements CSEventServiceType
     return new CSEventService(telemetry);
   }
 
+  /**
+   * @return The event service logger name
+   */
+
+  public static String loggerName()
+  {
+    return LOG.getName();
+  }
+
   @Override
   public void emit(
     final CSEventType event)
