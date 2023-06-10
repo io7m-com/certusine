@@ -87,6 +87,10 @@
           </Row>
         </Table>
       </FormalItem>
+      <Paragraph>
+        The package <Term type="term">may</Term> produce other metrics, however these are undocumented and
+        should not be relied upon.
+      </Paragraph>
     </Subsection>
     <Subsection title="Alerting Rules">
       <Subsection title="PromQL">
