@@ -19,11 +19,9 @@ package com.io7m.certusine.cmdline;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.core.LayoutBase;
-import com.io7m.certusine.vanilla.CSServices;
 import org.slf4j.MDC;
 
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * A dynamic logging pattern based on MDC values.
@@ -64,12 +62,6 @@ public final class CSLoggingPatternLayout extends LayoutBase<ILoggingEvent>
       s.append(MDC.get("attemptMax"));
       s.append(')');
       s.append(' ');
-    }
-
-    if (Objects.equals(
-      event.getLoggerName(),
-      CSServices.eventServiceLoggerName())) {
-      s.append("[event] ");
     }
 
     s.append(event.getFormattedMessage());

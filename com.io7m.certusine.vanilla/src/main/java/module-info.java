@@ -50,6 +50,7 @@ module com.io7m.certusine.vanilla
   requires io.opentelemetry.context;
   requires io.opentelemetry.exporter.otlp;
   requires io.opentelemetry.sdk.common;
+  requires io.opentelemetry.sdk.logs;
   requires io.opentelemetry.sdk.metrics;
   requires io.opentelemetry.sdk.trace;
   requires io.opentelemetry.sdk;
@@ -86,4 +87,6 @@ module com.io7m.certusine.vanilla
 
   opens com.io7m.certusine.vanilla to
     com.io7m.jxtrand.vanilla;
+  exports com.io7m.certusine.vanilla.internal.telemetry to com.io7m.certusine.tests;
+  opens com.io7m.certusine.vanilla.internal.telemetry to com.io7m.jxtrand.vanilla;
 }

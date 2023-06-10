@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,35 +14,8 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.certusine.api;
-
-import com.io7m.repetoir.core.RPServiceType;
-import io.opentelemetry.api.logs.Logger;
-import io.opentelemetry.api.metrics.Meter;
-import io.opentelemetry.api.trace.Tracer;
-
 /**
- * The type of server telemetry services.
+ * ACME client (Vanilla implementation [telemetry])
  */
 
-public interface CSTelemetryServiceType
-  extends RPServiceType
-{
-  /**
-   * @return The main tracer
-   */
-
-  Tracer tracer();
-
-  /**
-   * @return The main meter
-   */
-
-  Meter meter();
-
-  /**
-   * @return The main logger
-   */
-
-  Logger logger();
-}
+package com.io7m.certusine.vanilla.internal.telemetry;

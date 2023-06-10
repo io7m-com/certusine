@@ -18,10 +18,13 @@
 package com.io7m.certusine.vanilla.internal.events;
 
 import com.io7m.certusine.api.CSTelemetryServiceType;
+import io.opentelemetry.api.logs.Severity;
 import io.opentelemetry.api.metrics.LongCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.spi.LoggingEventBuilder;
+import org.slf4j.event.Level;
+
+import static io.opentelemetry.api.common.AttributeKey.stringKey;
 
 /**
  * The default event service.
@@ -38,6 +41,7 @@ public final class CSEventService implements CSEventServiceType
   private final LongCounter signingFailures;
   private final LongCounter storeFailures;
   private final LongCounter renewalSuccesses;
+  private final io.opentelemetry.api.logs.Logger logger;
 
   private CSEventService(
     final CSTelemetryServiceType telemetry)
@@ -75,6 +79,9 @@ public final class CSEventService implements CSEventServiceType
       telemetry.meter()
         .counterBuilder("certusine_certificates_store_failures")
         .build();
+
+    this.logger =
+      telemetry.logger();
   }
 
   /**
@@ -91,36 +98,54 @@ public final class CSEventService implements CSEventServiceType
     return new CSEventService(telemetry);
   }
 
-  /**
-   * @return The event service logger name
-   */
-
-  public static String loggerName()
-  {
-    return LOG.getName();
-  }
-
   @Override
   public void emit(
     final CSEventType event)
   {
-    LoggingEventBuilder builder;
-    if (event.isFailure()) {
-      builder = LOG.atError();
-    } else {
-      builder = LOG.atInfo();
-    }
+    this.publishTelemetry(event);
+    publishLog(event);
+    this.incrementMeters(event);
+  }
 
-    builder = builder.setMessage(event.message());
+  private static void publishLog(
+    final CSEventType event)
+  {
+    var builder =
+      LOG.makeLoggingEventBuilder(
+        event.isFailure() ? Level.ERROR : Level.INFO
+      );
+
+    builder = builder.setMessage("[event] " + event.message());
     builder = builder.addKeyValue(
       "certusine.type",
-      event.getClass().getSimpleName());
+      event.getClass().getSimpleName()
+    );
+
     for (final var entry : event.attributes().entrySet()) {
       builder = builder.addKeyValue(entry.getKey(), entry.getValue());
     }
-    builder.log();
 
-    this.incrementMeters(event);
+    builder.log();
+  }
+
+  private void publishTelemetry(
+    final CSEventType event)
+  {
+    final var builder =
+      this.logger.logRecordBuilder();
+
+    builder.setBody(event.message());
+    builder.setSeverity(event.isFailure() ? Severity.ERROR : Severity.INFO);
+    builder.setAttribute(
+      stringKey("certusine.type"),
+      event.getClass().getSimpleName()
+    );
+
+    for (final var entry : event.attributes().entrySet()) {
+      builder.setAttribute(stringKey(entry.getKey()), entry.getValue());
+    }
+
+    builder.emit();
   }
 
   private void incrementMeters(

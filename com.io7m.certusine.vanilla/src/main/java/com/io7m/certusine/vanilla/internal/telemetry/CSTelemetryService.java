@@ -14,9 +14,10 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.certusine.vanilla.internal;
+package com.io7m.certusine.vanilla.internal.telemetry;
 
 import com.io7m.certusine.api.CSTelemetryServiceType;
+import io.opentelemetry.api.logs.Logger;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Tracer;
 
@@ -31,22 +32,27 @@ public final class CSTelemetryService
 {
   private final Tracer tracer;
   private final Meter meter;
+  private final Logger logger;
 
   /**
    * An OpenTelemetry service.
    *
    * @param inTracer The tracer instance
    * @param inMeter  The meter instance
+   * @param inLogger The logger instance
    */
 
   public CSTelemetryService(
     final Tracer inTracer,
-    final Meter inMeter)
+    final Meter inMeter,
+    final Logger inLogger)
   {
     this.tracer =
       Objects.requireNonNull(inTracer, "tracer");
     this.meter =
       Objects.requireNonNull(inMeter, "meter");
+    this.logger =
+      Objects.requireNonNull(inLogger, "logger");
   }
 
   @Override
@@ -54,6 +60,13 @@ public final class CSTelemetryService
   {
     return "[CSTelemetryService 0x%s]"
       .formatted(Long.toUnsignedString(this.hashCode(), 16));
+  }
+
+
+  @Override
+  public Logger logger()
+  {
+    return this.logger;
   }
 
   @Override

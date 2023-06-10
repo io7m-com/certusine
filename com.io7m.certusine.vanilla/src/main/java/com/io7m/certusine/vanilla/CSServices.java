@@ -43,15 +43,6 @@ public final class CSServices
   }
 
   /**
-   * @return The event service logger name
-   */
-
-  public static String eventServiceLoggerName()
-  {
-    return CSEventService.loggerName();
-  }
-
-  /**
    * The main service directory.
    *
    * @param locale    The locale

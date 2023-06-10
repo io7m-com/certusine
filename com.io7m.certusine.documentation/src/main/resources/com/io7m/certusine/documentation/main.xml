@@ -21,6 +21,7 @@
   <xi:include href="intro.xml"/>
   <xi:include href="install.xml"/>
   <xi:include href="configuration.xml"/>
+  <xi:include href="monitoring.xml"/>
   <xi:include href="outputs.xml"/>
   <xi:include href="dns.xml"/>
   <xi:include href="cmdline.xml"/>

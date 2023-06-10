@@ -18,20 +18,27 @@
 package com.io7m.certusine.vanilla;
 
 import com.io7m.certusine.api.CSOpenTelemetryConfiguration;
+import com.io7m.certusine.api.CSOpenTelemetryConfiguration.CSLogs;
+import com.io7m.certusine.api.CSOpenTelemetryConfiguration.CSMetrics;
+import com.io7m.certusine.api.CSOpenTelemetryConfiguration.CSTraces;
 import com.io7m.certusine.api.CSTelemetryNoOp;
 import com.io7m.certusine.api.CSTelemetryServiceFactoryType;
 import com.io7m.certusine.api.CSTelemetryServiceType;
 import com.io7m.certusine.api.CSVersion;
-import com.io7m.certusine.vanilla.internal.CSTelemetryService;
+import com.io7m.certusine.vanilla.internal.telemetry.CSTelemetryService;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.propagation.ContextPropagators;
+import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter;
 import io.opentelemetry.exporter.otlp.http.metrics.OtlpHttpMetricExporter;
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter;
+import io.opentelemetry.exporter.otlp.logs.OtlpGrpcLogRecordExporter;
 import io.opentelemetry.exporter.otlp.metrics.OtlpGrpcMetricExporter;
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.logs.SdkLoggerProvider;
+import io.opentelemetry.sdk.logs.export.BatchLogRecordProcessor;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
 import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
 import io.opentelemetry.sdk.resources.Resource;
@@ -99,10 +106,12 @@ public final class CSTelemetryServices
       telemetryConfiguration.metrics();
     final var tracesOpt =
       telemetryConfiguration.traces();
+    final var logsOpt =
+      telemetryConfiguration.logs();
 
-    if (metricsOpt.isEmpty() && tracesOpt.isEmpty()) {
+    if (metricsOpt.isEmpty() && tracesOpt.isEmpty() && logsOpt.isEmpty()) {
       LOG.warn(
-        "Neither metrics nor trace configurations were provided; no telemetry will be sent!");
+        "No metrics, trace, or log configurations were provided; no telemetry will be sent!");
       return CSTelemetryNoOp.noop();
     }
 
@@ -126,6 +135,10 @@ public final class CSTelemetryServices
       builder.setTracerProvider(createTracerProvider(resource, traces));
     });
 
+    logsOpt.ifPresent(logs -> {
+      builder.setLoggerProvider(createLoggerProvider(resource, logs));
+    });
+
     final var contextPropagators =
       ContextPropagators.create(W3CTraceContextPropagator.getInstance());
 
@@ -144,15 +157,55 @@ public final class CSTelemetryServices
         "com.io7m.certusine"
       );
 
+    final var logger =
+      openTelemetry.getLogsBridge()
+        .get("com.io7m.certusine");
+
     return new CSTelemetryService(
       tracer,
-      meter
+      meter,
+      logger
     );
+  }
+
+  private static SdkLoggerProvider createLoggerProvider(
+    final Resource resource,
+    final CSLogs logs)
+  {
+    final var endpoint = logs.endpoint().toString();
+    LOG.info(
+      "log data will be sent to {} using {}",
+      endpoint,
+      logs.protocol()
+    );
+
+    final var logExporter =
+      switch (logs.protocol()) {
+        case HTTP -> {
+          yield OtlpHttpLogRecordExporter.builder()
+            .setEndpoint(endpoint)
+            .build();
+        }
+        case GRPC -> {
+          yield OtlpGrpcLogRecordExporter.builder()
+            .setEndpoint(endpoint)
+            .build();
+        }
+      };
+
+    final var processor =
+      BatchLogRecordProcessor.builder(logExporter)
+        .build();
+
+    return SdkLoggerProvider.builder()
+      .addLogRecordProcessor(processor)
+      .setResource(resource)
+      .build();
   }
 
   private static SdkMeterProvider createMeterProvider(
     final Resource resource,
-    final CSOpenTelemetryConfiguration.CSMetrics metrics)
+    final CSMetrics metrics)
   {
     final var endpoint = metrics.endpoint().toString();
     LOG.info(
@@ -188,7 +241,7 @@ public final class CSTelemetryServices
 
   private static SdkTracerProvider createTracerProvider(
     final Resource resource,
-    final CSOpenTelemetryConfiguration.CSTraces traces)
+    final CSTraces traces)
   {
     final var endpoint = traces.endpoint().toString();
     LOG.info(
