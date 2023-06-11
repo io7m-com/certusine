@@ -44,6 +44,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.io7m.certusine.api.CSTelemetryNoOp.noop;
 import static com.io7m.looseleaf.server.api.LLServerAction.READ;
@@ -103,7 +104,9 @@ public final class CSLooseleafDownloaderTest
               this.password.hash()
             ),
             List.of("main")
-          ))
+          )),
+          Optional.empty(),
+          Optional.empty()
         )
       );
   }

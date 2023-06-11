@@ -10,7 +10,6 @@
   </Section>
 
   <xi:include href="output-directory.xml"/>
-  <xi:include href="output-etcd.xml"/>
   <xi:include href="output-looseleaf.xml"/>
 
 </Section>

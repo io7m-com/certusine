@@ -21,7 +21,7 @@
 module com.io7m.certusine.cmdline
 {
   requires com.io7m.certusine.api;
-  requires com.io7m.certusine.etcd;
+  requires com.io7m.certusine.gandi;
   requires com.io7m.certusine.looseleaf;
   requires com.io7m.certusine.vanilla;
   requires com.io7m.certusine.vultr;

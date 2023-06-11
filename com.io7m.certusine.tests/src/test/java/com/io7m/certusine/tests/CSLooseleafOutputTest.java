@@ -48,6 +48,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.io7m.certusine.api.CSTelemetryNoOp.noop;
 import static com.io7m.looseleaf.server.api.LLServerAction.READ;
@@ -109,7 +110,9 @@ public final class CSLooseleafOutputTest
               this.password.hash()
             ),
             List.of("main")
-          ))
+          )),
+          Optional.empty(),
+          Optional.empty()
         )
       );
   }

@@ -23,7 +23,6 @@
     <module>com.io7m.certusine.certstore.api</module>
     <module>com.io7m.certusine.cmdline</module>
     <module>com.io7m.certusine.documentation</module>
-    <module>com.io7m.certusine.etcd</module>
     <module>com.io7m.certusine.gandi</module>
     <module>com.io7m.certusine.looseleaf</module>
     <module>com.io7m.certusine.oci</module>
@@ -35,14 +34,13 @@
   <properties>
     <acme4j.version>2.16</acme4j.version>
     <bouncycastle.version>1.73</bouncycastle.version>
-    <com.io7m.anethum.version>1.0.0-beta0001</com.io7m.anethum.version>
+    <com.io7m.anethum.version>1.0.0</com.io7m.anethum.version>
     <com.io7m.jsx.version>3.0.1</com.io7m.jsx.version>
-    <com.io7m.looseleaf.version>0.0.4</com.io7m.looseleaf.version>
-    <com.io7m.quarrel.version>1.1.0</com.io7m.quarrel.version>
+    <com.io7m.looseleaf.version>1.0.0</com.io7m.looseleaf.version>
+    <com.io7m.quarrel.version>1.2.0</com.io7m.quarrel.version>
     <com.io7m.xstructural.version>1.8.0</com.io7m.xstructural.version>
     <io7m.api.previousVersion>0.0.5-SNAPSHOT</io7m.api.previousVersion>
     <jackson.version>2.15.2</jackson.version>
-    <jetcd.version>0.7.5</jetcd.version>
     <jetty.version>11.0.15</jetty.version>
     <junit.version>5.9.3</junit.version>
     <logback.version>1.4.7</logback.version>
@@ -89,7 +87,7 @@
       <dependency>
         <groupId>com.io7m.repetoir</groupId>
         <artifactId>com.io7m.repetoir.core</artifactId>
-        <version>0.0.1</version>
+        <version>1.0.0</version>
       </dependency>
 
       <!-- ACME -->
@@ -227,7 +225,7 @@
       <dependency>
         <groupId>com.io7m.dixmont</groupId>
         <artifactId>com.io7m.dixmont.core</artifactId>
-        <version>0.0.2</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>dnsjava</groupId>
@@ -243,16 +241,6 @@
         <groupId>com.io7m.primogenitor</groupId>
         <artifactId>com.io7m.primogenitor.support</artifactId>
         <version>7.7.0</version>
-      </dependency>
-      <dependency>
-        <groupId>io.etcd</groupId>
-        <artifactId>jetcd-test</artifactId>
-        <version>${jetcd.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.etcd</groupId>
-        <artifactId>jetcd-core</artifactId>
-        <version>${jetcd.version}</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.looseleaf</groupId>
@@ -292,7 +280,7 @@
       <dependency>
         <groupId>com.io7m.quixote</groupId>
         <artifactId>com.io7m.quixote.core</artifactId>
-        <version>0.0.2</version>
+        <version>1.0.0</version>
       </dependency>
 
       <!-- CLI -->
