@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.certusine</artifactId>
     <groupId>com.io7m.certusine</groupId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
   </parent>
 
   <artifactId>com.io7m.certusine.cmdline</artifactId>
@@ -112,6 +112,40 @@
             <ignoredUnusedDeclaredDependency>ch.qos.logback:logback-classic::*</ignoredUnusedDeclaredDependency>
           </ignoredUnusedDeclaredDependencies>
         </configuration>
+      </plugin>
+
+      <!-- Shade the Kotlin jars, because they're still broken after all these years. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>org.jetbrains.kotlin:*</include>
+                </includes>
+                <excludes>
+                  <exclude>${project.groupId}:*</exclude>
+                </excludes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.jetbrains.kotlin:*</artifact>
+                  <excludes>
+                    <exclude>**/module-info.class</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <outputDirectory>${project.build.directory}/shaded-jars</outputDirectory>
+              <outputFile>${project.build.directory}/shaded-jars/kotlin.jar</outputFile>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
