@@ -19,10 +19,18 @@
       <outputDirectory>lib</outputDirectory>
       <useProjectArtifact>true</useProjectArtifact>
       <useTransitiveDependencies>true</useTransitiveDependencies>
+      <excludes>
+        <exclude>org.jetbrains.kotlin:kotlin-stdlib*</exclude>
+      </excludes>
     </dependencySet>
   </dependencySets>
 
   <files>
+    <file>
+      <source>target/shaded-jars/kotlin.jar</source>
+      <outputDirectory>lib</outputDirectory>
+      <fileMode>0644</fileMode>
+    </file>
     <file>
       <source>src/main/sh/certusine</source>
       <outputDirectory>/bin</outputDirectory>
