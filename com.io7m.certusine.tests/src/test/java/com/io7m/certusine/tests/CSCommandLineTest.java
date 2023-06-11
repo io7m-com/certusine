@@ -92,7 +92,7 @@ public final class CSCommandLineTest
     final var r = Main.mainExitless(new String[]{
 
     });
-    assertEquals(1, r);
+    assertEquals(0, r);
   }
 
   @Test

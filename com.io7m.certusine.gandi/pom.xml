@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.certusine</artifactId>
     <groupId>com.io7m.certusine</groupId>
-    <version>0.0.10</version>
+    <version>1.0.0</version>
   </parent>
 
   <artifactId>com.io7m.certusine.gandi</artifactId>
@@ -37,6 +37,16 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-api</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.annotation.bundle</artifactId>

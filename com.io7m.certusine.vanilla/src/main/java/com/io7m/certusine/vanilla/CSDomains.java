@@ -18,13 +18,16 @@ package com.io7m.certusine.vanilla;
 
 import com.io7m.certusine.api.CSDomain;
 import com.io7m.certusine.api.CSOptions;
+import com.io7m.certusine.api.CSTelemetryServiceType;
 import com.io7m.certusine.certstore.api.CSCertificateStoreType;
 import com.io7m.certusine.vanilla.internal.CSDomainExecutor;
 import com.io7m.certusine.vanilla.internal.CSStrings;
+import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
+import com.io7m.repetoir.core.RPServiceDirectoryType;
+import org.shredzone.acme4j.Session;
 
 import java.io.IOException;
 import java.time.Clock;
-import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -41,6 +44,7 @@ public final class CSDomains
   /**
    * Renew all certificates for the given domain.
    *
+   * @param services         A service directory
    * @param options          The execution options
    * @param domain           The domain
    * @param certificateStore The certificate store
@@ -51,23 +55,30 @@ public final class CSDomains
    */
 
   public static void renew(
+    final RPServiceDirectoryType services,
     final CSOptions options,
     final CSDomain domain,
     final Clock clock,
     final CSCertificateStoreType certificateStore)
     throws IOException, InterruptedException
   {
+    Objects.requireNonNull(services, "services");
     Objects.requireNonNull(options, "options");
     Objects.requireNonNull(domain, "domain");
     Objects.requireNonNull(clock, "clock");
     Objects.requireNonNull(certificateStore, "certificateStore");
 
     new CSDomainExecutor(
-      new CSStrings(Locale.getDefault()),
+      services.requireService(CSStrings.class),
+      services.requireService(CSTelemetryServiceType.class),
+      services.requireService(CSEventServiceType.class),
       options,
       domain,
       clock,
-      certificateStore
+      certificateStore,
+      acmeInformation -> {
+        return new Session(acmeInformation.acmeURI());
+      }
     ).execute();
   }
 }

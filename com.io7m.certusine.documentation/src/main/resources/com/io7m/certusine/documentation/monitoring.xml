@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         id="097ff283-1125-4bb0-94d9-c6af98776c7a"
+         title="Monitoring">
+
+  <Subsection title="Overview">
+    <Paragraph>
+      The <Term type="package">certusine</Term> package is extensively instrumented with
+      <LinkExternal target="https://opentelemetry.io">OpenTelemetry</LinkExternal>
+      in order to allow for the certificate renewal process to be continually monitored. The package publishes
+      <Link target="b72acc1b-4df7-49c5-bf9b-d911750b7009">metrics</Link>,
+      <Link target="a4a39f4f-44e5-48ae-9c6c-52d938d2b455">logs</Link>,
+      and
+      <Link target="d1c3a645-6cd2-46a0-9908-8cfbbfc69f7f">traces</Link>, all of which
+      can be independently enabled or disabled. Most installations will only want to
+      enable metrics or logs in production; traces are more useful when trying to diagnose performance
+      problems, or for doing actual development on the <Term type="package">certusine</Term> package.
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Metrics" id="b72acc1b-4df7-49c5-bf9b-d911750b7009">
+    <Subsection title="Names">
+      <Paragraph>
+        The package publishes the following metrics that can be used for monitoring:
+      </Paragraph>
+      <FormalItem title="Metrics">
+        <Table type="genericTable">
+          <Columns>
+            <Column>Name</Column>
+            <Column>Description</Column>
+          </Columns>
+          <Row>
+            <Cell>
+              <Term type="expression">certusine_dns_challenge_failures</Term>
+            </Cell>
+            <Cell>
+              A counter that is incremented every time a DNS challenge fails during certificate renewal.
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <Term type="expression">certusine_signing_failures</Term>
+            </Cell>
+            <Cell>
+              A counter that is incremented every time certificate signing fails during certificate renewal.
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <Term type="expression">certusine_renewal_failures</Term>
+            </Cell>
+            <Cell>
+              A counter that is incremented every time certificate renewal completely fails. This is an
+              important metric for error monitoring; any non-zero value for this metric should be considered
+              a problem.
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <Term type="expression">certusine_renewal_successes</Term>
+            </Cell>
+            <Cell>
+              A counter that is incremented every time certificate renewal completely succeeds. This is an
+              important metric for error monitoring; if this metric remains continually at zero, this should
+              likely be considered a problem.
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <Term type="expression">certusine_certificates_stored</Term>
+            </Cell>
+            <Cell>
+              A counter that is incremented every time certificates are stored. The package redundantly stores
+              certificates many times, so this metric will be incremented frequently.
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <Term type="expression">certusine_certificates_store_failures</Term>
+            </Cell>
+            <Cell>
+              A counter that is incremented every time certificates fail to be stored. If this metric is
+              trending upwards, it may mean that certificates are not being distributed to systems that
+              depend upon them.
+            </Cell>
+          </Row>
+        </Table>
+      </FormalItem>
+      <Paragraph>
+        The package <Term type="term">may</Term> produce other metrics, however these are undocumented and
+        should not be relied upon.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Alerting Rules">
+      <Subsection title="PromQL">
+        <Paragraph>
+          On a system that supports the querying of metrics using
+          <LinkExternal target="https://prometheus.io/docs/prometheus/latest/querying/basics/">PromQL</LinkExternal>,
+          alerting rules should be used to notify administrators that certificate renewals are failing.
+        </Paragraph>
+        <Paragraph>
+          Assuming that certificate renewal attempts are made at 30 minute intervals,
+          the following rule can be used to capture failures:
+        </Paragraph>
+        <FormalItem title="Alert">
+          <Verbatim><![CDATA[
+rate(certusine_renewal_failures_total[30m]) > bool 0
+]]></Verbatim>
+        </FormalItem>
+        <Paragraph>
+          The rate of the <Term type="expression">certusine_renewal_failures_total</Term> metric should be
+          zero over any given interval in a stable system.
+        </Paragraph>
+      </Subsection>
+    </Subsection>
+  </Subsection>
+
+  <Subsection title="Logs" id="a4a39f4f-44e5-48ae-9c6c-52d938d2b455">
+    <Subsection title="Overview">
+      <Paragraph>
+        The <Term type="package">certusine</Term> package is conservative in the amount of logging output
+        it produces by default. The package is written to publish only a specific set of log messages to
+        telemetry logs in order to increase the signal-to-noise ratio. The
+        <Term type="package">certusine</Term> package publishes strongly-typed events internally that
+        are mapped directly to OpenTelemetry log messages, using attributes to hold the fields of the
+        events, and using the <Term type="expression">certusine.type</Term> attribute to hold the name
+        of the event type. The intention is to make it very easy to write alerting rules simply by counting
+        occurrences of log messages that have a given type.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="CSEventCertificateDNSChallengeFailed">
+      <Paragraph>
+        The <Term type="type">CSEventCertificateDNSChallengeFailed</Term> event type indicates that a
+        DNS challenge failed during certificate renewal.
+      </Paragraph>
+      <FormalItem title="Attributes">
+        <Table type="genericTable">
+          <Columns>
+            <Column>Name</Column>
+            <Column>Description</Column>
+          </Columns>
+          <Row>
+            <Cell><Term type="expression">certusine.type</Term></Cell>
+            <Cell><Term type="expression">CSEventCertificateDNSChallengeFailed</Term></Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.domain</Term></Cell>
+            <Cell>The domain containing the certificate that failed.</Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.certificate</Term></Cell>
+            <Cell>The name of the certificate that failed.</Cell>
+          </Row>
+        </Table>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="CSEventCertificateRenewalFailed" id="8852231d-96df-4e67-b833-1df3fc5d04dc">
+      <Paragraph>
+        The <Term type="type">CSEventCertificateRenewalFailed</Term> event type indicates that a
+        certificate renewal completely failed. All occurrences of this log event should be considered
+        a problem that needs to be fixed.
+      </Paragraph>
+      <FormalItem title="Attributes">
+        <Table type="genericTable">
+          <Columns>
+            <Column>Name</Column>
+            <Column>Description</Column>
+          </Columns>
+          <Row>
+            <Cell><Term type="expression">certusine.type</Term></Cell>
+            <Cell><Term type="expression">CSEventCertificateRenewalFailed</Term></Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.domain</Term></Cell>
+            <Cell>The domain containing the certificate that failed.</Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.certificate</Term></Cell>
+            <Cell>The name of the certificate that failed.</Cell>
+          </Row>
+        </Table>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="CSEventCertificateRenewalSucceeded">
+      <Paragraph>
+        The <Term type="type">CSEventCertificateRenewalSucceeded</Term> event type indicates that a
+        certificate renewal completely succeeded.
+      </Paragraph>
+      <FormalItem title="Attributes">
+        <Table type="genericTable">
+          <Columns>
+            <Column>Name</Column>
+            <Column>Description</Column>
+          </Columns>
+          <Row>
+            <Cell><Term type="expression">certusine.type</Term></Cell>
+            <Cell><Term type="expression">CSEventCertificateRenewalSucceeded</Term></Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.domain</Term></Cell>
+            <Cell>The domain that succeeded.</Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.certificate</Term></Cell>
+            <Cell>The name of the certificate that was renewed.</Cell>
+          </Row>
+        </Table>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="CSEventCertificateSigningFailed">
+      <Paragraph>
+        The <Term type="type">CSEventCertificateSigningFailed</Term> event type indicates that a
+        certificate could not be signed.
+      </Paragraph>
+      <FormalItem title="Attributes">
+        <Table type="genericTable">
+          <Columns>
+            <Column>Name</Column>
+            <Column>Description</Column>
+          </Columns>
+          <Row>
+            <Cell><Term type="expression">certusine.type</Term></Cell>
+            <Cell><Term type="expression">CSEventCertificateSigningFailed</Term></Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.domain</Term></Cell>
+            <Cell>The domain containing the certificate that failed.</Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.certificate</Term></Cell>
+            <Cell>The name of the certificate that failed.</Cell>
+          </Row>
+        </Table>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="CSEventCertificateStored">
+      <Paragraph>
+        The <Term type="type">CSEventCertificateStored</Term> event type indicates that a
+        certificate was stored.
+      </Paragraph>
+      <FormalItem title="Attributes">
+        <Table type="genericTable">
+          <Columns>
+            <Column>Name</Column>
+            <Column>Description</Column>
+          </Columns>
+          <Row>
+            <Cell><Term type="expression">certusine.type</Term></Cell>
+            <Cell><Term type="expression">CSEventCertificateStored</Term></Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.domain</Term></Cell>
+            <Cell>The domain containing the certificate that was stored.</Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.certificate</Term></Cell>
+            <Cell>The name of the certificate that was stored.</Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.target</Term></Cell>
+            <Cell>The name of the output to which the certificate was stored.</Cell>
+          </Row>
+        </Table>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="CSEventCertificateStoreFailed">
+      <Paragraph>
+        The <Term type="type">CSEventCertificateStoreFailed</Term> event type indicates that a
+        certificate could not be stored to an output. Occurrences of this event type may indicate
+        that certificates are not reaching systems that depend on them (for example, if an application
+        is repeatedly failing to publish certificates to directory, applications reading certificates
+        from that directly may start serving expired certificates as newly renewed ones aren't getting
+        through).
+      </Paragraph>
+      <FormalItem title="Attributes">
+        <Table type="genericTable">
+          <Columns>
+            <Column>Name</Column>
+            <Column>Description</Column>
+          </Columns>
+          <Row>
+            <Cell><Term type="expression">certusine.type</Term></Cell>
+            <Cell><Term type="expression">CSEventCertificateStoreFailed</Term></Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.domain</Term></Cell>
+            <Cell>The domain containing the certificate that could not be stored.</Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.certificate</Term></Cell>
+            <Cell>The name of the certificate that could not be stored.</Cell>
+          </Row>
+          <Row>
+            <Cell><Term type="expression">certusine.target</Term></Cell>
+            <Cell>The name of the output to which the certificate could not be stored.</Cell>
+          </Row>
+        </Table>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="Alerting Rules">
+      <Subsection title="Grafana Loki">
+        <Paragraph>
+          Assuming that certificate renewal attempts are made at 30 minute intervals,
+          the following rule should be used to capture log events of type
+          <Link target="8852231d-96df-4e67-b833-1df3fc5d04dc">CSEventCertificateRenewalFailed</Link>:
+        </Paragraph>
+        <FormalItem title="Alert">
+          <Verbatim><![CDATA[
+count(rate({level="ERROR"} | json | attributes_certusine_type=`CSEventCertificateRenewalFailed`[30m])) > bool 0
+]]></Verbatim>
+        </FormalItem>
+        <Paragraph>
+          The rule captures messages at <Term type="constant">ERROR</Term> severity, unpacks the included
+          attributes using the <Term type="expression">json</Term> operator, and then filters messages
+          based on the generated <Term type="expression">attributes_certusine_type</Term> label. Occurences
+          of matching messages are counted over the previous 30-minute interval, and transformed to a
+          "boolean" numeric value using the greater-than operator.
+        </Paragraph>
+      </Subsection>
+    </Subsection>
+  </Subsection>
+
+  <Subsection title="Traces" id="d1c3a645-6cd2-46a0-9908-8cfbbfc69f7f">
+    <Paragraph>
+      The <Term type="package">certusine</Term> package publishes traces for all internal operations. No
+      specific documentation is provided on the structures of the traces as they are effectively tied to
+      the internal structure of the code and are subject to change.
+    </Paragraph>
+    <FormalItem title="Trace Display">
+      <Image source="telemetry4.png" width="640" height="484">
+        Telemetry displayed in Grafana.
+      </Image>
+    </FormalItem>
+  </Subsection>
+
+</Section>

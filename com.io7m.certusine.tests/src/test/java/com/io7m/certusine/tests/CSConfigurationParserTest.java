@@ -18,9 +18,9 @@
 package com.io7m.certusine.tests;
 
 import ch.qos.logback.classic.Level;
-import com.io7m.anethum.common.ParseException;
-import com.io7m.anethum.common.ParseSeverity;
-import com.io7m.anethum.common.ParseStatus;
+import com.io7m.anethum.api.ParseSeverity;
+import com.io7m.anethum.api.ParseStatus;
+import com.io7m.anethum.api.ParsingException;
 import com.io7m.certusine.vanilla.CSConfigurationParsers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +34,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.io7m.anethum.api.ParseSeverity.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -121,7 +122,7 @@ public final class CSConfigurationParserTest
     );
     assertTrue(
       this.statusLog.stream()
-        .allMatch(status -> status.severity() == ParseSeverity.PARSE_WARNING)
+        .allMatch(status -> status.severity() == PARSE_WARNING)
     );
   }
 
@@ -143,7 +144,7 @@ public final class CSConfigurationParserTest
       );
 
     final var ex =
-      assertThrows(ParseException.class, () -> {
+      assertThrows(ParsingException.class, () -> {
         this.parsers.parseFileWithContext(
           this.directory,
           file,
@@ -190,7 +191,7 @@ public final class CSConfigurationParserTest
       );
 
     final var ex =
-      assertThrows(ParseException.class, () -> {
+      assertThrows(ParsingException.class, () -> {
         this.parsers.parseFileWithContext(
           this.directory,
           file,
@@ -237,7 +238,7 @@ public final class CSConfigurationParserTest
       );
 
     final var ex =
-      assertThrows(ParseException.class, () -> {
+      assertThrows(ParsingException.class, () -> {
         this.parsers.parseFileWithContext(
           this.directory,
           file,
@@ -284,7 +285,7 @@ public final class CSConfigurationParserTest
       );
 
     final var ex =
-      assertThrows(ParseException.class, () -> {
+      assertThrows(ParsingException.class, () -> {
         this.parsers.parseFileWithContext(
           this.directory,
           file,
@@ -331,7 +332,7 @@ public final class CSConfigurationParserTest
       );
 
     final var ex =
-      assertThrows(ParseException.class, () -> {
+      assertThrows(ParsingException.class, () -> {
         this.parsers.parseFileWithContext(
           this.directory,
           file,
@@ -378,7 +379,7 @@ public final class CSConfigurationParserTest
       );
 
     final var ex =
-      assertThrows(ParseException.class, () -> {
+      assertThrows(ParsingException.class, () -> {
         this.parsers.parseFileWithContext(
           this.directory,
           file,
@@ -418,7 +419,7 @@ public final class CSConfigurationParserTest
     throws Exception
   {
     final var ex =
-      assertThrows(ParseException.class, () -> {
+      assertThrows(ParsingException.class, () -> {
         this.parsers.parseFileWithContext(
           this.directory,
           this.fakeTxt,

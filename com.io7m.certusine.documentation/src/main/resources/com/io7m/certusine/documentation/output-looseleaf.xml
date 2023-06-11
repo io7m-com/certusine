@@ -3,17 +3,17 @@
 <Section xmlns="urn:com.io7m.structural:8:0"
          xmlns:xi="http://www.w3.org/2001/XInclude"
          id="55c1f3b5-80c7-4fc3-9b8d-521106ce907b"
-         title="looseleaf">
+         title="Looseleaf">
 
   <Subsection title="Name">
     <Paragraph>
-      <Term type="package">looseleaf</Term> - Write certificates to a looseleaf server
+      <Term type="package">Looseleaf</Term> - Write certificates to a looseleaf server
     </Paragraph>
   </Subsection>
 
   <Subsection title="Description">
     <Paragraph>
-      The <Term type="package">looseleaf</Term> output writes certificates to an external
+      The <Term type="package">Looseleaf</Term> output writes certificates to an external
       <LinkExternal target="https://www.io7m.com/software/looseleaf/">looseleaf</LinkExternal>
       server. For a given domain name <Term type="expression">d</Term> and certificate name
       <Term type="expression">c</Term>, certificates are written to the following database keys:
@@ -56,7 +56,7 @@
   <Subsection title="Example">
     <FormalItem title="Example Configuration">
       <Verbatim><![CDATA[
-<Output Type="looseleaf" Name="an-example-looseleaf-output">
+<Output Type="Looseleaf" Name="an-example-looseleaf-output">
   <Parameters>
     <Parameter Name="endpoint" Value="http://looseleaf.example.com:20000/"/>
     <Parameter Name="username" Value="grouch"/>

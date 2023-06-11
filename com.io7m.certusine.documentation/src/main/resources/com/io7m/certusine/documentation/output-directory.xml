@@ -7,13 +7,13 @@
 
   <Subsection title="Name">
     <Paragraph>
-      <Term type="package">directory</Term> - Write certificates to a local directory
+      <Term type="package">Directory</Term> - Write certificates to a local directory
     </Paragraph>
   </Subsection>
 
   <Subsection title="Description">
     <Paragraph>
-      The <Term type="package">directory</Term> output writes certificates to a local directory.
+      The <Term type="package">Directory</Term> output writes certificates to a local directory.
       For a directory at <Term type="expression">/path</Term>, for a given domain name <Term type="expression">d</Term>
       and certificate name <Term type="expression">c</Term>, certificates are written to the following files:
     </Paragraph>
@@ -61,7 +61,7 @@
   <Subsection title="Example">
     <FormalItem title="Example Configuration">
       <Verbatim><![CDATA[
-<Output Type="directory" Name="an-example-output">
+<Output Type="Directory" Name="an-example-output">
   <Parameters>
     <Parameter Name="path" Value="/tmp"/>
   </Parameters>

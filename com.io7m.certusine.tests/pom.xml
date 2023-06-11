@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.certusine</artifactId>
     <groupId>com.io7m.certusine</groupId>
-    <version>0.0.10</version>
+    <version>1.0.0</version>
   </parent>
 
   <artifactId>com.io7m.certusine.tests</artifactId>
@@ -36,11 +36,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>com.io7m.certusine.vanilla</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.certusine.etcd</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -98,14 +93,6 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.etcd</groupId>
-      <artifactId>jetcd-test</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.etcd</groupId>
-      <artifactId>jetcd-core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.io7m.quixote</groupId>

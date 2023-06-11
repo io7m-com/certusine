@@ -7,14 +7,14 @@
 
   <Subsection title="Name">
     <Paragraph>
-      <Term type="package">vultr</Term>
+      <Term type="package">Vultr</Term>
       - Support for the Vultr DNS API
     </Paragraph>
   </Subsection>
 
   <Subsection title="Description">
     <Paragraph>
-      The <Term type="package">vultr</Term> DNS configurator supports creating and deleting DNS records using
+      The <Term type="package">Vultr</Term> DNS configurator supports creating and deleting DNS records using
       the <LinkExternal target="https://www.vultr.com/docs/introduction-to-vultr-dns">Vultr DNS API</LinkExternal>.
     </Paragraph>
 

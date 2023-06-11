@@ -35,9 +35,80 @@
                  use="optional">
         <annotation>
           <documentation>
-            specifies the maximum amount of time before expiration that the client will allow before it attempts to
+            Specifies the maximum amount of time before expiration that the client will allow before it attempts to
             renew a certificate. For example, a value of PT72H means that the client will start attempting to renew a
             certificate when the certificate becomes due to expire in less than 72 hours.
+          </documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+
+  <element name="FaultInjection">
+    <annotation>
+      <documentation>
+        Configuration for fault injection. The purpose of fault injection is to make the program fail in various ways at
+        runtime in order to verify that metrics and alerting are working correctly.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <attribute name="FailTasks"
+                 use="optional"
+                 type="boolean">
+        <annotation>
+          <documentation>
+            Specifies that failing tasks should be injected into the execution of tasks for each domain renewal.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="FailDNSChallenge"
+                 use="optional"
+                 type="boolean">
+        <annotation>
+          <documentation>
+            Specifies that DNS challenges should be purposefully failed.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="FailSigningCertificates"
+                 use="optional"
+                 type="boolean">
+        <annotation>
+          <documentation>
+            Specifies that certificate signing should be purposefully failed.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="CrashTasks"
+                 use="optional"
+                 type="boolean">
+        <annotation>
+          <documentation>
+            Specifies that crashing tasks should be injected into the execution of tasks for each domain renewal.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="CrashDNSChallenge"
+                 use="optional"
+                 type="boolean">
+        <annotation>
+          <documentation>
+            Specifies that DNS challenges should be purposefully crashed.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="CrashSigningCertificates"
+                 use="optional"
+                 type="boolean">
+        <annotation>
+          <documentation>
+            Specifies that certificate signing should be purposefully crashed.
           </documentation>
         </annotation>
       </attribute>
@@ -423,6 +494,153 @@
     </key>
   </element>
 
+  <simpleType name="OpenTelemetryProtocol">
+    <annotation>
+      <documentation>
+        The protocol used to deliver OpenTelemetry data.
+      </documentation>
+    </annotation>
+
+    <restriction base="string">
+      <enumeration value="GRPC">
+        <annotation>
+          <documentation>
+            The data will be sent using gRPC.
+          </documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="HTTP">
+        <annotation>
+          <documentation>
+            The data will be sent using HTTP(s).
+          </documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+
+  <element name="Metrics">
+    <annotation>
+      <documentation>
+        Configuration information for OpenTelemetry metrics.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <attribute name="Endpoint"
+                 use="required"
+                 type="anyURI">
+        <annotation>
+          <documentation>
+            The endpoint to which OTLP metrics data will be sent.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="Protocol"
+                 use="required"
+                 type="c:OpenTelemetryProtocol">
+        <annotation>
+          <documentation>
+            The protocol used to send metrics data.
+          </documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+
+  <element name="Traces">
+    <annotation>
+      <documentation>
+        Configuration information for OpenTelemetry traces.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <attribute name="Endpoint"
+                 use="required"
+                 type="anyURI">
+        <annotation>
+          <documentation>
+            The endpoint to which OTLP trace data will be sent.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="Protocol"
+                 use="required"
+                 type="c:OpenTelemetryProtocol">
+        <annotation>
+          <documentation>
+            The protocol used to send trace data.
+          </documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+
+  <element name="Logs">
+    <annotation>
+      <documentation>
+        Configuration information for OpenTelemetry logs/events.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <attribute name="Endpoint"
+                 use="required"
+                 type="anyURI">
+        <annotation>
+          <documentation>
+            The endpoint to which OTLP log data will be sent.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="Protocol"
+                 use="required"
+                 type="c:OpenTelemetryProtocol">
+        <annotation>
+          <documentation>
+            The protocol used to send log data.
+          </documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+
+  <element name="OpenTelemetry">
+    <annotation>
+      <documentation>
+        Configuration information for OpenTelemetry.
+      </documentation>
+    </annotation>
+
+    <complexType>
+      <sequence>
+        <element ref="c:Logs"
+                 minOccurs="0"
+                 maxOccurs="1"/>
+        <element ref="c:Metrics"
+                 minOccurs="0"
+                 maxOccurs="1"/>
+        <element ref="c:Traces"
+                 minOccurs="0"
+                 maxOccurs="1"/>
+      </sequence>
+
+      <attribute name="LogicalServiceName"
+                 use="required"
+                 type="string">
+        <annotation>
+          <documentation>
+            The logical name of the service as it will appear in OpenTelemetry.
+          </documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+
   <element name="Configuration">
     <annotation>
       <documentation>
@@ -437,6 +655,12 @@
         <element ref="c:Outputs"/>
         <element ref="c:DNSConfigurators"/>
         <element ref="c:Domains"/>
+        <element ref="c:OpenTelemetry"
+                 minOccurs="0"
+                 maxOccurs="1"/>
+        <element ref="c:FaultInjection"
+                 minOccurs="0"
+                 maxOccurs="1"/>
       </sequence>
     </complexType>
 
@@ -450,6 +674,12 @@
             refer="c:DNSConfiguratorKey">
       <selector xpath="c:Domains/c:Domain"/>
       <field xpath="@DNSConfigurator"/>
+    </keyref>
+
+    <keyref name="OutputReferencesExist"
+            refer="c:OutputKey">
+      <selector xpath="c:Domains/c:Domain/c:OutputReferences/c:OutputReference"/>
+      <field xpath="@Name"/>
     </keyref>
   </element>
 

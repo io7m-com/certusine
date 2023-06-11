@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.certusine</artifactId>
     <groupId>com.io7m.certusine</groupId>
-    <version>0.0.10</version>
+    <version>1.0.0</version>
   </parent>
 
   <artifactId>com.io7m.certusine.vanilla</artifactId>
@@ -31,12 +31,12 @@
     </dependency>
 
     <dependency>
-      <groupId>com.io7m.jaffirm</groupId>
-      <artifactId>com.io7m.jaffirm.core</artifactId>
+      <groupId>com.io7m.repetoir</groupId>
+      <artifactId>com.io7m.repetoir.core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.io7m.anethum</groupId>
-      <artifactId>com.io7m.anethum.common</artifactId>
+      <groupId>com.io7m.jaffirm</groupId>
+      <artifactId>com.io7m.jaffirm.core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.io7m.anethum</groupId>
@@ -90,6 +90,8 @@
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
     </dependency>
+
+    <!-- Build metadata. -->
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.annotation.bundle</artifactId>
@@ -99,6 +101,62 @@
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.annotation.versioning</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <!-- Telemetry. -->
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-semconv</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-exporter-otlp</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.squareup.okio</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okio</groupId>
+      <artifactId>okio-jvm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-metrics</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-trace</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-sdk-logs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-context</artifactId>
     </dependency>
   </dependencies>
 
@@ -112,6 +170,8 @@
           <failOnWarning>true</failOnWarning>
           <ignoredUnusedDeclaredDependencies>
             <ignoredUnusedDeclaredDependency>com.sun.xml.bind:jaxb-impl:*</ignoredUnusedDeclaredDependency>
+            <ignoredUnusedDeclaredDependency>org.jetbrains.kotlin:kotlin-stdlib:*</ignoredUnusedDeclaredDependency>
+            <ignoredUnusedDeclaredDependency>com.squareup.okio:*</ignoredUnusedDeclaredDependency>
           </ignoredUnusedDeclaredDependencies>
         </configuration>
       </plugin>

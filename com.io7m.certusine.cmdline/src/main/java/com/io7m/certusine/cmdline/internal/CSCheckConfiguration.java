@@ -17,71 +17,90 @@
 
 package com.io7m.certusine.cmdline.internal;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-import com.io7m.anethum.common.ParseException;
+import com.io7m.anethum.api.ParsingException;
 import com.io7m.certusine.vanilla.CSConfigurationParsers;
-import com.io7m.claypot.core.CLPAbstractCommand;
-import com.io7m.claypot.core.CLPCommandContextType;
+import com.io7m.quarrel.core.QCommandContextType;
+import com.io7m.quarrel.core.QCommandMetadata;
+import com.io7m.quarrel.core.QCommandStatus;
+import com.io7m.quarrel.core.QCommandType;
+import com.io7m.quarrel.core.QParameterNamed1;
+import com.io7m.quarrel.core.QParameterNamedType;
+import com.io7m.quarrel.core.QStringType;
+import com.io7m.quarrel.ext.logback.QLogback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
-
-import static com.io7m.claypot.core.CLPCommandType.Status.FAILURE;
-import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Check configuration file.
  */
 
-@Parameters(commandDescription = "Check configuration file.")
-public final class CSCheckConfiguration extends CLPAbstractCommand
+public final class CSCheckConfiguration implements QCommandType
 {
-  @Parameter(
-    names = "--file",
-    description = "The configuration file",
-    required = true
-  )
-  private Path file;
+  private static final Logger LOG =
+    LoggerFactory.getLogger(CSCheckConfiguration.class);
+
+  private static final QParameterNamed1<Path> FILE =
+    new QParameterNamed1<>(
+      "--file",
+      List.of(),
+      new QStringType.QConstant("The configuration file"),
+      Optional.empty(),
+      Path.class
+    );
+
+  private final QCommandMetadata metadata;
 
   /**
    * Construct a command.
-   *
-   * @param inContext The command context
    */
 
-  public CSCheckConfiguration(
-    final CLPCommandContextType inContext)
+  public CSCheckConfiguration()
   {
-    super(inContext);
+    this.metadata = new QCommandMetadata(
+      "check-configuration",
+      new QStringType.QConstant("Check configuration file."),
+      Optional.empty()
+    );
   }
 
   @Override
-  protected Status executeActual()
+  public List<QParameterNamedType<?>> onListNamedParameters()
+  {
+    return QLogback.plusParameters(List.of(FILE));
+  }
+
+  @Override
+  public QCommandStatus onExecute(
+    final QCommandContextType context)
     throws Exception
   {
     final var parsers =
       new CSConfigurationParsers();
 
-    this.file =
-      this.file.toAbsolutePath();
+    final var file =
+      context.parameterValue(FILE)
+        .toAbsolutePath();
 
-    final var logger = this.logger();
     try {
-      parsers.parseFileWithContext(this.file.getParent(), this.file);
-      return SUCCESS;
+      parsers.parseFileWithContext(file.getParent(), file);
+      return QCommandStatus.SUCCESS;
     } catch (final IOException e) {
-      logger.error("i/o error: {}", e.getMessage());
-      return FAILURE;
-    } catch (final ParseException e) {
-      CSParseErrorLogging.logParseErrors(logger, this.file, e);
-      return FAILURE;
+      LOG.error("i/o error: {}", e.getMessage());
+      return QCommandStatus.FAILURE;
+    } catch (final ParsingException e) {
+      CSParseErrorLogging.logParseErrors(LOG, file, e);
+      return QCommandStatus.FAILURE;
     }
   }
 
   @Override
-  public String name()
+  public QCommandMetadata metadata()
   {
-    return "check-configuration";
+    return this.metadata;
   }
 }

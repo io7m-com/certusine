@@ -49,8 +49,8 @@ public final class CSVultrDNSConfigurators
   /**
    * Access to the Vultr DNS API.
    *
-   * @param locale    A locale for error messages
-   * @param inStrings String resources
+   * @param locale      A locale for error messages
+   * @param inStrings   String resources
    *
    * @throws IOException On I/O errors
    */
@@ -67,7 +67,7 @@ public final class CSVultrDNSConfigurators
   /**
    * Access to the Vultr DNS API.
    *
-   * @param locale A locale for error messages
+   * @param locale      A locale for error messages
    *
    * @throws IOException On I/O errors
    */
@@ -117,7 +117,7 @@ public final class CSVultrDNSConfigurators
   @Override
   public String name()
   {
-    return "vultr";
+    return "Vultr";
   }
 
   @Override
@@ -158,5 +158,12 @@ public final class CSVultrDNSConfigurators
         )
       )
     );
+  }
+
+  @Override
+  public String toString()
+  {
+    return "[CSVultrDNSConfigurators 0x%s]"
+      .formatted(Long.toUnsignedString(this.hashCode(), 16));
   }
 }

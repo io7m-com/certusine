@@ -14,7 +14,7 @@
   </Accounts>
 
   <Outputs>
-    <Output Type="directory"
+    <Output Type="Directory"
             Name="main-output">
       <Parameters>
         <Parameter Name="path"
@@ -24,7 +24,7 @@
   </Outputs>
 
   <DNSConfigurators>
-    <DNSConfigurator Type="vultr"
+    <DNSConfigurator Type="Vultr"
                      Name="vultr-dns">
       <Parameters>
         <Parameter Name="api-key"

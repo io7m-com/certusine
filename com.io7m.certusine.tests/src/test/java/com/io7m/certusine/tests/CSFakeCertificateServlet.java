@@ -24,7 +24,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.io7m.certusine.tests.CSTestResources.utf8Of;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class CSFakeCertificateServlet extends HttpServlet
 {

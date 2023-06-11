@@ -18,6 +18,7 @@ package com.io7m.certusine.vanilla.internal;
 
 import com.io7m.certusine.api.CSCertificateOutputData;
 import com.io7m.certusine.api.CSCertificateOutputType;
+import com.io7m.certusine.api.CSTelemetryServiceType;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -60,6 +61,13 @@ public final class CSCertificateOutputDirectory
   }
 
   @Override
+  public String toString()
+  {
+    return "[CSCertificateOutputDirectory 0x%s]"
+      .formatted(Long.toUnsignedString(this.hashCode(), 16));
+  }
+
+  @Override
   public String type()
   {
     return "directory";
@@ -73,11 +81,33 @@ public final class CSCertificateOutputDirectory
 
   @Override
   public void write(
+    final CSTelemetryServiceType telemetry,
     final CSCertificateOutputData outputData)
     throws IOException
   {
+    Objects.requireNonNull(telemetry, "telemetry");
     Objects.requireNonNull(outputData, "outputData");
 
+    final var span =
+      telemetry.tracer()
+        .spanBuilder("WriteDirectory")
+        .setAttribute("certusine.target", this.path.toString())
+        .startSpan();
+
+    try (var ignored = span.makeCurrent()) {
+      this.writeData(outputData);
+    } catch (final Exception e) {
+      span.recordException(e);
+      throw e;
+    } finally {
+      span.end();
+    }
+  }
+
+  private void writeData(
+    final CSCertificateOutputData outputData)
+    throws IOException
+  {
     final var byDomain =
       this.path.resolve(URLEncoder.encode(outputData.domainName(), UTF_8));
     final var byName =

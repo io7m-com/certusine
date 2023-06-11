@@ -16,6 +16,8 @@
 
 package com.io7m.certusine.certstore.api;
 
+import com.io7m.repetoir.core.RPServiceType;
+
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -24,18 +26,20 @@ import java.nio.file.Path;
  */
 
 public interface CSCertificateStoreFactoryType
+  extends RPServiceType
 {
   /**
    * Create or open a certificate store. The certificate store is created if it
    * does not exist.
    *
-   * @param file The store file
+   * @param file     The store file
    *
    * @return A new certificate store
    *
    * @throws IOException On I/O errors
    */
 
-  CSCertificateStoreType open(Path file)
+  CSCertificateStoreType open(
+    Path file)
     throws IOException;
 }

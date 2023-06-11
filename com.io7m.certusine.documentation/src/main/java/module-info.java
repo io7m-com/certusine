@@ -21,9 +21,8 @@ module com.io7m.certusine.documentation
 
   requires com.io7m.certusine.api;
   requires com.io7m.certusine.cmdline;
-  requires com.io7m.claypot.core;
+
   requires java.xml;
-  requires jcommander;
 
   uses com.io7m.certusine.api.CSDNSConfiguratorProviderType;
   uses com.io7m.certusine.api.CSCertificateOutputProviderType;

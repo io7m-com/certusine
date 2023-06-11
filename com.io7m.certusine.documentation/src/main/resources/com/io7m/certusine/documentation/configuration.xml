@@ -277,6 +277,72 @@
     </FormalItem>
   </Subsection>
 
+  <Subsection title="OpenTelemetry" id="f92270bd-cbb4-4a6a-9582-ef304f4c3047">
+    <Subsection title="Overview">
+      <Paragraph>
+        The <Term type="expression">OpenTelemetry</Term> section of the configuration file configures
+        <LinkExternal target="https://opentelemetry.io/">Open Telemetry</LinkExternal>. This section is optional and
+        telemetry is disabled if the section is not present.
+      </Paragraph>
+      <Paragraph>
+        The logical service name should be provided in the <Term type="expression">LogicalServiceName</Term>
+        attribute.
+      </Paragraph>
+      <FormalItem title="Telemetry">
+        <Image source="telemetry3.png" width="640" height="484">
+          Telemetry displayed in Grafana.
+        </Image>
+      </FormalItem>
+    </Subsection>
+    <Subsection title="Traces" id="ccbf1cfb-c80d-4882-90a0-2cb84a89713b">
+      <Paragraph>
+        If the <Term type="expression">OpenTelemetry</Term> element contains a
+        <Term type="expression">Traces</Term> element, OTLP <LinkExternal
+        target="https://opentelemetry.io/docs/concepts/signals/traces/">traces</LinkExternal>
+        will be sent to a specified endpoint. The <Term type="expression">Endpoint</Term> attribute
+        specifies the endpoint, and the <Term type="expression">Protocol</Term> attribute can either
+        be <Term type="constant">GRPC</Term> or <Term type="constant">HTTP</Term>.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Metrics">
+      <Paragraph>
+        If the <Term type="expression">OpenTelemetry</Term> element contains a
+        <Term type="expression">Metrics</Term> element, OTLP <LinkExternal
+        target="https://opentelemetry.io/docs/concepts/signals/metrics/">metrics</LinkExternal>
+        will be sent to a specified endpoint. The <Term type="expression">Endpoint</Term> attribute
+        specifies the endpoint, and the <Term type="expression">Protocol</Term> attribute can either
+        be <Term type="constant">GRPC</Term> or <Term type="constant">HTTP</Term>.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Logs" id="9468e6ec-5c19-47ec-ba22-ffbc84937608">
+      <Paragraph>
+        If the <Term type="expression">OpenTelemetry</Term> element contains a
+        <Term type="expression">Logs</Term> element, OTLP <LinkExternal
+        target="https://opentelemetry.io/docs/concepts/signals/logs/">logs</LinkExternal>
+        will be sent to a specified endpoint. The <Term type="expression">Endpoint</Term> attribute
+        specifies the endpoint, and the <Term type="expression">Protocol</Term> attribute can either
+        be <Term type="constant">GRPC</Term> or <Term type="constant">HTTP</Term>.
+      </Paragraph>
+    </Subsection>
+    <Subsection title="Example">
+      <Paragraph>
+        An example Open Telemetry configuration:
+      </Paragraph>
+      <FormalItem title="Example">
+        <Verbatim><![CDATA[
+<OpenTelemetry LogicalServiceName="certusine">
+  <Logs Endpoint="http://logs.example.com:4317"
+        Protocol="GRPC"/>
+  <Metrics Endpoint="http://metrics.example.com:4317"
+           Protocol="GRPC"/>
+  <Traces Endpoint="http://traces.example.com:4317"
+          Protocol="GRPC"/>
+</OpenTelemetry>
+]]></Verbatim>
+      </FormalItem>
+    </Subsection>
+  </Subsection>
+
   <Subsection title="Example">
     <Paragraph>
       A full configuration file example is as follows:

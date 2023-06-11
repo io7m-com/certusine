@@ -19,7 +19,9 @@ package com.io7m.certusine.vanilla.internal.tasks;
 
 import com.io7m.certusine.api.CSCertificate;
 import com.io7m.certusine.api.CSDomain;
+import com.io7m.certusine.api.CSFaultInjectionConfiguration;
 import com.io7m.certusine.certstore.api.CSCertificateStoreType;
+import io.opentelemetry.api.trace.Span;
 import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.shredzone.acme4j.util.CSRBuilder;
@@ -34,7 +36,6 @@ import java.util.Optional;
 import java.util.OptionalLong;
 
 import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
-import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
 import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_PAUSE_TIME;
 
 /**
@@ -42,7 +43,7 @@ import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_
  */
 
 public final class CSCertificateTaskSignCertificateInitial
-  extends CSCertificateTask
+  extends CSCertificateTaskSignCertificate
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(CSCertificateTaskSignCertificateInitial.class);
@@ -60,7 +61,7 @@ public final class CSCertificateTaskSignCertificateInitial
     final CSCertificateTaskContext inContext,
     final Order inOrder)
   {
-    super(inContext);
+    super("SignCertificateInitial", inContext);
     this.order = Objects.requireNonNull(inOrder, "order");
   }
 
@@ -115,6 +116,21 @@ public final class CSCertificateTaskSignCertificateInitial
     try {
 
       /*
+       * Do any required fault injection.
+       */
+
+      final var faultInjection =
+        context.options().faultInjection();
+
+      injectFaultCrash(faultInjection);
+
+      if (faultInjection.failSigningCertificates()) {
+        return context.failedPermanently(
+          new RuntimeException("InjectedFaultSigningFailure")
+        );
+      }
+
+      /*
        * If the certificate expires soon, then order a renewal. A nonexistent
        * certificate is assumed to require a renewal.
        */
@@ -142,13 +158,21 @@ public final class CSCertificateTaskSignCertificateInitial
       return new CSCertificateTaskCompleted(
         OptionalLong.empty(),
         Optional.of(
-          new CSCertificateTaskSignCertificateSaveToOutputs(
-            context,
-            this.order))
+          new CSCertificateTaskSignCertificateSaveToOutputs(context))
       );
     } catch (final IOException | AcmeException e) {
+      Span.current().recordException(e);
       LOG.error("failed to submit a signing request: {}", e.getMessage());
-      return new CSCertificateTaskFailedPermanently(e);
+      return context.failedPermanently(e);
+    }
+  }
+
+  private static void injectFaultCrash(
+    final CSFaultInjectionConfiguration faultInjection)
+  {
+    if (faultInjection.crashSigningCertificates()) {
+      Span.current().addEvent("InjectedFaultSigningCrash");
+      throw new RuntimeException("InjectedFaultSigningCrash");
     }
   }
 }

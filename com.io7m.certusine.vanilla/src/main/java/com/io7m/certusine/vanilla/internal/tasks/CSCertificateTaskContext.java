@@ -20,10 +20,13 @@ package com.io7m.certusine.vanilla.internal.tasks;
 import com.io7m.certusine.api.CSCertificate;
 import com.io7m.certusine.api.CSDomain;
 import com.io7m.certusine.api.CSOptions;
+import com.io7m.certusine.api.CSTelemetryServiceType;
 import com.io7m.certusine.certstore.api.CSCertificateStoreType;
 import com.io7m.certusine.vanilla.internal.CSStrings;
 import com.io7m.certusine.vanilla.internal.dns.CSDNSQueriesFactoryType;
 import com.io7m.certusine.vanilla.internal.dns.CSDNSTXTRecord;
+import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
 import org.shredzone.acme4j.Problem;
 
 import java.time.Clock;
@@ -39,6 +42,8 @@ import java.util.Objects;
 public final class CSCertificateTaskContext
 {
   private final CSStrings strings;
+  private final CSEventServiceType events;
+  private final CSTelemetryServiceType telemetry;
   private final CSOptions options;
   private final CSCertificateStoreType certificateStore;
   private final Clock clock;
@@ -47,11 +52,14 @@ public final class CSCertificateTaskContext
   private final int retryAttemptsMax;
   private final ArrayList<CSDNSTXTRecord> dnsRecords;
   private final CSDNSQueriesFactoryType dnsQueries;
+  private boolean failed;
 
   /**
    * The execution context for a task.
    *
    * @param inStrings          The string resources
+   * @param inEvents           The event service
+   * @param inTelemetry        The telemetry service
    * @param inClock            The clock
    * @param inCertificateStore The certificate store
    * @param inOptions          The options
@@ -63,6 +71,8 @@ public final class CSCertificateTaskContext
 
   public CSCertificateTaskContext(
     final CSStrings inStrings,
+    final CSEventServiceType inEvents,
+    final CSTelemetryServiceType inTelemetry,
     final CSOptions inOptions,
     final CSCertificateStoreType inCertificateStore,
     final Clock inClock,
@@ -73,6 +83,10 @@ public final class CSCertificateTaskContext
   {
     this.strings =
       Objects.requireNonNull(inStrings, "inStrings");
+    this.events =
+      Objects.requireNonNull(inEvents, "inEvents");
+    this.telemetry =
+      Objects.requireNonNull(inTelemetry, "inTelemetry");
     this.options =
       Objects.requireNonNull(inOptions, "options");
     this.certificateStore =
@@ -90,6 +104,15 @@ public final class CSCertificateTaskContext
       inRetryAttemptsMax;
     this.dnsRecords =
       new ArrayList<>();
+  }
+
+  /**
+   * @return The telemetry service
+   */
+
+  public CSTelemetryServiceType telemetry()
+  {
+    return this.telemetry;
   }
 
   /**
@@ -233,5 +256,39 @@ public final class CSCertificateTaskContext
       stringBuilder.append(this.formatProblem(problem));
     }
     return stringBuilder.toString();
+  }
+
+  /**
+   * @return The event service
+   */
+
+  public CSEventServiceType events()
+  {
+    return this.events;
+  }
+
+  /**
+   * @return {@code true} if a task associated with this context has permanently failed
+   */
+
+  public boolean isFailed()
+  {
+    return this.failed;
+  }
+
+  /**
+   * Mark this context as permanently failed due to the given exception,
+   * and return a failed permanently status.
+   *
+   * @param exception The exception
+   *
+   * @return The failed status
+   */
+
+  public CSCertificateTaskFailedPermanently failedPermanently(
+    final Exception exception)
+  {
+    this.failed = true;
+    return new CSCertificateTaskFailedPermanently(exception);
   }
 }

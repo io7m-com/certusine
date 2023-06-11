@@ -19,8 +19,11 @@ package com.io7m.certusine.vanilla.internal.tasks;
 import com.io7m.certusine.api.CSDomain;
 import com.io7m.certusine.certstore.api.CSCertificateStored;
 import com.io7m.certusine.vanilla.internal.CSCertificateIO;
+import com.io7m.certusine.vanilla.internal.events.CSEventCertificateStoreFailed;
+import com.io7m.certusine.vanilla.internal.events.CSEventCertificateStored;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
+import io.opentelemetry.api.trace.Span;
 import org.shredzone.acme4j.Certificate;
 import org.shredzone.acme4j.Order;
 import org.slf4j.Logger;
@@ -40,7 +43,7 @@ import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.IO_RETRY_PAU
  */
 
 public final class CSCertificateTaskSignCertificateSaveToStore
-  extends CSCertificateTask
+  extends CSCertificateTaskSignCertificate
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(CSCertificateTaskSignCertificateSaveToStore.class);
@@ -58,7 +61,7 @@ public final class CSCertificateTaskSignCertificateSaveToStore
     final CSCertificateTaskContext inContext,
     final Order inOrder)
   {
-    super(inContext);
+    super("SignCertificateSaveToStore", inContext);
     this.order = Objects.requireNonNull(inOrder, "order");
   }
 
@@ -78,6 +81,7 @@ public final class CSCertificateTaskSignCertificateSaveToStore
     try {
       this.saveCertificateLocally(issuedCertificate, domain);
     } catch (final IOException e) {
+      Span.current().recordException(e);
       LOG.error("failed to save certificate to the local database: ", e);
       return new CSCertificateTaskFailedButCanBeRetried(IO_RETRY_PAUSE_TIME, e);
     }
@@ -85,9 +89,21 @@ public final class CSCertificateTaskSignCertificateSaveToStore
     return new CSCertificateTaskCompleted(
       OptionalLong.empty(),
       Optional.of(
-        new CSCertificateTaskSignCertificateSaveToOutputs(context, this.order)
+        new CSCertificateTaskSignCertificateSaveToOutputs(context)
       )
     );
+  }
+
+  @Override
+  void executeOnTaskCompletelyFailed()
+  {
+    final CSCertificateTaskContext context = this.context();
+    context.events()
+      .emit(new CSEventCertificateStoreFailed(
+        context.domain(),
+        context.certificate().name(),
+        "local"
+      ));
   }
 
   private void saveCertificateLocally(
@@ -112,8 +128,7 @@ public final class CSCertificateTaskSignCertificateSaveToStore
     final var encodedCertificateChain =
       CSCertificateIO.encodeCertificates(issuedCertificate.getCertificateChain());
 
-    context
-      .certificateStore()
+    context.certificateStore()
       .put(
         new CSCertificateStored(
           domain.domain(),
@@ -124,5 +139,12 @@ public final class CSCertificateTaskSignCertificateSaveToStore
           encodedCertificateChain
         )
       );
+
+    context.events()
+      .emit(new CSEventCertificateStored(
+        context.domain(),
+        context.certificate().name(),
+        "local"
+      ));
   }
 }

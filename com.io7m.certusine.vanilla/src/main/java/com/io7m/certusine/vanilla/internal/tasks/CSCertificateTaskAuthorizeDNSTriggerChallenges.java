@@ -20,6 +20,7 @@ package com.io7m.certusine.vanilla.internal.tasks;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
 import com.io7m.jdeferthrow.core.ExceptionTracker;
+import io.opentelemetry.api.trace.Span;
 import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
 import org.shredzone.acme4j.exception.AcmeException;
@@ -30,7 +31,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalLong;
 
-import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
 import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_PAUSE_TIME;
 
 /**
@@ -39,7 +39,7 @@ import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_
  */
 
 public final class CSCertificateTaskAuthorizeDNSTriggerChallenges
-  extends CSCertificateTask
+  extends CSCertificateTaskAuthorizeDNS
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(CSCertificateTaskAuthorizeDNSTriggerChallenges.class);
@@ -58,7 +58,7 @@ public final class CSCertificateTaskAuthorizeDNSTriggerChallenges
     final CSCertificateTaskContext inContext,
     final Order inOrder)
   {
-    super(inContext);
+    super("AuthorizeDNSTriggerChallenges", inContext);
     this.order = Objects.requireNonNull(inOrder, "order");
   }
 
@@ -84,11 +84,17 @@ public final class CSCertificateTaskAuthorizeDNSTriggerChallenges
         final var challengeStatus = challenge.getStatus();
         switch (challengeStatus) {
           case INVALID -> {
-            return new CSCertificateTaskFailedPermanently(
-              new CSCertificateTaskException(
-                context.formatProblem(this.order.getError()),
-                false
-              )
+            return context.failedPermanently(new CSCertificateTaskException(
+              context.formatProblem(this.order.getError()),
+              false
+            ));
+          }
+
+          case VALID, READY, UNKNOWN, CANCELED, EXPIRED, DEACTIVATED, REVOKED, PROCESSING -> {
+            LOG.debug(
+              "challenge status for authorization {} is {}, so not triggering",
+              auth.getIdentifier().getDomain(),
+              challengeStatus
             );
           }
 
@@ -98,13 +104,7 @@ public final class CSCertificateTaskAuthorizeDNSTriggerChallenges
               auth.getIdentifier().getDomain());
             challenge.trigger();
           }
-          case READY, UNKNOWN, CANCELED, EXPIRED, DEACTIVATED, REVOKED, VALID, PROCESSING -> {
-            LOG.debug(
-              "challenge status for authorization {} is {}, so not triggering",
-              auth.getIdentifier().getDomain(),
-              challengeStatus
-            );
-          }
+
         }
       } catch (final AcmeException e) {
         exceptions.addException(new CSCertificateTaskException(e, true));
@@ -114,6 +114,7 @@ public final class CSCertificateTaskAuthorizeDNSTriggerChallenges
     try {
       exceptions.throwIfNecessary();
     } catch (final Exception e) {
+      Span.current().recordException(e);
       return new CSCertificateTaskFailedButCanBeRetried(
         ACME_UPDATE_PAUSE_TIME,
         e
@@ -122,10 +123,10 @@ public final class CSCertificateTaskAuthorizeDNSTriggerChallenges
 
     return new CSCertificateTaskCompleted(
       OptionalLong.empty(),
-      Optional.of(new CSCertificateTaskAuthorizeDNSUpdateChallenges(
-        context,
-        this.order
-      ))
+      Optional.of(
+        new CSCertificateTaskAuthorizeDNSUpdateChallenges(context, this.order)
+      )
     );
   }
+
 }

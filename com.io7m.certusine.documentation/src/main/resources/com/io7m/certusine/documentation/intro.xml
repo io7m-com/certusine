@@ -46,6 +46,10 @@
         servers.
       </Item>
       <Item>
+        Heavily instrumented with <LinkExternal target="https://www.opentelemetry.io">OpenTelemetry</LinkExternal>
+        for reliable service monitoring.
+      </Item>
+      <Item>
         An extensive automated test suite with high coverage.
       </Item>
       <Item>

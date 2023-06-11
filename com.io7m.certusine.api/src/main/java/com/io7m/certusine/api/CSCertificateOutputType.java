@@ -39,12 +39,14 @@ public interface CSCertificateOutputType
   /**
    * Write a certificate to the output.
    *
+   * @param telemetry  The telemetry service
    * @param outputData The data to be written
    *
    * @throws IOException On I/O errors
    */
 
   void write(
+    CSTelemetryServiceType telemetry,
     CSCertificateOutputData outputData)
     throws IOException, InterruptedException;
 }

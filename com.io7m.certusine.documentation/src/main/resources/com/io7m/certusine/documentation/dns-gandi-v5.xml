@@ -7,7 +7,7 @@
 
   <Subsection title="Name">
     <Paragraph>
-      <Term type="package">gandi-v5</Term>
+      <Term type="package">Gandi-v5</Term>
       - Support for the Gandi LiveDNS API
     </Paragraph>
   </Subsection>

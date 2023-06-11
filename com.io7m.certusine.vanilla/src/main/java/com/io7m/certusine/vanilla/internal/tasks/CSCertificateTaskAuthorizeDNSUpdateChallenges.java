@@ -16,11 +16,12 @@
 
 package com.io7m.certusine.vanilla.internal.tasks;
 
+import com.io7m.certusine.vanilla.internal.events.CSEventCertificateRenewalSucceeded;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskInProgress;
 import com.io7m.jdeferthrow.core.ExceptionTracker;
+import io.opentelemetry.api.trace.Span;
 import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
 import org.shredzone.acme4j.exception.AcmeException;
@@ -39,7 +40,7 @@ import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_
  */
 
 public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
-  extends CSCertificateTask
+  extends CSCertificateTaskAuthorizeDNS
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(CSCertificateTaskAuthorizeDNSUpdateChallenges.class);
@@ -57,7 +58,7 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
     final CSCertificateTaskContext inContext,
     final Order inOrder)
   {
-    super(inContext);
+    super("AuthorizeDNSUpdateChallenges", inContext);
     this.order = Objects.requireNonNull(inOrder, "order");
   }
 
@@ -91,6 +92,12 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
 
     final var context = this.context();
     if (challengesSucceeded.size() == challenges.size()) {
+      context.events()
+        .emit(new CSEventCertificateRenewalSucceeded(
+          context.domain(),
+          context.certificate().name()
+        ));
+
       return new CSCertificateTaskCompleted(
         OptionalLong.empty(),
         Optional.of(
@@ -104,7 +111,7 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
      */
 
     if (challengesFailed.size() == challenges.size()) {
-      return new CSCertificateTaskFailedPermanently(
+      return context.failedPermanently(
         new CSCertificateTaskException(
           context.strings().format("errorAllTasksFailed"),
           false
@@ -120,6 +127,7 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
     try {
       exceptions.throwIfNecessary();
     } catch (final Exception e) {
+      Span.current().recordException(e);
       return new CSCertificateTaskFailedButCanBeRetried(
         ACME_UPDATE_PAUSE_TIME,
         e

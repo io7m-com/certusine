@@ -18,7 +18,6 @@ package com.io7m.certusine.tests;
 
 import com.io7m.certusine.api.CSConfigurationException;
 import com.io7m.certusine.api.CSConfigurationParameters;
-import com.io7m.certusine.api.CSDNSRecordNameType;
 import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameRelative;
 import com.io7m.certusine.vultr.CSVultrDNSConfigurators;
 import com.io7m.jlexing.core.LexicalPositions;
@@ -30,6 +29,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static com.io7m.certusine.api.CSTelemetryNoOp.noop;
 import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -84,7 +84,7 @@ public final class CSVultrDNSTests
       );
 
     this.fakeServer.setResponseCode(201);
-    v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+    v.createTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
   }
 
   /**
@@ -117,7 +117,7 @@ public final class CSVultrDNSTests
 
       this.fakeServer.setResponseCode(code);
       assertThrows(IOException.class, () -> {
-        v.createTXTRecord(new CSDNSRecordNameRelative("a"), "b");
+        v.createTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
       });
     }
   }

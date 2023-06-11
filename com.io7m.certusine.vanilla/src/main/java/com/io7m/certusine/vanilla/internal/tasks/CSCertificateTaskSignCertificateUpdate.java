@@ -16,8 +16,8 @@
 
 package com.io7m.certusine.vanilla.internal.tasks;
 
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskInProgress;
+import io.opentelemetry.api.trace.Span;
 import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ import static org.shredzone.acme4j.Status.VALID;
  */
 
 public final class CSCertificateTaskSignCertificateUpdate
-  extends CSCertificateTask
+  extends CSCertificateTaskSignCertificate
 {
   private static final Logger LOG =
     LoggerFactory.getLogger(CSCertificateTaskSignCertificateUpdate.class);
@@ -57,7 +57,7 @@ public final class CSCertificateTaskSignCertificateUpdate
     final CSCertificateTaskContext inContext,
     final Order inOrder)
   {
-    super(inContext);
+    super("SignCertificateUpdate", inContext);
     this.order = Objects.requireNonNull(inOrder, "order");
   }
 
@@ -66,6 +66,13 @@ public final class CSCertificateTaskSignCertificateUpdate
     throws InterruptedException
   {
     LOG.debug("updating certificate signing order");
+
+    final var issued =
+      this.context()
+        .telemetry()
+        .meter()
+        .counterBuilder("certusine_certificates_issued")
+        .build();
 
     /*
      * If the order status is valid, then move to writing out certificates.
@@ -85,6 +92,7 @@ public final class CSCertificateTaskSignCertificateUpdate
     try {
       this.order.update();
     } catch (final AcmeException e) {
+      Span.current().recordException(e);
       return new CSCertificateTaskFailedButCanBeRetried(
         ACME_UPDATE_PAUSE_TIME, e);
     }
@@ -95,13 +103,14 @@ public final class CSCertificateTaskSignCertificateUpdate
       }
 
       case VALID -> {
+        issued.add(1L);
         yield new CSCertificateTaskCompleted(OptionalLong.empty(), Optional.of(
           new CSCertificateTaskSignCertificateSaveToStore(context, this.order)
         ));
       }
 
       case INVALID, DEACTIVATED, REVOKED, EXPIRED, CANCELED, UNKNOWN -> {
-        yield new CSCertificateTaskFailedPermanently(
+        yield context.failedPermanently(
           new CSCertificateTaskException(
             context.formatProblem(this.order.getError()),
             false

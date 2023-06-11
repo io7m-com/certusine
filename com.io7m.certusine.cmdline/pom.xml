@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.certusine</artifactId>
     <groupId>com.io7m.certusine</groupId>
-    <version>0.0.10</version>
+    <version>1.0.0</version>
   </parent>
 
   <artifactId>com.io7m.certusine.cmdline</artifactId>
@@ -27,11 +27,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>com.io7m.certusine.vanilla</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.certusine.etcd</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -56,6 +51,18 @@
     </dependency>
 
     <dependency>
+      <groupId>com.io7m.quarrel</groupId>
+      <artifactId>com.io7m.quarrel.ext.logback</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.quarrel</groupId>
+      <artifactId>com.io7m.quarrel.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.repetoir</groupId>
+      <artifactId>com.io7m.repetoir.core</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
@@ -73,15 +80,7 @@
     </dependency>
     <dependency>
       <groupId>com.io7m.anethum</groupId>
-      <artifactId>com.io7m.anethum.common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.beust</groupId>
-      <artifactId>jcommander</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.io7m.claypot</groupId>
-      <artifactId>com.io7m.claypot.core</artifactId>
+      <artifactId>com.io7m.anethum.api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>

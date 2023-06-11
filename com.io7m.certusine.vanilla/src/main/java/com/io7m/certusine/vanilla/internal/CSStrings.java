@@ -18,6 +18,7 @@
 package com.io7m.certusine.vanilla.internal;
 
 import com.io7m.jxtrand.vanilla.JXTAbstractStrings;
+import com.io7m.repetoir.core.RPServiceType;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -26,7 +27,8 @@ import java.util.Locale;
  * String resources.
  */
 
-public final class CSStrings extends JXTAbstractStrings
+public final class CSStrings
+  extends JXTAbstractStrings implements RPServiceType
 {
   /**
    * String resources.
@@ -63,5 +65,11 @@ public final class CSStrings extends JXTAbstractStrings
       "[CSStrings 0x%08x]",
       Integer.valueOf(this.hashCode())
     );
+  }
+
+  @Override
+  public String description()
+  {
+    return "Strings.";
   }
 }

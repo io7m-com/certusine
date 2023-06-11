@@ -18,6 +18,7 @@ package com.io7m.certusine.tests;
 
 import com.io7m.certusine.api.CSDNSConfiguratorType;
 import com.io7m.certusine.api.CSDNSRecordNameType;
+import com.io7m.certusine.api.CSTelemetryServiceType;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -38,6 +39,7 @@ public final class CSFakeDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void createTXTRecord(
+    final CSTelemetryServiceType telemetry,
     final CSDNSRecordNameType name,
     final String text)
   {
@@ -46,6 +48,7 @@ public final class CSFakeDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void deleteTXTRecord(
+    final CSTelemetryServiceType telemetry,
     final CSDNSRecordNameType recordName,
     final String recordValue)
   {

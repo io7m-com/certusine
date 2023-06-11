@@ -28,6 +28,9 @@ module com.io7m.certusine.looseleaf
 
   requires transitive com.io7m.certusine.api;
 
+  requires io.opentelemetry.context;
+  requires io.opentelemetry.api;
+
   requires com.io7m.jdeferthrow.core;
   requires com.io7m.jxtrand.vanilla;
   requires com.io7m.looseleaf.protocol.v1;

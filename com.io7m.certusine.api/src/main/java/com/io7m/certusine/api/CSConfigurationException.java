@@ -17,7 +17,8 @@
 
 package com.io7m.certusine.api;
 
-import com.io7m.anethum.common.ParseStatus;
+
+import com.io7m.anethum.api.ParseStatus;
 
 import java.util.List;
 import java.util.Objects;

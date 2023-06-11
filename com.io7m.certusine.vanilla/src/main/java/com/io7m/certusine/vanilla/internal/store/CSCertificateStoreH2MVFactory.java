@@ -14,7 +14,6 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
 package com.io7m.certusine.vanilla.internal.store;
 
 import com.io7m.certusine.certstore.api.CSCertificateStoreFactoryType;
@@ -59,5 +58,18 @@ public final class CSCertificateStoreH2MVFactory
     } catch (final Exception e) {
       throw new IOException(e);
     }
+  }
+
+  @Override
+  public String description()
+  {
+    return "H2 MVStore certificate store.";
+  }
+
+  @Override
+  public String toString()
+  {
+    return "[CSCertificateStoreH2MVFactory 0x%s]"
+      .formatted(Long.toUnsignedString(this.hashCode(), 16));
   }
 }

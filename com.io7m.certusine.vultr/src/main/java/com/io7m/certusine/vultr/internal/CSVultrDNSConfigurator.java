@@ -19,6 +19,7 @@ package com.io7m.certusine.vultr.internal;
 
 import com.io7m.certusine.api.CSDNSConfiguratorType;
 import com.io7m.certusine.api.CSDNSRecordNameType;
+import com.io7m.certusine.api.CSTelemetryServiceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +78,7 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void createTXTRecord(
+    final CSTelemetryServiceType telemetry,
     final CSDNSRecordNameType recordName,
     final String recordValue)
     throws IOException, InterruptedException
@@ -126,6 +128,7 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
 
   @Override
   public void deleteTXTRecord(
+    final CSTelemetryServiceType telemetry,
     final CSDNSRecordNameType recordName,
     final String recordValue)
   {

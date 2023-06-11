@@ -28,6 +28,9 @@ module com.io7m.certusine.gandi
 
   requires transitive com.io7m.certusine.api;
 
+  requires io.opentelemetry.api;
+  requires io.opentelemetry.context;
+
   requires com.fasterxml.jackson.databind;
   requires com.io7m.jxtrand.vanilla;
   requires java.net.http;

@@ -30,7 +30,6 @@ module com.io7m.certusine.vanilla
   requires static org.osgi.annotation.versioning;
 
   requires transitive com.io7m.anethum.api;
-  requires transitive com.io7m.anethum.common;
   requires transitive com.io7m.certusine.api;
   requires transitive com.io7m.certusine.certstore.api;
 
@@ -38,6 +37,7 @@ module com.io7m.certusine.vanilla
   requires com.io7m.jaffirm.core;
   requires com.io7m.jdeferthrow.core;
   requires com.io7m.jxtrand.vanilla;
+  requires com.io7m.repetoir.core;
   requires jakarta.xml.bind;
   requires org.bouncycastle.pkix;
   requires org.bouncycastle.provider;
@@ -46,13 +46,25 @@ module com.io7m.certusine.vanilla
   requires org.shredzone.acme4j;
   requires org.slf4j;
 
+  requires io.opentelemetry.api;
+  requires io.opentelemetry.context;
+  requires io.opentelemetry.exporter.otlp;
+  requires io.opentelemetry.sdk.common;
+  requires io.opentelemetry.sdk.logs;
+  requires io.opentelemetry.sdk.metrics;
+  requires io.opentelemetry.sdk.trace;
+  requires io.opentelemetry.sdk;
+  requires io.opentelemetry.semconv;
+
   exports com.io7m.certusine.vanilla;
 
   uses CSCertificateOutputProviderType;
   uses CSDNSConfiguratorProviderType;
+  uses CSCertificateStoreFactoryType;
 
   provides CSCertificateOutputProviderType
     with CSCertificateOutputProviderDirectory;
+
   provides CSCertificateStoreFactoryType
     with CSCertificateStoreH2MVFactory;
 
@@ -70,4 +82,11 @@ module com.io7m.certusine.vanilla
     to com.io7m.certusine.tests;
   exports com.io7m.certusine.vanilla.internal.dns
     to com.io7m.certusine.tests;
+  exports com.io7m.certusine.vanilla.internal.events
+    to com.io7m.certusine.tests;
+
+  opens com.io7m.certusine.vanilla to
+    com.io7m.jxtrand.vanilla;
+  exports com.io7m.certusine.vanilla.internal.telemetry to com.io7m.certusine.tests;
+  opens com.io7m.certusine.vanilla.internal.telemetry to com.io7m.jxtrand.vanilla;
 }

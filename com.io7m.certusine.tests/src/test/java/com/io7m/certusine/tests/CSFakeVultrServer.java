@@ -19,11 +19,9 @@ package com.io7m.certusine.tests;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 
 import java.net.InetSocketAddress;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public final class CSFakeVultrServer implements AutoCloseable
 {

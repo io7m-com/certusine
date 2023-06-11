@@ -16,19 +16,27 @@
 
 package com.io7m.certusine.cmdline.internal;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-import com.io7m.claypot.core.CLPAbstractCommand;
-import com.io7m.claypot.core.CLPCommandContextType;
+import com.io7m.quarrel.core.QCommandContextType;
+import com.io7m.quarrel.core.QCommandMetadata;
+import com.io7m.quarrel.core.QCommandStatus;
+import com.io7m.quarrel.core.QCommandType;
+import com.io7m.quarrel.core.QParameterNamed1;
+import com.io7m.quarrel.core.QParameterNamedType;
+import com.io7m.quarrel.core.QStringType.QConstant;
+import com.io7m.quarrel.ext.logback.QLogback;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.security.KeyPairGenerator;
+import java.security.Security;
 import java.security.spec.ECGenParameterSpec;
+import java.util.List;
+import java.util.Optional;
 
-import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
+import static java.lang.Boolean.FALSE;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -38,87 +46,104 @@ import static java.nio.file.StandardOpenOption.WRITE;
  * Generate keypairs.
  */
 
-@Parameters(commandDescription = "Generate keypairs.")
-public final class CSGenerateKeyPair extends CLPAbstractCommand
+public final class CSGenerateKeyPair implements QCommandType
 {
-  @Parameter(
-    names = "--public-key",
-    description = "The public key",
-    required = true
-  )
-  private Path publicKeyFile;
+  private static final QParameterNamed1<Path> PUBLIC_KEY_FILE =
+    new QParameterNamed1<>(
+      "--public-key",
+      List.of(),
+      new QConstant("The public key"),
+      Optional.empty(),
+      Path.class
+    );
 
-  @Parameter(
-    names = "--private-key",
-    description = "The private key",
-    required = true
-  )
-  private Path privateKeyFile;
+  private static final QParameterNamed1<Path> PRIVATE_KEY_FILE =
+    new QParameterNamed1<>(
+      "--private-key",
+      List.of(),
+      new QConstant("The private key"),
+      Optional.empty(),
+      Path.class
+    );
 
-  @Parameter(
-    names = "--overwrite",
-    arity = 1,
-    description = "Overwrite keys if already present."
-  )
-  private boolean overwrite;
+  private static final QParameterNamed1<Boolean> OVERWRITE =
+    new QParameterNamed1<>(
+      "--overwrite",
+      List.of(),
+      new QConstant("Overwrite keys if already present."),
+      Optional.of(FALSE),
+      Boolean.class
+    );
+
+  private final QCommandMetadata metadata;
 
   /**
    * Construct a command.
-   *
-   * @param inContext The command context
    */
 
-  public CSGenerateKeyPair(
-    final CLPCommandContextType inContext)
+  public CSGenerateKeyPair()
   {
-    super(inContext);
+    this.metadata = new QCommandMetadata(
+      "generate-keypair",
+      new QConstant("Generate keypairs."),
+      Optional.empty()
+    );
   }
 
   @Override
-  protected Status executeActual()
+  public List<QParameterNamedType<?>> onListNamedParameters()
+  {
+    return QLogback.plusParameters(
+      List.of(PUBLIC_KEY_FILE, PRIVATE_KEY_FILE, OVERWRITE)
+    );
+  }
+
+  @Override
+  public QCommandStatus onExecute(
+    final QCommandContextType context)
     throws Exception
   {
+    Security.addProvider(new BouncyCastleProvider());
+
     final var generator =
       KeyPairGenerator.getInstance("EC", "BC");
 
-    this.privateKeyFile =
-      this.privateKeyFile.toAbsolutePath();
-    this.publicKeyFile =
-      this.publicKeyFile.toAbsolutePath();
+    final var privateKeyFile =
+      context.parameterValue(PRIVATE_KEY_FILE).toAbsolutePath();
+    final var publicKeyFile =
+      context.parameterValue(PUBLIC_KEY_FILE).toAbsolutePath();
 
     generator.initialize(new ECGenParameterSpec("P-256"));
 
     final var keyPair = generator.generateKeyPair();
 
     final OpenOption[] options;
-    if (this.overwrite) {
+    if (context.parameterValue(OVERWRITE).booleanValue()) {
       options = new OpenOption[]{CREATE, TRUNCATE_EXISTING, WRITE};
     } else {
       options = new OpenOption[]{CREATE_NEW, WRITE};
     }
 
-    try (var writer =
-           Files.newBufferedWriter(this.publicKeyFile, options)) {
+    try (var writer = Files.newBufferedWriter(publicKeyFile, options)) {
       try (var pemWriter = new JcaPEMWriter(writer)) {
         pemWriter.writeObject(keyPair.getPublic());
         pemWriter.flush();
       }
     }
 
-    try (var writer =
-           Files.newBufferedWriter(this.privateKeyFile, options)) {
+    try (var writer = Files.newBufferedWriter(privateKeyFile, options)) {
       try (var pemWriter = new JcaPEMWriter(writer)) {
         pemWriter.writeObject(keyPair.getPrivate());
         pemWriter.flush();
       }
     }
 
-    return SUCCESS;
+    return QCommandStatus.SUCCESS;
   }
 
   @Override
-  public String name()
+  public QCommandMetadata metadata()
   {
-    return "generate-keypair";
+    return this.metadata;
   }
 }

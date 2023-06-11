@@ -118,7 +118,7 @@ public final class CSLLOutputProvider
   @Override
   public String name()
   {
-    return "looseleaf";
+    return "Looseleaf";
   }
 
   @Override
@@ -159,5 +159,12 @@ public final class CSLLOutputProvider
         )
       )
     );
+  }
+
+  @Override
+  public String toString()
+  {
+    return "[CSLLOutputProvider 0x%s]"
+      .formatted(Long.toUnsignedString(this.hashCode(), 16));
   }
 }

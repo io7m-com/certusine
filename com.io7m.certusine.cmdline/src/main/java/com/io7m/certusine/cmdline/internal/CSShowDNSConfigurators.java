@@ -17,52 +17,67 @@
 
 package com.io7m.certusine.cmdline.internal;
 
-import com.beust.jcommander.Parameters;
 import com.io7m.certusine.api.CSDNSConfiguratorProviderType;
-import com.io7m.claypot.core.CLPAbstractCommand;
-import com.io7m.claypot.core.CLPCommandContextType;
+import com.io7m.quarrel.core.QCommandContextType;
+import com.io7m.quarrel.core.QCommandMetadata;
+import com.io7m.quarrel.core.QCommandStatus;
+import com.io7m.quarrel.core.QCommandType;
+import com.io7m.quarrel.core.QParameterNamedType;
+import com.io7m.quarrel.core.QStringType.QConstant;
+import com.io7m.quarrel.ext.logback.QLogback;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.ServiceLoader;
-
-import static com.io7m.claypot.core.CLPCommandType.Status.SUCCESS;
 
 /**
  * Show supported DNS configurators.
  */
 
-@Parameters(commandDescription = "Show supported DNS configurators.")
-public final class CSShowDNSConfigurators extends CLPAbstractCommand
+public final class CSShowDNSConfigurators implements QCommandType
 {
+  private final QCommandMetadata metadata;
+
   /**
    * Construct a command.
-   *
-   * @param inContext The command context
    */
 
-  public CSShowDNSConfigurators(
-    final CLPCommandContextType inContext)
+  public CSShowDNSConfigurators()
   {
-    super(inContext);
+    this.metadata = new QCommandMetadata(
+      "show-dns-configurators",
+      new QConstant("Show supported DNS configurators."),
+      Optional.empty()
+    );
   }
 
   @Override
-  protected Status executeActual()
+  public List<QParameterNamedType<?>> onListNamedParameters()
+  {
+    return QLogback.parameters();
+  }
+
+  @Override
+  public QCommandStatus onExecute(
+    final QCommandContextType context)
   {
     final var iter =
       ServiceLoader.load(CSDNSConfiguratorProviderType.class)
         .iterator();
 
+    final var output = context.output();
     while (iter.hasNext()) {
       final var dns = iter.next();
-      System.out.printf("%s : %s%n", dns.name(), dns.description());
+      output.printf("%s : %s%n", dns.name(), dns.description());
     }
 
-    return SUCCESS;
+    output.flush();
+    return QCommandStatus.SUCCESS;
   }
 
   @Override
-  public String name()
+  public QCommandMetadata metadata()
   {
-    return "show-dns-configurators";
+    return this.metadata;
   }
 }

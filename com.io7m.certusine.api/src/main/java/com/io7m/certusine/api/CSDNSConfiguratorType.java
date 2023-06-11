@@ -27,6 +27,7 @@ public interface CSDNSConfiguratorType
   /**
    * Create a TXT record with the given text.
    *
+   * @param telemetry   A telemetry service used to report results
    * @param recordName  The record name
    * @param recordValue The text
    *
@@ -35,6 +36,7 @@ public interface CSDNSConfiguratorType
    */
 
   void createTXTRecord(
+    CSTelemetryServiceType telemetry,
     CSDNSRecordNameType recordName,
     String recordValue)
     throws IOException, InterruptedException;
@@ -42,6 +44,7 @@ public interface CSDNSConfiguratorType
   /**
    * Delete a TXT record with the given text.
    *
+   * @param telemetry   A telemetry service used to report results
    * @param recordName  The record name
    * @param recordValue The text
    *
@@ -50,6 +53,7 @@ public interface CSDNSConfiguratorType
    */
 
   void deleteTXTRecord(
+    CSTelemetryServiceType telemetry,
     CSDNSRecordNameType recordName,
     String recordValue)
     throws IOException, InterruptedException;
