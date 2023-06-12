@@ -19,7 +19,6 @@ package com.io7m.certusine.vanilla.internal.tasks;
 
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskInProgress;
-import io.opentelemetry.api.trace.Span;
 import org.shredzone.acme4j.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalLong;
 
+import static com.io7m.certusine.api.CSTelemetryServiceType.recordExceptionAndSetError;
 import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_PAUSE_TIME;
 
 /**
@@ -130,7 +130,7 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecords
         foundAll &= found;
       } catch (final IOException e) {
         LOG.error("i/o error: {}", e.getMessage());
-        Span.current().recordException(e);
+        recordExceptionAndSetError(e);
         foundAll = false;
       }
     }

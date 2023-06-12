@@ -17,6 +17,7 @@
 package com.io7m.certusine.looseleaf;
 
 import com.io7m.certusine.api.CSCertificateName;
+import com.io7m.certusine.api.CSTelemetryServiceType;
 import com.io7m.jdeferthrow.core.ExceptionTracker;
 import com.io7m.looseleaf.protocol.v1.LLv1Error;
 import com.io7m.looseleaf.protocol.v1.LLv1Errors;
@@ -235,6 +236,7 @@ public final class CSLLDownloader
         nameCertFullChain
       );
     } catch (final IOException e) {
+      CSTelemetryServiceType.recordExceptionAndSetError(e);
       throw new IllegalStateException(e);
     }
   }
@@ -249,45 +251,50 @@ public final class CSLLDownloader
   public void execute()
     throws IOException, InterruptedException
   {
-    final var response =
-      this.client.send(this.request, BodyHandlers.ofByteArray());
-    final var message =
-      this.messages.deserialize(response.body());
+    try {
+      final var response =
+        this.client.send(this.request, BodyHandlers.ofByteArray());
+      final var message =
+        this.messages.deserialize(response.body());
 
-    if (message instanceof LLv1Errors errors) {
-      final var text = new StringBuilder();
-      final var lineSeparator = System.lineSeparator();
-      text.append("Server returned one or more errors.");
-      text.append(lineSeparator);
-      text.append("  HTTP status: ");
-      text.append(response.statusCode());
-      text.append(lineSeparator);
+      if (message instanceof final LLv1Errors errors) {
+        final var text = new StringBuilder();
+        final var lineSeparator = System.lineSeparator();
+        text.append("Server returned one or more errors.");
+        text.append(lineSeparator);
+        text.append("  HTTP status: ");
+        text.append(response.statusCode());
+        text.append(lineSeparator);
 
-      for (final var error : errors.errors()) {
-        errorAppend(text, lineSeparator, error);
+        for (final var error : errors.errors()) {
+          errorAppend(text, lineSeparator, error);
+        }
+
+        throw new IOException(text.toString());
       }
 
-      throw new IOException(text.toString());
-    }
+      if (message instanceof final LLv1Error error) {
+        final var text = new StringBuilder();
+        final var lineSeparator = System.lineSeparator();
+        text.append("Server returned one or more errors.");
+        text.append(lineSeparator);
+        text.append("  HTTP status: ");
+        text.append(response.statusCode());
+        text.append(lineSeparator);
+        errorAppend(text, lineSeparator, error);
+        throw new IOException(text.toString());
+      }
 
-    if (message instanceof LLv1Error error) {
-      final var text = new StringBuilder();
-      final var lineSeparator = System.lineSeparator();
-      text.append("Server returned one or more errors.");
-      text.append(lineSeparator);
-      text.append("  HTTP status: ");
-      text.append(response.statusCode());
-      text.append(lineSeparator);
-      errorAppend(text, lineSeparator, error);
-      throw new IOException(text.toString());
-    }
+      if (message instanceof final LLv1Result result) {
+        this.executeResult(result);
+        return;
+      }
 
-    if (message instanceof LLv1Result result) {
-      this.executeResult(result);
-      return;
+      throw new IOException("Received unexpected result: %s".formatted(message));
+    } catch (final Exception e) {
+      CSTelemetryServiceType.recordExceptionAndSetError(e);
+      throw e;
     }
-
-    throw new IOException("Received unexpected result: %s".formatted(message));
   }
 
   private static void errorAppend(

@@ -28,6 +28,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.io7m.certusine.api.CSTelemetryServiceType.recordExceptionAndSetError;
+
 /**
  * A certificate store based on the H2 MVStore class.
  */
@@ -76,6 +78,7 @@ public final class CSCertificateStoreH2MV
       certificates.put(id, certificate);
       tx.commit();
     } catch (final Exception e) {
+      recordExceptionAndSetError(e);
       throw new IOException(e);
     }
   }
@@ -98,6 +101,7 @@ public final class CSCertificateStoreH2MV
         tx.<String, CSCertificateStored>openMap("certificates");
       return Optional.ofNullable(certificates.get(id));
     } catch (final Exception e) {
+      recordExceptionAndSetError(e);
       throw new IOException(e);
     }
   }
@@ -125,6 +129,7 @@ public final class CSCertificateStoreH2MV
       tx.commit();
       return existing != null;
     } catch (final Exception e) {
+      recordExceptionAndSetError(e);
       throw new IOException(e);
     }
   }
@@ -137,6 +142,7 @@ public final class CSCertificateStoreH2MV
       try {
         this.store.close();
       } catch (final Exception e) {
+        recordExceptionAndSetError(e);
         throw new IOException(e);
       }
     }

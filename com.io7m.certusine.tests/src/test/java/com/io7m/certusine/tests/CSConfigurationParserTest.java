@@ -18,7 +18,6 @@
 package com.io7m.certusine.tests;
 
 import ch.qos.logback.classic.Level;
-import com.io7m.anethum.api.ParseSeverity;
 import com.io7m.anethum.api.ParseStatus;
 import com.io7m.anethum.api.ParsingException;
 import com.io7m.certusine.vanilla.CSConfigurationParsers;
@@ -34,7 +33,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.io7m.anethum.api.ParseSeverity.*;
+import static com.io7m.anethum.api.ParseSeverity.PARSE_WARNING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;

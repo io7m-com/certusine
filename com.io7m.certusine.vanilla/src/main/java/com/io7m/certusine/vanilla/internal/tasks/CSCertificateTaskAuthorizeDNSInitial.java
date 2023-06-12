@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalLong;
 
+import static com.io7m.certusine.api.CSTelemetryServiceType.recordExceptionAndSetError;
 import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_PAUSE_TIME;
 
 /**
@@ -136,6 +137,8 @@ public final class CSCertificateTaskAuthorizeDNSInitial
       );
     } catch (final CSCertificateTaskException e) {
       LOG.error("error checking authorization: ", e);
+      recordExceptionAndSetError(e);
+
       if (e.canRetry()) {
         LOG.info("retrying...");
         return new CSCertificateTaskFailedButCanBeRetried(

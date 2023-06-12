@@ -97,7 +97,7 @@ public final class CSCertificateOutputDirectory
     try (var ignored = span.makeCurrent()) {
       this.writeData(outputData);
     } catch (final Exception e) {
-      span.recordException(e);
+      CSTelemetryServiceType.recordExceptionAndSetError(e);
       throw e;
     } finally {
       span.end();

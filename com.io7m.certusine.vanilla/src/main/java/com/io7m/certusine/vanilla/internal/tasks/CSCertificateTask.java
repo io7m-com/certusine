@@ -27,6 +27,8 @@ import org.slf4j.MDC;
 import java.io.IOException;
 import java.util.Objects;
 
+import static com.io7m.certusine.api.CSTelemetryServiceType.recordExceptionAndSetError;
+
 /**
  * The base type of certificate tasks.
  */
@@ -130,8 +132,7 @@ public abstract class CSCertificateTask
       }
       return result;
     } catch (final Exception e) {
-      span.setStatus(StatusCode.ERROR);
-      span.recordException(e);
+      recordExceptionAndSetError(e);
       return this.context.failedPermanently(e);
     } finally {
       MDC.remove("domain");
