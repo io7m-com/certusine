@@ -16,13 +16,13 @@
 
 package com.io7m.certusine.vanilla;
 
+import com.io7m.certusine.api.CSConfigurationServiceType;
 import com.io7m.certusine.api.CSDomain;
-import com.io7m.certusine.api.CSOptions;
 import com.io7m.certusine.api.CSTelemetryServiceType;
-import com.io7m.certusine.certstore.api.CSCertificateStoreType;
 import com.io7m.certusine.vanilla.internal.CSDomainExecutor;
 import com.io7m.certusine.vanilla.internal.CSStrings;
 import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
+import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreServiceType;
 import com.io7m.repetoir.core.RPServiceDirectoryType;
 import org.shredzone.acme4j.Session;
 
@@ -45,9 +45,7 @@ public final class CSDomains
    * Renew all certificates for the given domain.
    *
    * @param services         A service directory
-   * @param options          The execution options
    * @param domain           The domain
-   * @param certificateStore The certificate store
    * @param clock            The clock used for time-based operations
    *
    * @throws IOException          On errors
@@ -56,26 +54,22 @@ public final class CSDomains
 
   public static void renew(
     final RPServiceDirectoryType services,
-    final CSOptions options,
     final CSDomain domain,
-    final Clock clock,
-    final CSCertificateStoreType certificateStore)
+    final Clock clock)
     throws IOException, InterruptedException
   {
     Objects.requireNonNull(services, "services");
-    Objects.requireNonNull(options, "options");
     Objects.requireNonNull(domain, "domain");
     Objects.requireNonNull(clock, "clock");
-    Objects.requireNonNull(certificateStore, "certificateStore");
 
     new CSDomainExecutor(
       services.requireService(CSStrings.class),
       services.requireService(CSTelemetryServiceType.class),
       services.requireService(CSEventServiceType.class),
-      options,
+      services.requireService(CSConfigurationServiceType.class),
+      services.requireService(CSCertificateStoreServiceType.class),
       domain,
       clock,
-      certificateStore,
       acmeInformation -> {
         return new Session(acmeInformation.acmeURI());
       }

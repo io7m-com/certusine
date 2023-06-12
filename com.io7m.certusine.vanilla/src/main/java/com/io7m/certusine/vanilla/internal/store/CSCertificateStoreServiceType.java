@@ -1,5 +1,5 @@
 /*
- * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2023 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,13 +14,23 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
+package com.io7m.certusine.vanilla.internal.store;
+
+import com.io7m.certusine.certstore.api.CSCertificateStoreType;
+import com.io7m.repetoir.core.RPServiceType;
+
 /**
- * ACME client (Vanilla implementation)
+ * A service that maintains a reference to a certificate store, and
+ * reloads the store when the configuration changes.
  */
 
-@Export
-@Version("2.0.0")
-package com.io7m.certusine.vanilla;
+public interface CSCertificateStoreServiceType
+  extends RPServiceType, AutoCloseable
+{
+  /**
+   * @return The open store
+   */
 
-import org.osgi.annotation.bundle.Export;
-import org.osgi.annotation.versioning.Version;
+  CSCertificateStoreType store();
+}

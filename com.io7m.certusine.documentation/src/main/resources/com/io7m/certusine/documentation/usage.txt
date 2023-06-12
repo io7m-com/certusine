@@ -1,31 +1,27 @@
-info: Usage: certusine [options] [command] [command options]
+certusine: usage: certusine [command] [arguments ...]
 
-  Options:
-    --verbose
-      Set the minimum logging verbosity level.
-      Default: info
-      Possible Values: [trace, debug, info, warn, error]
+  The certusine ACME client.
 
   Use the "help" command to examine specific commands:
 
     $ certusine help help.
 
-  Command-line arguments can be placed one per line into a file, and the file
-  can be referenced using the @ symbol:
+  Command-line arguments can be placed one per line into a file, and
+  the file can be referenced using the @ symbol:
 
     $ echo help > file.txt
     $ echo help >> file.txt
     $ certusine @file.txt
 
   Commands:
-    check-configuration          Check configuration file.
-    generate-keypair             Generate keypairs.
-    help                         Show detailed help messages for commands.
-    renew                        Renew certificates.
-    show-certificate-outputs     Show supported certificate outputs.
-    show-dns-configurators       Show supported DNS configurators.
-    version                      Show the package version.
+    check-configuration         Check configuration file.
+    generate-keypair            Generate keypairs.
+    help                        Show usage information for a command.
+    looseleaf-download          Download certificates from looseleaf databases.
+    renew                       Renew certificates.
+    show-certificate-outputs    Show supported certificate outputs.
+    show-dns-configurators      Show supported DNS configurators.
+    version                     Show the application version.
 
   Documentation:
-    https://www.io7m.com/software/certusine/documentation/
-
+    https://www.io7m.com/software/certusine/

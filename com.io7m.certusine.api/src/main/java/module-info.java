@@ -28,6 +28,7 @@ module com.io7m.certusine.api
 
   requires com.io7m.jxtrand.vanilla;
   requires transitive io.opentelemetry.api;
+  requires org.slf4j;
 
   opens com.io7m.certusine.api.internal
     to com.io7m.jxtrand.vanilla;

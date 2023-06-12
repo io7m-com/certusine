@@ -81,7 +81,8 @@ public final class CSCertificateTaskSignCertificateSaveToOutputs
 
     try {
       final var storedCertificate =
-        context.certificateStore()
+        context.certificateStores()
+          .store()
           .find(domain.domain(), certificate.name())
           .orElseThrow(() -> {
             return new IllegalStateException(

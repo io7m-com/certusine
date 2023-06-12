@@ -18,16 +18,24 @@
 package com.io7m.certusine.vanilla;
 
 import com.io7m.certusine.api.CSCertificateOutputProviderType;
+import com.io7m.certusine.api.CSConfigurationServiceType;
 import com.io7m.certusine.api.CSDNSConfiguratorProviderType;
 import com.io7m.certusine.api.CSTelemetryServiceType;
 import com.io7m.certusine.certstore.api.CSCertificateStoreFactoryType;
 import com.io7m.certusine.vanilla.internal.CSStrings;
+import com.io7m.certusine.vanilla.internal.age.CSAgeService;
+import com.io7m.certusine.vanilla.internal.age.CSAgeServiceType;
+import com.io7m.certusine.vanilla.internal.configuration.CSConfigurationService;
 import com.io7m.certusine.vanilla.internal.events.CSEventService;
 import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
+import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreService;
+import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreServiceType;
 import com.io7m.repetoir.core.RPServiceDirectory;
 import com.io7m.repetoir.core.RPServiceDirectoryWritableType;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.time.Clock;
 import java.util.Locale;
 import java.util.ServiceLoader;
 
@@ -45,8 +53,10 @@ public final class CSServices
   /**
    * The main service directory.
    *
-   * @param locale    The locale
-   * @param telemetry The telemetry service
+   * @param clock             The clock
+   * @param locale            The locale
+   * @param configurationFile The configuration file
+   * @param telemetry         The telemetry service
    *
    * @return A service directory
    *
@@ -55,10 +65,60 @@ public final class CSServices
 
   public static RPServiceDirectoryWritableType create(
     final Locale locale,
+    final Path configurationFile,
+    final Clock clock,
     final CSTelemetryServiceType telemetry)
-    throws IOException
+    throws Exception
   {
     final var directory = new RPServiceDirectory();
+    directory.register(CSTelemetryServiceType.class, telemetry);
+
+    final var configurationParsers =
+      new CSConfigurationParsers();
+    final var baseDirectory =
+      configurationFile.toAbsolutePath().getParent();
+    final var configuration =
+      configurationParsers.parseFileWithContext(
+        baseDirectory,
+        configurationFile
+      );
+
+    final var configurationService =
+      CSConfigurationService.create(
+        configurationParsers,
+        baseDirectory,
+        configurationFile,
+        configuration
+      );
+
+    directory.register(CSConfigurationServiceType.class, configurationService);
+
+    final var eventService =
+      CSEventService.create(configurationService, telemetry);
+    directory.register(CSEventServiceType.class, eventService);
+    directory.register(CSStrings.class, new CSStrings(locale));
+
+    ServiceLoader.load(CSCertificateStoreFactoryType.class)
+      .stream()
+      .map(ServiceLoader.Provider::get)
+      .forEach(s -> directory.register(CSCertificateStoreFactoryType.class, s));
+
+    final var certificateStore =
+      CSCertificateStoreService.store(
+        configurationService,
+        directory.requireService(CSCertificateStoreFactoryType.class)
+      );
+
+    directory.register(CSCertificateStoreServiceType.class, certificateStore);
+
+    final var ageService =
+      CSAgeService.create(
+        clock,
+        directory.requireService(CSCertificateStoreServiceType.class),
+        eventService
+      );
+
+    directory.register(CSAgeServiceType.class, ageService);
 
     ServiceLoader.load(CSDNSConfiguratorProviderType.class)
       .stream()
@@ -69,19 +129,9 @@ public final class CSServices
       .stream()
       .map(ServiceLoader.Provider::get)
       .forEach(s -> directory.register(
-        CSCertificateOutputProviderType.class,
-        s));
+        CSCertificateOutputProviderType.class, s)
+      );
 
-    ServiceLoader.load(CSCertificateStoreFactoryType.class)
-      .stream()
-      .map(ServiceLoader.Provider::get)
-      .forEach(s -> directory.register(CSCertificateStoreFactoryType.class, s));
-
-    directory.register(CSTelemetryServiceType.class, telemetry);
-    directory.register(
-      CSEventServiceType.class,
-      CSEventService.create(telemetry));
-    directory.register(CSStrings.class, new CSStrings(locale));
     return directory;
   }
 }

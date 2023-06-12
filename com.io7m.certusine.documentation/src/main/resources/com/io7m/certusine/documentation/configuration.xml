@@ -72,12 +72,11 @@
       internal database of certificates. Relative paths are resolved relative to the configuration file.
     </Paragraph>
 
-    <Paragraph>
+    <Paragraph id="8c2da237-ad6a-4daa-9d22-a221c8aaeaf9">
       The <Term type="expression">CertificateExpirationThreshold</Term> attribute specifies the maximum amount of time
-      before expiration that the client will allow before it attempts to renew a certificate. For example, a value of <Term type="expression">
-      PT72H
-    </Term> means that the client will start attempting to renew a certificate when the certificate becomes due to
-      expire in less than 72 hours.
+      before expiration that the client will allow before it attempts to renew a certificate. For example, a value of
+      <Term type="expression">PT72H</Term> means that the client will start attempting to renew a certificate when
+      the certificate becomes due to expire in less than 72 hours.
     </Paragraph>
 
     <FormalItem title="Example Options">

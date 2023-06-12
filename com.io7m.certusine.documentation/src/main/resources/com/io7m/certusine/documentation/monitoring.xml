@@ -32,6 +32,15 @@
           </Columns>
           <Row>
             <Cell>
+              <Term type="expression">certusine_up</Term>
+            </Cell>
+            <Cell>
+              A gauge that produces a constant value of <Term type="constant">1</Term> for as long as the
+              <Term type="package">certusine</Term> client is running.
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
               <Term type="expression">certusine_dns_challenge_failures</Term>
             </Cell>
             <Cell>
@@ -85,6 +94,26 @@
               depend upon them.
             </Cell>
           </Row>
+          <Row>
+            <Cell>
+              <Term type="expression">certusine_certificate_time_remaining</Term>
+            </Cell>
+            <Cell>
+              A gauge that displays the age of all the certificates that are currently in the certificate
+              store. Certificates can be distinguished by their domain and certificate name labels/attributes.
+              This is an important metric for <Link target="6549c521-5efb-49c7-8c20-53672a7a0106">alerting</Link>.
+            </Cell>
+          </Row>
+          <Row>
+            <Cell>
+              <Term type="expression">certusine_certificate_expiration_threshold</Term>
+            </Cell>
+            <Cell>
+              A gauge that displays the configured <Link target="8c2da237-ad6a-4daa-9d22-a221c8aaeaf9">expiration
+              threshold</Link> in seconds. This is useful when combined with the
+              <Term type="expression">certusine_certificate_time_remaining</Term> metric for alerting.
+            </Cell>
+          </Row>
         </Table>
       </FormalItem>
       <Paragraph>
@@ -92,6 +121,7 @@
         should not be relied upon.
       </Paragraph>
     </Subsection>
+
     <Subsection title="Alerting Rules">
       <Subsection title="PromQL">
         <Paragraph>
@@ -111,6 +141,40 @@ rate(certusine_renewal_failures_total[30m]) > bool 0
         <Paragraph>
           The rate of the <Term type="expression">certusine_renewal_failures_total</Term> metric should be
           zero over any given interval in a stable system.
+        </Paragraph>
+        <Paragraph id="6549c521-5efb-49c7-8c20-53672a7a0106">
+          Another useful metric to monitor for alerting is the
+          <Term type="expression">certusine_certificate_time_remaining</Term> metric. ACME-issued certificates
+          generally have relatively short expiration times. The de-facto standard 
+          <LinkExternal target="https://letsencrypt.org/">Let's Encrypt</LinkExternal> service issues
+          certificates with a 90-day expiration. If the <Term type="package">certusine</Term> package
+          is configured to renew any certificate with less than <Term type="expression">N</Term> seconds
+          remaining before expiration (the conventional value being 72 hours, or 259200 seconds), and the
+          expiration time of any certificate drops below, say, <Term type="expression">N / 2</Term>, then
+          this clearly indicates that something is wrong and certificates are not being renewed as expected.
+          An alerting rule for this scenario could be written such as:
+        </Paragraph>
+        <FormalItem title="Alert">
+          <Verbatim><![CDATA[
+certusine_certificate_time_remaining{} < 252000
+]]></Verbatim>
+        </FormalItem>
+        <Paragraph>
+          A value of <Term type="constant">252000</Term> (70 hours in seconds) is chosen arbitrarily. A working
+          system should have renewed certificates minutes after the 72-hour renewal threshold. This rule could be
+          improved by using the <Term type="expression">certusine_certificate_expiration_threshold</Term>
+          metric:
+        </Paragraph>
+        <FormalItem title="Alert">
+          <Verbatim><![CDATA[
+max(certusine_certificate_time_remaining{}) < bool max(certusine_certificate_expiration_threshold{})
+]]></Verbatim>
+        </FormalItem>
+        <Paragraph>
+          The alerting rule would ideally be configured to fire if the above condition remains true for an hour or more.
+          The rule is robust in the face of configuration changes; if the expiration threshold is changed, the
+          value of the <Term type="expression">certusine_certificate_expiration_threshold</Term> metric will
+          automatically update to reflect the change.
         </Paragraph>
       </Subsection>
     </Subsection>

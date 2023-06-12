@@ -20,7 +20,9 @@ import com.io7m.certusine.api.CSCertificateName;
 import com.io7m.certusine.certstore.api.CSCertificateStoreType;
 import com.io7m.certusine.certstore.api.CSCertificateStored;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 public final class CSFakeCertificateStore
@@ -62,6 +64,13 @@ public final class CSFakeCertificateStore
   {
     final var id = "%s/%s".formatted(domain, name.value());
     return this.certificates.remove(id) != null;
+  }
+
+  @Override
+  public List<CSCertificateStored> all()
+    throws IOException
+  {
+    return List.copyOf(this.certificates.values());
   }
 
   @Override

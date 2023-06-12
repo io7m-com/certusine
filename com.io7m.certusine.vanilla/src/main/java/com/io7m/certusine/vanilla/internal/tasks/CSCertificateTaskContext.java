@@ -21,11 +21,11 @@ import com.io7m.certusine.api.CSCertificate;
 import com.io7m.certusine.api.CSDomain;
 import com.io7m.certusine.api.CSOptions;
 import com.io7m.certusine.api.CSTelemetryServiceType;
-import com.io7m.certusine.certstore.api.CSCertificateStoreType;
 import com.io7m.certusine.vanilla.internal.CSStrings;
 import com.io7m.certusine.vanilla.internal.dns.CSDNSQueriesFactoryType;
 import com.io7m.certusine.vanilla.internal.dns.CSDNSTXTRecord;
 import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
+import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreServiceType;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
 import org.shredzone.acme4j.Problem;
 
@@ -45,7 +45,7 @@ public final class CSCertificateTaskContext
   private final CSEventServiceType events;
   private final CSTelemetryServiceType telemetry;
   private final CSOptions options;
-  private final CSCertificateStoreType certificateStore;
+  private final CSCertificateStoreServiceType certificateStores;
   private final Clock clock;
   private final CSDomain domain;
   private final CSCertificate certificate;
@@ -57,16 +57,16 @@ public final class CSCertificateTaskContext
   /**
    * The execution context for a task.
    *
-   * @param inStrings          The string resources
-   * @param inEvents           The event service
-   * @param inTelemetry        The telemetry service
-   * @param inClock            The clock
-   * @param inCertificateStore The certificate store
-   * @param inOptions          The options
-   * @param inDomain           The domain
-   * @param inCertificate      The certificate
-   * @param inDnsQueries       The DNS query factory
-   * @param inRetryAttemptsMax The maximum number of retry attempts
+   * @param inStrings           The string resources
+   * @param inEvents            The event service
+   * @param inTelemetry         The telemetry service
+   * @param inClock             The clock
+   * @param inCertificateStores The certificate stores
+   * @param inOptions           The options
+   * @param inDomain            The domain
+   * @param inCertificate       The certificate
+   * @param inDnsQueries        The DNS query factory
+   * @param inRetryAttemptsMax  The maximum number of retry attempts
    */
 
   public CSCertificateTaskContext(
@@ -74,7 +74,7 @@ public final class CSCertificateTaskContext
     final CSEventServiceType inEvents,
     final CSTelemetryServiceType inTelemetry,
     final CSOptions inOptions,
-    final CSCertificateStoreType inCertificateStore,
+    final CSCertificateStoreServiceType inCertificateStores,
     final Clock inClock,
     final CSDomain inDomain,
     final CSCertificate inCertificate,
@@ -89,8 +89,8 @@ public final class CSCertificateTaskContext
       Objects.requireNonNull(inTelemetry, "inTelemetry");
     this.options =
       Objects.requireNonNull(inOptions, "options");
-    this.certificateStore =
-      Objects.requireNonNull(inCertificateStore, "inCertificateStore");
+    this.certificateStores =
+      Objects.requireNonNull(inCertificateStores, "inCertificateStores");
     this.clock =
       Objects.requireNonNull(inClock, "inClock");
     this.domain =
@@ -119,9 +119,9 @@ public final class CSCertificateTaskContext
    * @return The certificate store used during execution
    */
 
-  public CSCertificateStoreType certificateStore()
+  public CSCertificateStoreServiceType certificateStores()
   {
-    return this.certificateStore;
+    return this.certificateStores;
   }
 
   /**

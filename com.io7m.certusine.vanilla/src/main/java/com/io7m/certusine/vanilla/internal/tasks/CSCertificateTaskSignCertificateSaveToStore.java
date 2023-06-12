@@ -128,7 +128,8 @@ public final class CSCertificateTaskSignCertificateSaveToStore
     final var encodedCertificateChain =
       CSCertificateIO.encodeCertificates(issuedCertificate.getCertificateChain());
 
-    context.certificateStore()
+    context.certificateStores()
+      .store()
       .put(
         new CSCertificateStored(
           domain.domain(),

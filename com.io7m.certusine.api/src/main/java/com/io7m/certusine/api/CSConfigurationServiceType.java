@@ -1,5 +1,5 @@
 /*
- * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2023 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,13 +14,35 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
+package com.io7m.certusine.api;
+
+import com.io7m.repetoir.core.RPServiceType;
+
+import java.util.concurrent.Flow;
+
 /**
- * ACME client (Vanilla implementation)
+ * A service that frequently reloads a configuration, and always
+ * returns the most recently successfully loaded configuration.
  */
 
-@Export
-@Version("2.0.0")
-package com.io7m.certusine.vanilla;
+public interface CSConfigurationServiceType extends RPServiceType, AutoCloseable
+{
+  /**
+   * @return The most recent configuration
+   */
 
-import org.osgi.annotation.bundle.Export;
-import org.osgi.annotation.versioning.Version;
+  CSConfiguration configuration();
+
+  /**
+   * Reload the configuration.
+   */
+
+  void reload();
+
+  /**
+   * @return An event stream that publishes a stream of distinct configuration values
+   */
+
+  Flow.Publisher<CSConfiguration> events();
+}

@@ -112,7 +112,8 @@ public final class CSCertificateTaskSignCertificateInitial
     final var certificate =
       context.certificate();
     final var store =
-      context.certificateStore();
+      context.certificateStores()
+        .store();
 
     try {
 

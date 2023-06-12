@@ -24,6 +24,7 @@ import org.h2.mvstore.MVStore;
 import org.h2.mvstore.tx.TransactionStore;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -128,6 +129,22 @@ public final class CSCertificateStoreH2MV
       certificates.remove(id);
       tx.commit();
       return existing != null;
+    } catch (final Exception e) {
+      recordExceptionAndSetError(e);
+      throw new IOException(e);
+    }
+  }
+
+  @Override
+  public List<CSCertificateStored> all()
+    throws IOException
+  {
+    try {
+      final var tx =
+        this.txStore.begin();
+      final var certificates =
+        tx.<String, CSCertificateStored>openMap("certificates");
+      return List.copyOf(certificates.values());
     } catch (final Exception e) {
       recordExceptionAndSetError(e);
       throw new IOException(e);

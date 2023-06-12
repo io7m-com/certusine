@@ -1,2 +1,3 @@
 $ certusine show-dns-configurators
-vultr : Configure DNS records using the Vultr DNS API.
+Gandi-v5 : Configure DNS records using the Gandi LiveDNS v5 API.
+Vultr : Configure DNS records using the Vultr DNS API.

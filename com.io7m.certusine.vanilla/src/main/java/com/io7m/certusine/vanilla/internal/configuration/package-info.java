@@ -15,12 +15,7 @@
  */
 
 /**
- * ACME client (Vanilla implementation)
+ * ACME client (Vanilla implementation [configuration service])
  */
 
-@Export
-@Version("2.0.0")
-package com.io7m.certusine.vanilla;
-
-import org.osgi.annotation.bundle.Export;
-import org.osgi.annotation.versioning.Version;
+package com.io7m.certusine.vanilla.internal.configuration;

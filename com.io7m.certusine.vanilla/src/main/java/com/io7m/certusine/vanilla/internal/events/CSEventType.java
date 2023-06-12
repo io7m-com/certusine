@@ -24,7 +24,8 @@ import java.util.Map;
  */
 
 public sealed interface CSEventType
-  permits CSEventCertificateDNSChallengeFailed,
+  permits CSEventCertificateValidityRemaining,
+  CSEventCertificateDNSChallengeFailed,
   CSEventCertificateRenewalFailed,
   CSEventCertificateRenewalSucceeded,
   CSEventCertificateSigningFailed,
@@ -42,6 +43,15 @@ public sealed interface CSEventType
    */
 
   boolean isFailure();
+
+  /**
+   * @return {@code true} if the event should be logged
+   */
+
+  default boolean isLogged()
+  {
+    return true;
+  }
 
   /**
    * @return The event attributes for logging purposes

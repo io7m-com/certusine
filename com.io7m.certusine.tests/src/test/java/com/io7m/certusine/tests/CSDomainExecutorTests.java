@@ -19,6 +19,8 @@ package com.io7m.certusine.tests;
 import com.io7m.certusine.api.CSAccount;
 import com.io7m.certusine.api.CSCertificate;
 import com.io7m.certusine.api.CSCertificateName;
+import com.io7m.certusine.api.CSConfiguration;
+import com.io7m.certusine.api.CSConfigurationServiceType;
 import com.io7m.certusine.api.CSDomain;
 import com.io7m.certusine.api.CSFaultInjectionConfiguration;
 import com.io7m.certusine.api.CSOptions;
@@ -26,6 +28,7 @@ import com.io7m.certusine.api.CSTelemetryNoOp;
 import com.io7m.certusine.vanilla.internal.CSDomainExecutor;
 import com.io7m.certusine.vanilla.internal.CSStrings;
 import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
+import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreServiceType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,12 +43,14 @@ import java.security.SecureRandom;
 import java.security.spec.ECGenParameterSpec;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 public final class CSDomainExecutorTests
 {
@@ -62,6 +67,10 @@ public final class CSDomainExecutorTests
   private Path file;
   private CSFakeCertificateStore certificates;
   private CSFakeClock clock;
+  private CSEventServiceType events;
+  private CSConfigurationServiceType configurations;
+  private CSCertificateStoreServiceType stores;
+  private CSFakeCertificateStore store;
 
   private static KeyPair generateKeyPair()
     throws Exception
@@ -103,9 +112,21 @@ public final class CSDomainExecutorTests
       new CSFakeCertificateOutput();
     this.output2 =
       new CSFakeCertificateOutput();
+    this.store =
+      new CSFakeCertificateStore();
 
     this.strings =
       new CSStrings(Locale.getDefault());
+
+    this.events =
+      Mockito.mock(CSEventServiceType.class);
+    this.configurations =
+      Mockito.mock(CSConfigurationServiceType.class);
+    this.stores =
+      Mockito.mock(CSCertificateStoreServiceType.class);
+
+    when(this.stores.store())
+      .thenReturn(this.store);
 
     this.acmeProvider =
       new CSFakeAcmeProvider();
@@ -160,21 +181,27 @@ public final class CSDomainExecutorTests
       OffsetDateTime.parse("2000-01-01T00:00:00+00:00").toInstant()
     );
 
+    when(this.configurations.configuration())
+      .thenReturn(new CSConfiguration(
+        new CSOptions(
+          this.file,
+          Duration.of(5L, ChronoUnit.MINUTES),
+          Duration.ofHours(72L),
+          Optional.empty(),
+          CSFaultInjectionConfiguration.disabled()
+        ),
+        Map.of(domain.domain(), domain)
+      ));
+
     final var executor =
       new CSDomainExecutor(
         new CSStrings(Locale.ROOT),
         CSTelemetryNoOp.noop(),
-        Mockito.mock(CSEventServiceType.class),
-        new CSOptions(
-          this.file,
-          Duration.ofSeconds(1L),
-          Duration.ofDays(1L),
-          Optional.empty(),
-          CSFaultInjectionConfiguration.disabled()
-        ),
+        this.events,
+        this.configurations,
+        this.stores,
         domain,
         this.clock,
-        this.certificates,
         acmeInfo -> {
           return new Session(acmeInfo.acmeURI(), this.acmeProvider);
         }
