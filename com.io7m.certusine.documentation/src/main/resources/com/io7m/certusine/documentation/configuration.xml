@@ -8,7 +8,7 @@
   <Subsection title="Overview">
     <Paragraph>
       The <Term type="package">certusine</Term> client accepts a XML configuration file with a very strictly-defined
-      schema. The configuration file is an XML element with the following properties:
+      schema. The configuration file is an XML element with the following elements:
     </Paragraph>
 
     <FormalItem title="Properties">
@@ -27,6 +27,9 @@
         </Item>
         <Item>
           <Link target="966f04c2-65df-4a6b-8fd6-066c5434015e">Domains</Link>
+        </Item>
+        <Item>
+          <Link target="f92270bd-cbb4-4a6a-9582-ef304f4c3047">OpenTelemetry</Link>
         </Item>
       </ListUnordered>
     </FormalItem>

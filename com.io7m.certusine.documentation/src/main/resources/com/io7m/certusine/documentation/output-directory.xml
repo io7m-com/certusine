@@ -25,19 +25,19 @@
           <Column>Description</Column>
         </Columns>
         <Row>
-          <Cell><Term type="expression">/path/d/c/public_key</Term></Cell>
+          <Cell><Term type="expression">/path/d/c/public.key</Term></Cell>
           <Cell>The certificate public key.</Cell>
         </Row>
         <Row>
-          <Cell><Term type="expression">/path/d/c/private_key</Term></Cell>
+          <Cell><Term type="expression">/path/d/c/private.key</Term></Cell>
           <Cell>The certificate private key.</Cell>
         </Row>
         <Row>
-          <Cell><Term type="expression">/path/d/c/certificate</Term></Cell>
+          <Cell><Term type="expression">/path/d/c/certificate.pem</Term></Cell>
           <Cell>The PEM-encoded certificate.</Cell>
         </Row>
         <Row>
-          <Cell><Term type="expression">/path/d/c/certificate_full_chain</Term></Cell>
+          <Cell><Term type="expression">/path/d/c/full_chain.pem</Term></Cell>
           <Cell>The PEM-encoded full certificate chain.</Cell>
         </Row>
       </Table>
