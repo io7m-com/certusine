@@ -11,12 +11,12 @@
         <c:change date="2023-06-11T00:00:00+00:00" summary="Fix a packaging issue that prevented application startup with metrics enabled."/>
       </c:changes>
     </c:release>
-    <c:release date="2023-06-12T20:29:33+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="2.0.0">
+    <c:release date="2023-06-12T22:40:03+00:00" is-open="false" ticket-system="com.github.io7m.certusine" version="2.0.0">
       <c:changes>
         <c:change date="2023-06-12T00:00:00+00:00" summary="Fix some documentation issues."/>
         <c:change date="2023-06-12T00:00:00+00:00" summary="More aggressively log exceptions in telemetry traces, and set the trace error status more often."/>
-        <c:change date="2023-06-12T00:00:00+00:00" summary="Large internal refactoring for better telemetry reporting." compatible="false"/>
-        <c:change date="2023-06-12T20:29:33+00:00" summary="Fix numerous documentation issues."/>
+        <c:change compatible="false" date="2023-06-12T00:00:00+00:00" summary="Large internal refactoring for better telemetry reporting."/>
+        <c:change date="2023-06-12T00:00:00+00:00" summary="Fix numerous documentation issues."/>
       </c:changes>
     </c:release>
   </c:releases>
