@@ -24,6 +24,7 @@
     <module>com.io7m.certusine.cmdline</module>
     <module>com.io7m.certusine.documentation</module>
     <module>com.io7m.certusine.gandi</module>
+    <module>com.io7m.certusine.grafana</module>
     <module>com.io7m.certusine.looseleaf</module>
     <module>com.io7m.certusine.oci</module>
     <module>com.io7m.certusine.tests</module>

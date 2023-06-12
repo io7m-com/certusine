@@ -120,7 +120,8 @@ public final class CSEventService implements CSEventServiceType
     this.storeFailures =
       telemetry.meter()
         .counterBuilder("certusine_certificates_store_failures")
-        .setDescription("The number of times certificates have failed to store.")
+        .setDescription(
+          "The number of times certificates have failed to store.")
         .build();
 
     this.certificateRemaining =
@@ -153,7 +154,7 @@ public final class CSEventService implements CSEventServiceType
    * Create a new event service.
    *
    * @param configuration The configuration service
-   * @param telemetry The telemetry
+   * @param telemetry     The telemetry
    *
    * @return A new event service
    */

@@ -398,4 +398,16 @@ count(rate({level="ERROR"} | json | attributes_certusine_type=`CSEventCertificat
     </FormalItem>
   </Subsection>
 
+  <Subsection title="Grafana Dashboard" id="45a1921d-bd2f-4a5d-b657-85f22e444c6e">
+    <Paragraph>
+      The <Term type="package">certusine</Term> package provides a basic example
+      <LinkExternal target="https://grafana.com">Grafana</LinkExternal> dashboard. The dashboard
+      can be imported from
+      <LinkExternal
+        target="https://raw.githubusercontent.com/io7m/certusine/develop/com.io7m.certusine.grafana/src/main/resources/com/io7m/certusine/grafana/dashboard.json">
+        https://raw.githubusercontent.com/io7m/certusine/develop/com.io7m.certusine.grafana/src/main/resources/com/io7m/certusine/grafana/dashboard.json
+      </LinkExternal>.
+    </Paragraph>
+  </Subsection>
+
 </Section>
