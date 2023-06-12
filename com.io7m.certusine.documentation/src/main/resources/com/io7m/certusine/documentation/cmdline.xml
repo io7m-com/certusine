@@ -7,7 +7,7 @@
   <Section title="Overview">
     <Paragraph>
       The <Term type="package">certusine</Term> package provides a command-line interface for performing tasks such as
-      starting the server, checking configuration files, hashing passwords, and etc. The base
+      starting the server, checking configuration files, generating keypairs, etc. The base
       <Term type="command">certusine</Term> command is broken into a number of subcommands which are documented
       over the following sections.
     </Paragraph>
@@ -24,9 +24,9 @@
       level effectively causes everything to be logged, and will produce large volumes of debugging output.
     </Paragraph>
     <Paragraph id="9833c2f4-01db-4366-8315-8e9522e4a25a">
-      The <Term type="package">certusine</Term> command-line tool uses <LinkExternal target="https://jcommander.org/">
-      jcommander
-    </LinkExternal> to parse command-line arguments, and therefore supports placing command-line arguments into a file,
+      The <Term type="package">certusine</Term> command-line tool uses
+      <LinkExternal target="https://www.io7m.com/software/quarrel/">quarrel</LinkExternal> to parse
+      command-line arguments, and therefore supports placing command-line arguments into a file,
       one argument per line, and then referencing that file with <Term type="constant">@</Term>. For example:
     </Paragraph>
     <FormalItem title="@ Syntax">

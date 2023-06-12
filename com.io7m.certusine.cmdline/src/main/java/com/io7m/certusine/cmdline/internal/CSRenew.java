@@ -19,7 +19,7 @@ package com.io7m.certusine.cmdline.internal;
 
 import com.io7m.anethum.api.ParsingException;
 import com.io7m.certusine.api.CSConfiguration;
-import com.io7m.certusine.certstore.api.CSCertificateStoreFactoryType;
+import com.io7m.certusine.api.CSConfigurationServiceType;
 import com.io7m.certusine.vanilla.CSConfigurationParsers;
 import com.io7m.certusine.vanilla.CSDomains;
 import com.io7m.certusine.vanilla.CSServices;
@@ -32,6 +32,7 @@ import com.io7m.quarrel.core.QParameterNamed1;
 import com.io7m.quarrel.core.QParameterNamedType;
 import com.io7m.quarrel.core.QStringType;
 import com.io7m.quarrel.ext.logback.QLogback;
+import com.io7m.repetoir.core.RPServiceDirectoryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static com.io7m.certusine.cmdline.internal.CSParseErrorLogging.logParseErrors;
 import static java.lang.Boolean.FALSE;
 
 /**
@@ -123,84 +123,88 @@ public final class CSRenew implements QCommandType
       context.parameterValue(SCHEDULE);
 
     final var configurationInitial =
-      CSRenew.loadConfiguration(file, parsers);
+      loadConfiguration(file, parsers);
 
     final var telemetry =
       CSTelemetryServices.createOptional(
         configurationInitial.options()
           .openTelemetry()
       );
+
     final var services =
-      CSServices.create(Locale.ROOT, telemetry);
+      CSServices.create(
+        Locale.ROOT,
+        file,
+        Clock.systemUTC(),
+        telemetry
+      );
 
-    while (true) {
-      try {
-        final var configuration =
-          CSRenew.loadConfiguration(file, parsers);
+    final var configurationService =
+      services.requireService(CSConfigurationServiceType.class);
 
-        LOG.debug(
-          "loaded {} domains",
-          Integer.valueOf(configuration.domains().size())
-        );
+    try {
+      while (true) {
+        final var result =
+          runOneIteration(onlyOnce, schedule, services, configurationService);
 
-        final var storeFactory =
-          services.requireService(CSCertificateStoreFactoryType.class);
+        if (result.isPresent()) {
+          return result.get();
+        }
+      }
+    } finally {
+      services.close();
+    }
+  }
 
-        final var storePath =
-          configuration.options().certificateStore();
+  private static Optional<QCommandStatus> runOneIteration(
+    final boolean onlyOnce,
+    final Duration schedule,
+    final RPServiceDirectoryType services,
+    final CSConfigurationServiceType configurationService)
+  {
+    try {
+      final var configuration =
+        configurationService.configuration();
 
-        var result = QCommandStatus.SUCCESS;
-        try (var store = storeFactory.open(storePath)) {
-          for (final var domain : configuration.domains().values()) {
-            try {
-              CSDomains.renew(
-                services,
-                configuration.options(),
-                domain,
-                Clock.systemUTC(),
-                store
-              );
-            } catch (final Exception e) {
-              LOG.error("error executing domain: ", e);
-              result = QCommandStatus.FAILURE;
-            }
+      LOG.debug(
+        "loaded {} domains",
+        Integer.valueOf(configuration.domains().size())
+      );
+
+      var result = QCommandStatus.SUCCESS;
+        for (final var domain : configuration.domains().values()) {
+          try {
+            CSDomains.renew(services, domain, Clock.systemUTC()
+            );
+          } catch (final Exception e) {
+            LOG.error("error executing domain: ", e);
+            result = QCommandStatus.FAILURE;
           }
         }
 
-        if (onlyOnce) {
-          return result;
-        }
-
-        final var timeNow =
-          OffsetDateTime.now(Clock.systemUTC());
-        final var timeNext =
-          timeNow.plus(schedule);
-        final var timeNextClamp =
-          timeNext.withNano(0);
-
-        LOG.info(
-          "waiting until {} for the next renewal attempt ({})",
-          timeNextClamp,
-          schedule
-        );
-        Thread.sleep(schedule.toMillis());
-
-      } catch (final InterruptedException e) {
-        Thread.currentThread().interrupt();
-      } catch (final IOException e) {
-        LOG.error("i/o error: {}", e.getMessage());
-        if (onlyOnce) {
-          return QCommandStatus.FAILURE;
-        }
-        pauseOnError();
-      } catch (final ParsingException e) {
-        logParseErrors(LOG, file, e);
-        if (onlyOnce) {
-          return QCommandStatus.FAILURE;
-        }
-        pauseOnError();
+      if (onlyOnce) {
+        return Optional.of(result);
       }
+
+      final var timeNow =
+        OffsetDateTime.now(Clock.systemUTC());
+      final var timeNext =
+        timeNow.plus(schedule);
+      final var timeNextClamp =
+        timeNext.withNano(0);
+
+      LOG.info(
+        "waiting until {} for the next renewal attempt ({})",
+        timeNextClamp,
+        schedule
+      );
+      Thread.sleep(schedule.toMillis());
+
+    } catch (final InterruptedException e) {
+      Thread.currentThread().interrupt();
     }
+
+    return Optional.empty();
   }
 
   private static CSConfiguration loadConfiguration(
@@ -211,16 +215,6 @@ public final class CSRenew implements QCommandType
     final var baseDirectory = file.toAbsolutePath().getParent();
     return parsers.parseFileWithContext(baseDirectory, file);
   }
-
-  private static void pauseOnError()
-  {
-    try {
-      Thread.sleep(3_000L);
-    } catch (final InterruptedException e) {
-      Thread.currentThread().interrupt();
-    }
-  }
-
 
   @Override
   public QCommandMetadata metadata()

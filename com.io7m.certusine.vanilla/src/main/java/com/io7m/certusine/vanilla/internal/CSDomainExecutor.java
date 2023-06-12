@@ -18,16 +18,16 @@ package com.io7m.certusine.vanilla.internal;
 
 import com.io7m.certusine.api.CSAccount;
 import com.io7m.certusine.api.CSCertificate;
+import com.io7m.certusine.api.CSConfigurationServiceType;
 import com.io7m.certusine.api.CSDNSRecordNameType;
 import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameAbsolute;
 import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameRelative;
 import com.io7m.certusine.api.CSDomain;
-import com.io7m.certusine.api.CSOptions;
 import com.io7m.certusine.api.CSTelemetryServiceType;
-import com.io7m.certusine.certstore.api.CSCertificateStoreType;
 import com.io7m.certusine.vanilla.internal.dns.CSDNSQueriesFactoryDJ;
 import com.io7m.certusine.vanilla.internal.events.CSEventCertificateRenewalFailed;
 import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
+import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreServiceType;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTask;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskAuthorizeDNSInitial;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskContext;
@@ -64,36 +64,37 @@ public final class CSDomainExecutor
     LoggerFactory.getLogger(CSDomainExecutor.class);
 
   private static final int ATTEMPT_LIMIT = 10;
-  private final CSOptions options;
+
   private final CSDomain domain;
   private final CSStrings strings;
   private final Clock clock;
-  private final CSCertificateStoreType certificateStore;
   private final Function<CSAccount, Session> sessions;
   private final CSTelemetryServiceType telemetry;
   private final CSEventServiceType events;
+  private final CSConfigurationServiceType configs;
+  private final CSCertificateStoreServiceType certificateStores;
 
   /**
    * A domain executor.
    *
-   * @param inTelemetry        A telemetry service
-   * @param inStrings          String resources
-   * @param inEvents           The event service
-   * @param inOptions          The execution options
-   * @param inDomain           The executed domain
-   * @param inSessions         A provider of ACME sessions
-   * @param inClock            The clock used for time-based operations
-   * @param inCertificateStore The certificate store
+   * @param inStrings           String resources
+   * @param inConfigs           The configuration service
+   * @param inTelemetry         A telemetry service
+   * @param inEvents            The event service
+   * @param inCertificateStores The certificate stores
+   * @param inDomain            The executed domain
+   * @param inClock             The clock used for time-based operations
+   * @param inSessions          A provider of ACME sessions
    */
 
   public CSDomainExecutor(
     final CSStrings inStrings,
     final CSTelemetryServiceType inTelemetry,
     final CSEventServiceType inEvents,
-    final CSOptions inOptions,
+    final CSConfigurationServiceType inConfigs,
+    final CSCertificateStoreServiceType inCertificateStores,
     final CSDomain inDomain,
     final Clock inClock,
-    final CSCertificateStoreType inCertificateStore,
     final Function<CSAccount, Session> inSessions)
   {
     this.strings =
@@ -102,14 +103,14 @@ public final class CSDomainExecutor
       Objects.requireNonNull(inTelemetry, "inTelemetry");
     this.events =
       Objects.requireNonNull(inEvents, "inEvents");
-    this.options =
-      Objects.requireNonNull(inOptions, "options");
+    this.configs =
+      Objects.requireNonNull(inConfigs, "configs");
+    this.certificateStores =
+      Objects.requireNonNull(inCertificateStores, "certificateStores");
     this.domain =
       Objects.requireNonNull(inDomain, "domain");
     this.clock =
       Objects.requireNonNull(inClock, "inClock");
-    this.certificateStore =
-      Objects.requireNonNull(inCertificateStore, "inCertificateStore");
     this.sessions =
       Objects.requireNonNull(inSessions, "inSessions");
   }
@@ -284,15 +285,20 @@ public final class CSDomainExecutor
     final List<CSCertificateTaskContext> taskContexts =
       new ArrayList<>();
 
+    final var options =
+      this.configs.configuration()
+        .options();
+
     try (var ignored = span.makeCurrent()) {
       for (final var certificate : this.domain.certificates().values()) {
+
         final var context =
           new CSCertificateTaskContext(
             this.strings,
             this.events,
             this.telemetry,
-            this.options,
-            this.certificateStore,
+            options,
+            this.certificateStores,
             this.clock,
             this.domain,
             certificate,

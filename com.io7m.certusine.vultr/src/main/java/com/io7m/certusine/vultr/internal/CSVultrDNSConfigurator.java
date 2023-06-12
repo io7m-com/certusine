@@ -86,43 +86,48 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
     Objects.requireNonNull(recordName, "recordName");
     Objects.requireNonNull(recordValue, "recordValue");
 
-    final var targetURI =
-      URI.create("%s/domains/%s/records".formatted(this.apiBase, this.domain));
+    try {
+      final var targetURI =
+        URI.create("%s/domains/%s/records".formatted(this.apiBase, this.domain));
 
-    LOG.debug(
-      "creating a TXT record {} = {} for domain {}",
-      recordName,
-      recordValue,
-      this.domain
-    );
-    LOG.debug("POST {}", targetURI);
-
-    final var json = """
-      {
-        "name": "%s",
-        "type": "TXT",
-        "data": "%s",
-        "ttl": 600,
-        "priority": 0
-      }
-      """.formatted(recordName, recordValue);
-
-    final var request =
-      HttpRequest.newBuilder()
-        .uri(targetURI)
-        .POST(HttpRequest.BodyPublishers.ofString(json, UTF_8))
-        .header("Authorization", "Bearer " + this.apiKey)
-        .build();
-
-    final var r =
-      this.client.send(request, HttpResponse.BodyHandlers.ofString());
-
-    LOG.debug("response: {}", r.body());
-
-    if (r.statusCode() != 201) {
-      throw new IOException(
-        this.strings.format("errorServer", r.statusCode())
+      LOG.debug(
+        "creating a TXT record {} = {} for domain {}",
+        recordName,
+        recordValue,
+        this.domain
       );
+      LOG.debug("POST {}", targetURI);
+
+      final var json = """
+        {
+          "name": "%s",
+          "type": "TXT",
+          "data": "%s",
+          "ttl": 600,
+          "priority": 0
+        }
+        """.formatted(recordName, recordValue);
+
+      final var request =
+        HttpRequest.newBuilder()
+          .uri(targetURI)
+          .POST(HttpRequest.BodyPublishers.ofString(json, UTF_8))
+          .header("Authorization", "Bearer " + this.apiKey)
+          .build();
+
+      final var r =
+        this.client.send(request, HttpResponse.BodyHandlers.ofString());
+
+      LOG.debug("response: {}", r.body());
+
+      if (r.statusCode() != 201) {
+        throw new IOException(
+          this.strings.format("errorServer", r.statusCode())
+        );
+      }
+    } catch (final Exception e) {
+      CSTelemetryServiceType.recordExceptionAndSetError(e);
+      throw e;
     }
   }
 

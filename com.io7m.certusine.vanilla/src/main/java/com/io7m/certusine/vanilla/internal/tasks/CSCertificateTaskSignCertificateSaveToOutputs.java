@@ -22,7 +22,6 @@ import com.io7m.certusine.vanilla.internal.events.CSEventCertificateStored;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
 import com.io7m.jdeferthrow.core.ExceptionTracker;
-import io.opentelemetry.api.trace.Span;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +30,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.OptionalLong;
 
+import static com.io7m.certusine.api.CSTelemetryServiceType.recordExceptionAndSetError;
 import static com.io7m.certusine.vanilla.internal.CSCertificateIO.encodePrivateKey;
 import static com.io7m.certusine.vanilla.internal.CSCertificateIO.encodePublicKey;
 import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.IO_RETRY_PAUSE_TIME;
@@ -81,7 +81,8 @@ public final class CSCertificateTaskSignCertificateSaveToOutputs
 
     try {
       final var storedCertificate =
-        context.certificateStore()
+        context.certificateStores()
+          .store()
           .find(domain.domain(), certificate.name())
           .orElseThrow(() -> {
             return new IllegalStateException(
@@ -129,7 +130,7 @@ public final class CSCertificateTaskSignCertificateSaveToOutputs
     try {
       tracker.throwIfNecessary();
     } catch (final IOException e) {
-      Span.current().recordException(e);
+      recordExceptionAndSetError(e);
       LOG.error("failed to save certificates to one or more outputs: ", e);
       return new CSCertificateTaskFailedButCanBeRetried(IO_RETRY_PAUSE_TIME, e);
     }

@@ -1,9 +1,0 @@
-info: Usage: version [options]
-
-  Options:
-    --verbose
-      Set the minimum logging verbosity level.
-      Default: info
-      Possible Values: [trace, debug, info, warn, error]
-
-

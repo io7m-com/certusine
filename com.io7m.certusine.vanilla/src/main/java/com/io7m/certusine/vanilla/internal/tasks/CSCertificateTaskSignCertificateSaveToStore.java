@@ -23,7 +23,6 @@ import com.io7m.certusine.vanilla.internal.events.CSEventCertificateStoreFailed;
 import com.io7m.certusine.vanilla.internal.events.CSEventCertificateStored;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
-import io.opentelemetry.api.trace.Span;
 import org.shredzone.acme4j.Certificate;
 import org.shredzone.acme4j.Order;
 import org.slf4j.Logger;
@@ -36,6 +35,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalLong;
 
+import static com.io7m.certusine.api.CSTelemetryServiceType.recordExceptionAndSetError;
 import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.IO_RETRY_PAUSE_TIME;
 
 /**
@@ -81,7 +81,7 @@ public final class CSCertificateTaskSignCertificateSaveToStore
     try {
       this.saveCertificateLocally(issuedCertificate, domain);
     } catch (final IOException e) {
-      Span.current().recordException(e);
+      recordExceptionAndSetError(e);
       LOG.error("failed to save certificate to the local database: ", e);
       return new CSCertificateTaskFailedButCanBeRetried(IO_RETRY_PAUSE_TIME, e);
     }
@@ -128,7 +128,8 @@ public final class CSCertificateTaskSignCertificateSaveToStore
     final var encodedCertificateChain =
       CSCertificateIO.encodeCertificates(issuedCertificate.getCertificateChain());
 
-    context.certificateStore()
+    context.certificateStores()
+      .store()
       .put(
         new CSCertificateStored(
           domain.domain(),

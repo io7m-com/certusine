@@ -18,14 +18,11 @@
 package com.io7m.certusine.tests;
 
 import com.io7m.certusine.api.CSCertificateName;
-import com.io7m.certusine.api.CSTelemetryServiceType;
 import com.io7m.certusine.certstore.api.CSCertificateStored;
 import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreH2MVFactory;
-import com.io7m.repetoir.core.RPServiceDirectory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.file.Path;

@@ -14,7 +14,7 @@
 
   <Subsection title="Description">
     <Paragraph>
-      The <Term type="package">gandi-v5</Term> DNS configurator supports creating and deleting DNS records using
+      The <Term type="package">Gandi-v5</Term> DNS configurator supports creating and deleting DNS records using
       the <LinkExternal target="https://api.gandi.net/docs/livedns/">Gandi DNS API</LinkExternal>.
     </Paragraph>
 

@@ -17,6 +17,7 @@
 package com.io7m.certusine.certstore.api;
 
 import com.io7m.repetoir.core.RPServiceType;
+import org.osgi.annotation.versioning.ProviderType;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -25,6 +26,7 @@ import java.nio.file.Path;
  * The type of certificate store factories.
  */
 
+@ProviderType
 public interface CSCertificateStoreFactoryType
   extends RPServiceType
 {

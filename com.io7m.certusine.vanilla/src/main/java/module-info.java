@@ -36,6 +36,7 @@ module com.io7m.certusine.vanilla
   requires com.h2database.mvstore;
   requires com.io7m.jaffirm.core;
   requires com.io7m.jdeferthrow.core;
+  requires com.io7m.jmulticlose.core;
   requires com.io7m.jxtrand.vanilla;
   requires com.io7m.repetoir.core;
   requires jakarta.xml.bind;

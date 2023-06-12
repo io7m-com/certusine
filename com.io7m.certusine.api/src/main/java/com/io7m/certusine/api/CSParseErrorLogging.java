@@ -15,7 +15,7 @@
  */
 
 
-package com.io7m.certusine.cmdline.internal;
+package com.io7m.certusine.api;
 
 import com.io7m.anethum.api.ParseStatusType;
 import com.io7m.anethum.api.ParsingException;
@@ -34,7 +34,15 @@ public final class CSParseErrorLogging
 
   }
 
-  static void logError(
+  /**
+   * Log a parse error.
+   *
+   * @param logger The logger
+   * @param file   The source file
+   * @param status The status
+   */
+
+  public static void logError(
     final Logger logger,
     final Path file,
     final ParseStatusType status)
@@ -70,7 +78,15 @@ public final class CSParseErrorLogging
     }
   }
 
-  static void logParseErrors(
+  /**
+   * Log a parse error.
+   *
+   * @param logger The logger
+   * @param file   The source file
+   * @param e      The exception
+   */
+
+  public static void logParseErrors(
     final Logger logger,
     final Path file,
     final ParsingException e)

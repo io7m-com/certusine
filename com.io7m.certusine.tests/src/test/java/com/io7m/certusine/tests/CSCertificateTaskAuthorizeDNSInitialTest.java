@@ -27,6 +27,7 @@ import com.io7m.certusine.api.CSTelemetryNoOp;
 import com.io7m.certusine.vanilla.internal.CSStrings;
 import com.io7m.certusine.vanilla.internal.dns.CSDNSQueriesFactoryDJ;
 import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
+import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreServiceType;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTask;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskAuthorizeDNSCheckRecords;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskAuthorizeDNSInitial;
@@ -82,6 +83,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
   private Path file;
   private CSFakeCertificateStore certificates;
   private CSFakeClock clock;
+  private CSCertificateStoreServiceType certificateStores;
 
   private static KeyPair generateKeyPair()
     throws Exception
@@ -126,6 +128,10 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
       new CSFakeCertificateOutput();
     this.certificates =
       new CSFakeCertificateStore();
+    this.certificateStores =
+      Mockito.mock(CSCertificateStoreServiceType.class);
+    Mockito.when(this.certificateStores.store())
+      .thenReturn(this.certificates);
 
     this.account =
       new CSAccount(this.accountKeyPair, URI.create("http://localhost:20000"));
@@ -179,7 +185,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
         Mockito.mock(CSEventServiceType.class),
         CSTelemetryNoOp.noop(),
         this.options,
-        this.certificates,
+        this.certificateStores,
         this.clock,
         domain,
         this.certificate0,
@@ -239,7 +245,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
         Mockito.mock(CSEventServiceType.class),
         CSTelemetryNoOp.noop(),
         this.options,
-        this.certificates,
+        this.certificateStores,
         this.clock,
         domain,
         this.certificate0,
@@ -292,7 +298,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
         Mockito.mock(CSEventServiceType.class),
         CSTelemetryNoOp.noop(),
         this.options,
-        this.certificates,
+        this.certificateStores,
         this.clock,
         domain,
         this.certificate0,
@@ -373,7 +379,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
         Mockito.mock(CSEventServiceType.class),
         CSTelemetryNoOp.noop(),
         this.options,
-        this.certificates,
+        this.certificateStores,
         this.clock,
         domain,
         this.certificate0,

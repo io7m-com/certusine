@@ -1,9 +1,9 @@
-$ certusine check-configuration --file config.json
+$ certusine check-configuration --file config.xml
 
 $ (cat <<EOF
 check-configuration
 --file
-config.json
+config.xml
 EOF
 ) > args.txt
 

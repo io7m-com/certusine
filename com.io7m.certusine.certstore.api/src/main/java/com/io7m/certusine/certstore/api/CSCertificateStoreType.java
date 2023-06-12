@@ -17,15 +17,18 @@
 package com.io7m.certusine.certstore.api;
 
 import com.io7m.certusine.api.CSCertificateName;
+import org.osgi.annotation.versioning.ProviderType;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 /**
  * A certificate store.
  */
 
+@ProviderType
 public interface CSCertificateStoreType
   extends Closeable
 {
@@ -76,5 +79,16 @@ public interface CSCertificateStoreType
   boolean delete(
     String domain,
     CSCertificateName name)
+    throws IOException;
+
+  /**
+   * Obtain a read-only snapshot of all currently stored certificates.
+   *
+   * @return A snapshot
+   *
+   * @throws IOException On I/O errors
+   */
+
+  List<CSCertificateStored> all()
     throws IOException;
 }

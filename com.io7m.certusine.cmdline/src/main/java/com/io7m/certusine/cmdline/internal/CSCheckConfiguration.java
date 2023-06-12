@@ -19,6 +19,7 @@ package com.io7m.certusine.cmdline.internal;
 
 import com.io7m.anethum.api.ParsingException;
 import com.io7m.certusine.vanilla.CSConfigurationParsers;
+import com.io7m.certusine.api.CSParseErrorLogging;
 import com.io7m.quarrel.core.QCommandContextType;
 import com.io7m.quarrel.core.QCommandMetadata;
 import com.io7m.quarrel.core.QCommandStatus;

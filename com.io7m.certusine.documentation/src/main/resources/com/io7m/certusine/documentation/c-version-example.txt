@@ -1,2 +1,3 @@
 $ certusine version
-1.0.0
+com.io7m.certusine 2.0.0-SNAPSHOT b2163bef9f4870ea97a97aad21f76667387a1fc3
+

@@ -127,9 +127,11 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
         yield this.parseTXTRecord(r.body());
       }
       default -> {
-        throw new IOException(
+        final var exception = new IOException(
           this.strings.format("errorServer", statusCode)
         );
+        CSTelemetryServiceType.recordExceptionAndSetError(exception);
+        throw exception;
       }
     };
   }
@@ -138,37 +140,42 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
     final InputStream body)
     throws IOException
   {
-    final var node = this.mapper.readTree(body);
+    try {
+      final var node = this.mapper.readTree(body);
 
-    if (node instanceof ArrayNode arrayNode) {
-      if (arrayNode.isEmpty()) {
-        return Optional.empty();
-      }
-
-      final var first = arrayNode.get(0);
-      if (first instanceof ObjectNode object) {
-        final var values = object.get("rrset_values");
-        if (values instanceof ArrayNode existingArray) {
-          final var arrayValues = new ArrayList<String>(existingArray.size());
-          for (int index = 0; index < existingArray.size(); ++index) {
-            arrayValues.add(existingArray.get(index).asText());
-          }
-          return Optional.of(new TXTRecord(List.copyOf(arrayValues)));
+      if (node instanceof final ArrayNode arrayNode) {
+        if (arrayNode.isEmpty()) {
+          return Optional.empty();
         }
 
-        throw new IOException(
-          this.strings.format(
-            "errorParse",
-            "rrset_values is not an array")
-        );
-      }
-    }
+        final var first = arrayNode.get(0);
+        if (first instanceof final ObjectNode object) {
+          final var values = object.get("rrset_values");
+          if (values instanceof final ArrayNode existingArray) {
+            final var arrayValues = new ArrayList<String>(existingArray.size());
+            for (var index = 0; index < existingArray.size(); ++index) {
+              arrayValues.add(existingArray.get(index).asText());
+            }
+            return Optional.of(new TXTRecord(List.copyOf(arrayValues)));
+          }
 
-    throw new IOException(
-      this.strings.format(
-        "errorParse",
-        "Did not receive a parseable JSON object")
-    );
+          throw new IOException(
+            this.strings.format(
+              "errorParse",
+              "rrset_values is not an array")
+          );
+        }
+      }
+
+      throw new IOException(
+        this.strings.format(
+          "errorParse",
+          "Did not receive a parseable JSON object")
+      );
+    } catch (final IOException e) {
+      CSTelemetryServiceType.recordExceptionAndSetError(e);
+      throw e;
+    }
   }
 
   @Override
@@ -284,9 +291,10 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
 
       }
       default -> {
-        throw new IOException(
-          this.strings.format("errorServer", statusCode)
-        );
+        final var exception =
+          new IOException(this.strings.format("errorServer", statusCode));
+        CSTelemetryServiceType.recordExceptionAndSetError(exception);
+        throw exception;
       }
     }
   }
@@ -384,9 +392,10 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
 
       }
       default -> {
-        throw new IOException(
-          this.strings.format("errorServer", statusCode)
-        );
+        final var exception =
+          new IOException(this.strings.format("errorServer", statusCode));
+        CSTelemetryServiceType.recordExceptionAndSetError(exception);
+        throw exception;
       }
     }
   }

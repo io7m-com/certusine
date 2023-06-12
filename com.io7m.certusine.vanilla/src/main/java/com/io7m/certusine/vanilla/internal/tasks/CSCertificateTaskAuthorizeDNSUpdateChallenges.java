@@ -33,7 +33,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalLong;
 
+import static com.io7m.certusine.api.CSTelemetryServiceType.recordExceptionAndSetError;
 import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_PAUSE_TIME;
+import static io.opentelemetry.api.trace.StatusCode.ERROR;
 
 /**
  * A task that updates all the DNS challenges that may be in progress.
@@ -111,12 +113,12 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
      */
 
     if (challengesFailed.size() == challenges.size()) {
-      return context.failedPermanently(
+      final var ex =
         new CSCertificateTaskException(
-          context.strings().format("errorAllTasksFailed"),
-          false
-        )
-      );
+          context.strings().format("errorAllTasksFailed"), false
+        );
+      recordExceptionAndSetError(ex);
+      return context.failedPermanently(ex);
     }
 
     /*
@@ -127,7 +129,7 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
     try {
       exceptions.throwIfNecessary();
     } catch (final Exception e) {
-      Span.current().recordException(e);
+      recordExceptionAndSetError(e);
       return new CSCertificateTaskFailedButCanBeRetried(
         ACME_UPDATE_PAUSE_TIME,
         e
@@ -154,7 +156,9 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
         auth.findChallenge(Dns01Challenge.TYPE);
 
       if (challenge == null) {
-        throw new IllegalStateException("Missing DNS challenge!");
+        final var ex = new IllegalStateException("Missing DNS challenge!");
+        recordExceptionAndSetError(ex);
+        throw ex;
       }
       challenges.add(challenge);
 
@@ -175,6 +179,7 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
           LOG.error(
             "challenge failed: {}",
             context.formatProblem(challenge.getError()));
+          Span.current().setStatus(ERROR);
           challengesFailed.add(challenge);
         }
       }

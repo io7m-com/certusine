@@ -35,6 +35,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalLong;
 
+import static com.io7m.certusine.api.CSTelemetryServiceType.recordExceptionAndSetError;
 import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
 import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_PAUSE_TIME;
 
@@ -111,7 +112,8 @@ public final class CSCertificateTaskSignCertificateInitial
     final var certificate =
       context.certificate();
     final var store =
-      context.certificateStore();
+      context.certificateStores()
+        .store();
 
     try {
 
@@ -161,7 +163,7 @@ public final class CSCertificateTaskSignCertificateInitial
           new CSCertificateTaskSignCertificateSaveToOutputs(context))
       );
     } catch (final IOException | AcmeException e) {
-      Span.current().recordException(e);
+      recordExceptionAndSetError(e);
       LOG.error("failed to submit a signing request: {}", e.getMessage());
       return context.failedPermanently(e);
     }

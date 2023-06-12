@@ -20,7 +20,6 @@ package com.io7m.certusine.vanilla.internal.tasks;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
 import com.io7m.jdeferthrow.core.ExceptionTracker;
-import io.opentelemetry.api.trace.Span;
 import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
 import org.shredzone.acme4j.exception.AcmeException;
@@ -31,6 +30,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalLong;
 
+import static com.io7m.certusine.api.CSTelemetryServiceType.recordExceptionAndSetError;
 import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_PAUSE_TIME;
 
 /**
@@ -84,10 +84,12 @@ public final class CSCertificateTaskAuthorizeDNSTriggerChallenges
         final var challengeStatus = challenge.getStatus();
         switch (challengeStatus) {
           case INVALID -> {
-            return context.failedPermanently(new CSCertificateTaskException(
-              context.formatProblem(this.order.getError()),
-              false
-            ));
+            final var ex =
+              new CSCertificateTaskException(
+                context.formatProblem(this.order.getError()), false
+              );
+            recordExceptionAndSetError(ex);
+            return context.failedPermanently(ex);
           }
 
           case VALID, READY, UNKNOWN, CANCELED, EXPIRED, DEACTIVATED, REVOKED, PROCESSING -> {
@@ -114,11 +116,9 @@ public final class CSCertificateTaskAuthorizeDNSTriggerChallenges
     try {
       exceptions.throwIfNecessary();
     } catch (final Exception e) {
-      Span.current().recordException(e);
+      recordExceptionAndSetError(e);
       return new CSCertificateTaskFailedButCanBeRetried(
-        ACME_UPDATE_PAUSE_TIME,
-        e
-      );
+        ACME_UPDATE_PAUSE_TIME, e);
     }
 
     return new CSCertificateTaskCompleted(

@@ -121,7 +121,7 @@ public final class CSLLOutput
     try (var ignored = span.makeCurrent()) {
       this.sendData(outputData);
     } catch (final Exception e) {
-      span.recordException(e);
+      CSTelemetryServiceType.recordExceptionAndSetError(e);
       throw e;
     } finally {
       span.end();

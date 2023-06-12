@@ -19,6 +19,8 @@ package com.io7m.certusine.api;
 import com.io7m.repetoir.core.RPServiceType;
 import io.opentelemetry.api.logs.Logger;
 import io.opentelemetry.api.metrics.Meter;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 
 /**
@@ -45,4 +47,19 @@ public interface CSTelemetryServiceType
    */
 
   Logger logger();
+
+  /**
+   * Record an exception to the current span, and mark the span as having
+   * an error status.
+   *
+   * @param e The exception
+   */
+
+  static void recordExceptionAndSetError(
+    final Throwable e)
+  {
+    final var span = Span.current();
+    span.recordException(e);
+    span.setStatus(StatusCode.ERROR);
+  }
 }
