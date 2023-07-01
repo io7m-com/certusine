@@ -130,6 +130,24 @@
                 </configuration>
               </execution>
 
+              <!-- Run the image as a basic sanity check. -->
+              <execution>
+                <id>oci-image-run-check</id>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <executable>podman</executable>
+                  <arguments>
+                    <argument>run</argument>
+                    <argument>--rm</argument>
+                    <argument>quay.io/io7mcom/certusine:${project.version}</argument>
+                    <argument>help</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+
               <!-- Push with podman. -->
               <execution>
                 <id>oci-image-push</id>

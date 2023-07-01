@@ -1,5 +1,5 @@
 /*
- * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2023 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,33 +14,37 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * ACME client (unit tests)
- */
 
-module com.io7m.certusine.tests
+open module com.io7m.certusine.tests
 {
   requires com.io7m.certusine.api;
-  requires com.io7m.certusine.certstore.api;
+  requires com.io7m.certusine.cmdline;
   requires com.io7m.certusine.gandi;
+  requires com.io7m.certusine.grafana;
   requires com.io7m.certusine.looseleaf;
   requires com.io7m.certusine.vanilla;
   requires com.io7m.certusine.vultr;
 
+  requires org.junit.jupiter.api;
+  requires org.junit.jupiter.engine;
+  requires org.junit.platform.commons;
+  requires org.junit.platform.engine;
+
   requires ch.qos.logback.classic;
-  requires com.fasterxml.jackson.core;
   requires com.fasterxml.jackson.databind;
-  requires com.io7m.jaffirm.core;
-  requires com.io7m.looseleaf.protocol.v1;
+  requires com.io7m.looseleaf.security;
   requires com.io7m.looseleaf.server.api;
   requires com.io7m.looseleaf.server;
   requires com.io7m.quixote.core;
   requires java.net.http;
-  requires org.bouncycastle.pkix;
-  requires org.dnsjava;
+  requires jetty.servlet.api;
+  requires net.bytebuddy.agent;
+  requires net.bytebuddy;
   requires org.eclipse.jetty.server;
   requires org.eclipse.jetty.servlet;
+  requires org.mockito;
   requires org.shredzone.acme4j;
+  requires org.slf4j;
 
   exports com.io7m.certusine.tests;
 }
