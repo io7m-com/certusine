@@ -20,6 +20,7 @@ package com.io7m.certusine.cmdline.internal;
 import com.io7m.anethum.api.ParsingException;
 import com.io7m.certusine.api.CSConfiguration;
 import com.io7m.certusine.api.CSConfigurationServiceType;
+import com.io7m.certusine.api.CSParseErrorLogging;
 import com.io7m.certusine.vanilla.CSConfigurationParsers;
 import com.io7m.certusine.vanilla.CSDomains;
 import com.io7m.certusine.vanilla.CSServices;
@@ -212,8 +213,13 @@ public final class CSRenew implements QCommandType
     final CSConfigurationParsers parsers)
     throws IOException, ParsingException
   {
-    final var baseDirectory = file.toAbsolutePath().getParent();
-    return parsers.parseFileWithContext(baseDirectory, file);
+    try {
+      final var baseDirectory = file.toAbsolutePath().getParent();
+      return parsers.parseFileWithContext(baseDirectory, file);
+    } catch (final ParsingException e) {
+      CSParseErrorLogging.logParseErrors(LOG, file, e);
+      throw e;
+    }
   }
 
   @Override
