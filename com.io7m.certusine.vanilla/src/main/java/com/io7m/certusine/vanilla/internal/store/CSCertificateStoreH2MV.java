@@ -68,9 +68,9 @@ public final class CSCertificateStoreH2MV
   {
     Objects.requireNonNull(certificate, "certificate");
 
+    final var tx = this.txStore.begin();
+
     try {
-      final var tx =
-        this.txStore.begin();
       final var id =
         certificate.identifier();
       final var certificates =
@@ -81,6 +81,8 @@ public final class CSCertificateStoreH2MV
     } catch (final Exception e) {
       recordExceptionAndSetError(e);
       throw new IOException(e);
+    } finally {
+      tx.rollback();
     }
   }
 
@@ -93,9 +95,9 @@ public final class CSCertificateStoreH2MV
     Objects.requireNonNull(domain, "domain");
     Objects.requireNonNull(name, "name");
 
+    final var tx = this.txStore.begin();
+
     try {
-      final var tx =
-        this.txStore.begin();
       final var id =
         "%s/%s".formatted(domain, name.value());
       final var certificates =
@@ -104,6 +106,8 @@ public final class CSCertificateStoreH2MV
     } catch (final Exception e) {
       recordExceptionAndSetError(e);
       throw new IOException(e);
+    } finally {
+      tx.rollback();
     }
   }
 
@@ -116,9 +120,9 @@ public final class CSCertificateStoreH2MV
     Objects.requireNonNull(domain, "domain");
     Objects.requireNonNull(name, "name");
 
+    final var tx = this.txStore.begin();
+
     try {
-      final var tx =
-        this.txStore.begin();
       final var id =
         "%s/%s".formatted(domain, name.value());
       final var certificates =
@@ -132,6 +136,8 @@ public final class CSCertificateStoreH2MV
     } catch (final Exception e) {
       recordExceptionAndSetError(e);
       throw new IOException(e);
+    } finally {
+      tx.rollback();
     }
   }
 
@@ -139,15 +145,17 @@ public final class CSCertificateStoreH2MV
   public List<CSCertificateStored> all()
     throws IOException
   {
+    final var tx = this.txStore.begin();
+
     try {
-      final var tx =
-        this.txStore.begin();
       final var certificates =
         tx.<String, CSCertificateStored>openMap("certificates");
       return List.copyOf(certificates.values());
     } catch (final Exception e) {
       recordExceptionAndSetError(e);
       throw new IOException(e);
+    } finally {
+      tx.rollback();
     }
   }
 
