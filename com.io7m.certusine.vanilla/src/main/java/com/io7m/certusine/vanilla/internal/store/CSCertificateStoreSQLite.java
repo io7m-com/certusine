@@ -223,7 +223,7 @@ public final class CSCertificateStoreSQLite
       c_pem_full_chain
     FROM certificates
     JOIN domains ON domains.d_id = certificates.c_domain
-    ORDER BY (d_name, c_name)
+    ORDER BY d_name, c_name
         """;
 
   @Override
