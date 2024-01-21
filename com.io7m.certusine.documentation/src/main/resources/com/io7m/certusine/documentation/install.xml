@@ -35,7 +35,7 @@
         target="https://repo1.maven.org/maven2/com/io7m/certusine/com.io7m.certusine.cmdline/${project.version}/com.io7m.certusine.cmdline-${project.version}-distribution.zip">Maven Central</LinkExternal>.
     </Paragraph>
     <Paragraph>
-      The <Term type="command">certusine</Term> command requires that a Java 17+ compatible
+      The <Term type="command">certusine</Term> command requires that a Java 21+ compatible
       JVM be accessible via <Term type="command">/usr/bin/env java</Term>.
     </Paragraph>
     <Paragraph>
