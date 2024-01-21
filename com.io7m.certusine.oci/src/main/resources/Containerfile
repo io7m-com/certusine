@@ -3,6 +3,7 @@ FROM docker.io/library/eclipse-temurin:${com.io7m.oci.versionTemurin}
 
 ENV PATH="/certusine/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/java/openjdk/bin"
 ENV CERTUSINE_HOME="/certusine"
+ENV _JAVA_OPTIONS="-Dorg.sqlite.tmpdir=/certusine/var"
 
 COPY certusine /certusine
 
