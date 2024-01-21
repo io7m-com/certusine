@@ -16,6 +16,7 @@
 
 package com.io7m.certusine.certstore.api;
 
+import com.io7m.certusine.api.CSTelemetryServiceType;
 import com.io7m.repetoir.core.RPServiceType;
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -34,7 +35,8 @@ public interface CSCertificateStoreFactoryType
    * Create or open a certificate store. The certificate store is created if it
    * does not exist.
    *
-   * @param file     The store file
+   * @param telemetry The telemetry service
+   * @param file      The store file
    *
    * @return A new certificate store
    *
@@ -42,6 +44,7 @@ public interface CSCertificateStoreFactoryType
    */
 
   CSCertificateStoreType open(
+    CSTelemetryServiceType telemetry,
     Path file)
     throws IOException;
 }

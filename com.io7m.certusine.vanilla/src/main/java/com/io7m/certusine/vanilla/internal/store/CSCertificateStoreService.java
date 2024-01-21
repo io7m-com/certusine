@@ -19,6 +19,7 @@ package com.io7m.certusine.vanilla.internal.store;
 
 import com.io7m.certusine.api.CSConfiguration;
 import com.io7m.certusine.api.CSConfigurationServiceType;
+import com.io7m.certusine.api.CSTelemetryServiceType;
 import com.io7m.certusine.certstore.api.CSCertificateStoreFactoryType;
 import com.io7m.certusine.certstore.api.CSCertificateStoreType;
 import org.slf4j.Logger;
@@ -39,16 +40,20 @@ public final class CSCertificateStoreService
   private static final Logger LOG =
     LoggerFactory.getLogger(CSCertificateStoreService.class);
 
+  private final CSTelemetryServiceType telemetry;
   private final CSCertificateStoreFactoryType stores;
   private volatile CSCertificateStoreType store;
   private volatile Path storePath;
   private Flow.Subscription subscription;
 
   private CSCertificateStoreService(
+    final CSTelemetryServiceType inTelemetry,
     final CSCertificateStoreFactoryType inStores,
     final CSCertificateStoreType inStore,
     final Path path)
   {
+    this.telemetry =
+      Objects.requireNonNull(inTelemetry, "telemetry");
     this.stores =
       Objects.requireNonNull(inStores, "stores");
     this.store =
@@ -60,6 +65,7 @@ public final class CSCertificateStoreService
   /**
    * Open a certificate store service.
    *
+   * @param telemetry     The telemetry service
    * @param configuration The configuration service
    * @param stores        The store factory
    *
@@ -69,10 +75,15 @@ public final class CSCertificateStoreService
    */
 
   public static CSCertificateStoreServiceType store(
+    final CSTelemetryServiceType telemetry,
     final CSConfigurationServiceType configuration,
     final CSCertificateStoreFactoryType stores)
     throws IOException
   {
+    Objects.requireNonNull(telemetry, "telemetry");
+    Objects.requireNonNull(configuration, "configuration");
+    Objects.requireNonNull(stores, "stores");
+
     final var path =
       configuration.configuration()
         .options()
@@ -80,10 +91,10 @@ public final class CSCertificateStoreService
         .toAbsolutePath();
 
     final var store =
-      stores.open(path);
+      stores.open(telemetry, path);
 
     final var service =
-      new CSCertificateStoreService(stores, store, path);
+      new CSCertificateStoreService(telemetry, stores, store, path);
 
     configuration.events().subscribe(service);
     return service;
@@ -116,7 +127,7 @@ public final class CSCertificateStoreService
     this.subscription =
       Objects.requireNonNull(newSubscription, "subscription");
 
-    this.subscription.request(1L);
+    this.subscription.request(Long.MAX_VALUE);
   }
 
   @Override
@@ -124,7 +135,6 @@ public final class CSCertificateStoreService
     final CSConfiguration item)
   {
     this.reloadStore(item);
-    this.subscription.request(1L);
   }
 
   private void reloadStore(
@@ -141,14 +151,14 @@ public final class CSCertificateStoreService
       }
 
       final var newStore =
-        this.stores.open(item.options().certificateStore());
+        this.stores.open(this.telemetry, item.options().certificateStore());
 
       final var oldStore = this.store;
       this.store = newStore;
       this.storePath = newPath;
       oldStore.close();
     } catch (final IOException e) {
-      LOG.error("failed to open new certificate store: ", e);
+      LOG.error("Failed to open new certificate store: ", e);
     }
   }
 

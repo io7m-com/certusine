@@ -33,13 +33,15 @@
   </modules>
 
   <properties>
-    <acme4j.version>2.16</acme4j.version>
-    <bouncycastle.version>1.77</bouncycastle.version>
     <com.io7m.anethum.version>1.1.0</com.io7m.anethum.version>
     <com.io7m.jsx.version>3.0.1</com.io7m.jsx.version>
     <com.io7m.looseleaf.version>1.1.0</com.io7m.looseleaf.version>
     <com.io7m.quarrel.version>1.5.0</com.io7m.quarrel.version>
     <com.io7m.xstructural.version>1.8.0</com.io7m.xstructural.version>
+    <com.io7m.trasco.version>1.1.0</com.io7m.trasco.version>
+
+    <acme4j.version>2.16</acme4j.version>
+    <bouncycastle.version>1.77</bouncycastle.version>
     <io7m.api.previousVersion>1.1.0</io7m.api.previousVersion>
     <jackson.version>2.16.1</jackson.version>
     <jetty.version>11.0.19</jetty.version>
@@ -299,6 +301,23 @@
         <groupId>com.io7m.quixote</groupId>
         <artifactId>com.io7m.quixote.core</artifactId>
         <version>1.1.0</version>
+      </dependency>
+
+      <!-- Internal datastore -->
+      <dependency>
+        <groupId>org.xerial</groupId>
+        <artifactId>sqlite-jdbc</artifactId>
+        <version>3.43.2.2</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.trasco</groupId>
+        <artifactId>com.io7m.trasco.api</artifactId>
+        <version>${com.io7m.trasco.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.trasco</groupId>
+        <artifactId>com.io7m.trasco.vanilla</artifactId>
+        <version>${com.io7m.trasco.version}</version>
       </dependency>
 
       <!-- CLI -->

@@ -84,4 +84,23 @@ certusine: usage: certusine [command] [arguments ...]
     </Subsection>
   </Subsection>
 
+  <Subsection title="Migrating From 2.*.*" id="6098843e-0c21-4d0b-bf88-9425c344c0a2">
+    <Subsection title="SQLite Store">
+      <Paragraph>
+        Versions of the <Term type="package">certusine</Term> package prior to <Term type="constant">3.0.0</Term>
+        used the <LinkExternal target="https://www.h2database.com/html/mvstore.html">MVStore</LinkExternal> database
+        to store internal certificate state. In version <Term type="constant">3.0.0</Term>, the
+        <Term type="package">certusine</Term> package switched to using
+        <LinkExternal target="https://sqlite.org/index.html">SQLite</LinkExternal>.
+      </Paragraph>
+      <Paragraph>
+        Please either delete the <Link target="59891d12-be32-4b31-852f-5e6d6b8af20e">existing store</Link> before
+        running <Term type="constant">3.0.0</Term> on a system that previously used
+        <Term type="constant">2.*.*</Term>, or specify a new file name for the store in the
+        configuration file. Certificates will be automatically recreated and placed into the new store
+        on application startup.
+      </Paragraph>
+    </Subsection>
+  </Subsection>
+
 </Section>

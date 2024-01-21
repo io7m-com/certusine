@@ -67,7 +67,7 @@
       fail.
     </Paragraph>
 
-    <Paragraph>
+    <Paragraph id="59891d12-be32-4b31-852f-5e6d6b8af20e">
       The <Term type="expression">CertificateStore</Term> attribute specifies the file that the client will use for its
       internal database of certificates. Relative paths are resolved relative to the configuration file.
     </Paragraph>

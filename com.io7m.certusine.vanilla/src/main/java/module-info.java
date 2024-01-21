@@ -18,7 +18,7 @@ import com.io7m.certusine.api.CSCertificateOutputProviderType;
 import com.io7m.certusine.api.CSDNSConfiguratorProviderType;
 import com.io7m.certusine.certstore.api.CSCertificateStoreFactoryType;
 import com.io7m.certusine.vanilla.CSCertificateOutputProviderDirectory;
-import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreH2MVFactory;
+import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreSQLiteFactory;
 
 /**
  * ACME client (Vanilla implementation)
@@ -33,7 +33,6 @@ module com.io7m.certusine.vanilla
   requires transitive com.io7m.certusine.api;
   requires transitive com.io7m.certusine.certstore.api;
 
-  requires com.h2database.mvstore;
   requires com.io7m.jaffirm.core;
   requires com.io7m.jdeferthrow.core;
   requires com.io7m.jmulticlose.core;
@@ -46,6 +45,7 @@ module com.io7m.certusine.vanilla
   requires org.shredzone.acme4j.utils;
   requires org.shredzone.acme4j;
   requires org.slf4j;
+  requires org.xerial.sqlitejdbc;
 
   requires io.opentelemetry.api;
   requires io.opentelemetry.context;
@@ -56,6 +56,8 @@ module com.io7m.certusine.vanilla
   requires io.opentelemetry.sdk.trace;
   requires io.opentelemetry.sdk;
   requires io.opentelemetry.semconv;
+  requires com.io7m.trasco.api;
+  requires com.io7m.trasco.vanilla;
 
   exports com.io7m.certusine.vanilla;
 
@@ -67,7 +69,7 @@ module com.io7m.certusine.vanilla
     with CSCertificateOutputProviderDirectory;
 
   provides CSCertificateStoreFactoryType
-    with CSCertificateStoreH2MVFactory;
+    with CSCertificateStoreSQLiteFactory;
 
   opens com.io7m.certusine.vanilla.internal
     to com.io7m.jxtrand.vanilla;
