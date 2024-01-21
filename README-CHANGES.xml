@@ -11,12 +11,55 @@
         <c:change date="2023-06-11T00:00:00+00:00" summary="Fix a packaging issue that prevented application startup with metrics enabled."/>
       </c:changes>
     </c:release>
-    <c:release date="2023-06-12T22:40:03+00:00" is-open="false" ticket-system="com.github.io7m.certusine" version="2.0.0">
+    <c:release date="2023-06-12T00:00:00+00:00" is-open="false" ticket-system="com.github.io7m.certusine" version="2.0.0">
       <c:changes>
         <c:change date="2023-06-12T00:00:00+00:00" summary="Fix some documentation issues."/>
         <c:change date="2023-06-12T00:00:00+00:00" summary="More aggressively log exceptions in telemetry traces, and set the trace error status more often."/>
         <c:change compatible="false" date="2023-06-12T00:00:00+00:00" summary="Large internal refactoring for better telemetry reporting."/>
         <c:change date="2023-06-12T00:00:00+00:00" summary="Fix numerous documentation issues."/>
+      </c:changes>
+    </c:release>
+    <c:release date="2024-01-21T11:14:47+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="3.0.0">
+      <c:changes>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.io7m.jmulticlose:com.io7m.jmulticlose.core 1.0.0 → 1.1.0."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.mockito:mockito-core 5.4.0 → 5.8.0."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update net.bytebuddy:byte-buddy-agent 1.14.5 → 1.14.11."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update net.bytebuddy:byte-buddy 1.14.5 → 1.14.11."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.slf4j:slf4j-api 2.0.7 → 2.0.10."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update dnsjava:dnsjava 3.5.2 → 3.5.3."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.h2database:h2-mvstore 2.1.214 → 2.2.224."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update jakarta.xml.bind:jakarta.xml.bind-api 4.0.0 → 4.0.1."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.sun.xml.bind:jaxb-impl 4.0.3 → 4.0.4."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.io7m.quixote:com.io7m.quixote.core 1.0.0 → 1.1.0."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-sdk-logs 1.27.0 → 1.33.0."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.jetbrains.kotlin:kotlin-stdlib 1.8.22 → 1.9.22."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.squareup.okio:okio-jvm 3.3.0 → 3.7.0."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.eclipse.jetty:jetty-http 11.0.15 → 11.0.19."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.eclipse.jetty:jetty-jmx 11.0.15 → 11.0.19."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.eclipse.jetty:jetty-server 11.0.15 → 11.0.19."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.eclipse.jetty:jetty-servlet 11.0.15 → 11.0.19."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.eclipse.jetty:jetty-util 11.0.15 → 11.0.19."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.fasterxml.jackson.core:jackson-annotations 2.15.2 → 2.16.1."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.fasterxml.jackson.core:jackson-core 2.15.2 → 2.16.1."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.fasterxml.jackson.core:jackson-databind 2.15.2 → 2.16.1."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom 1.27.0 → 1.33.0."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.io7m.quarrel:com.io7m.quarrel.core 1.2.0 → 1.4.0."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.io7m.quarrel:com.io7m.quarrel.ext.logback 1.2.0 → 1.4.0."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.junit.jupiter:junit-jupiter-api 5.9.3 → 5.10.1."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.junit.jupiter:junit-jupiter-engine 5.9.3 → 5.10.1."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update ch.qos.logback:logback-classic 1.4.8 → 1.4.14."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update ch.qos.logback:logback-core 1.4.8 → 1.4.14."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.bouncycastle:bcpkix-jdk18on 1.75 → 1.77."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.bouncycastle:bcprov-jdk18on 1.75 → 1.77."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.bouncycastle:bcutil-jdk18on 1.75 → 1.77."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.io7m.anethum:com.io7m.anethum.api 1.0.0 → 1.1.0."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.mockito:mockito-core 5.8.0 → 5.9.0."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.slf4j:slf4j-api 2.0.10 → 2.0.11."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-sdk-logs 1.33.0 → 1.34.1."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom 1.33.0 → 1.34.1."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.io7m.quarrel:com.io7m.quarrel.core 1.4.0 → 1.5.0."/>
+        <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.io7m.quarrel:com.io7m.quarrel.ext.logback 1.4.0 → 1.5.0."/>
+        <c:change compatible="false" date="2024-01-21T11:14:47+00:00" summary="Require JDK 21"/>
       </c:changes>
     </c:release>
   </c:releases>
