@@ -18,8 +18,9 @@
 package com.io7m.certusine.tests;
 
 import com.io7m.certusine.api.CSCertificateName;
+import com.io7m.certusine.api.CSTelemetryNoOp;
 import com.io7m.certusine.certstore.api.CSCertificateStored;
-import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreH2MVFactory;
+import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreSQLiteFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,11 +35,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class CSCertificateStoreH2MVTest
+public final class CSCertificateStoreSQLiteTest
 {
+  private static final CSTelemetryNoOp NOOP =
+    CSTelemetryNoOp.noop();
+
   private Path directory;
   private Path file;
-  private CSCertificateStoreH2MVFactory stores;
+  private CSCertificateStoreSQLiteFactory stores;
 
   @BeforeEach
   public void setup()
@@ -49,7 +53,7 @@ public final class CSCertificateStoreH2MVTest
     this.file =
       this.directory.resolve("store.db");
     this.stores =
-      new CSCertificateStoreH2MVFactory();
+      new CSCertificateStoreSQLiteFactory();
   }
 
   @AfterEach
@@ -86,14 +90,14 @@ public final class CSCertificateStoreH2MVTest
         "-- BEGIN CERTIFICATE --"
       );
 
-    try (var store = this.stores.open(this.file)) {
+    try (var store = this.stores.open(NOOP, this.file)) {
       assertEquals(
         Optional.empty(),
         store.find("example.com", www)
       );
     }
 
-    try (var store = this.stores.open(this.file)) {
+    try (var store = this.stores.open(NOOP, this.file)) {
       store.put(certificate0);
       assertEquals(
         Optional.of(certificate0),
@@ -101,14 +105,14 @@ public final class CSCertificateStoreH2MVTest
       );
     }
 
-    try (var store = this.stores.open(this.file)) {
+    try (var store = this.stores.open(NOOP, this.file)) {
       assertEquals(
         Optional.of(certificate0),
         store.find("example.com", www)
       );
     }
 
-    try (var store = this.stores.open(this.file)) {
+    try (var store = this.stores.open(NOOP, this.file)) {
       store.put(certificate1);
       assertEquals(
         Optional.of(certificate1),
@@ -116,14 +120,14 @@ public final class CSCertificateStoreH2MVTest
       );
     }
 
-    try (var store = this.stores.open(this.file)) {
+    try (var store = this.stores.open(NOOP, this.file)) {
       assertEquals(
         Optional.of(certificate1),
         store.find("example.com", www)
       );
     }
 
-    try (var store = this.stores.open(this.file)) {
+    try (var store = this.stores.open(NOOP, this.file)) {
       assertTrue(store.delete("example.com", www));
       assertFalse(store.delete("example.com", www));
       assertEquals(
@@ -132,7 +136,7 @@ public final class CSCertificateStoreH2MVTest
       );
     }
 
-    try (var store = this.stores.open(this.file)) {
+    try (var store = this.stores.open(NOOP, this.file)) {
       assertEquals(
         Optional.empty(),
         store.find("example.com", www)

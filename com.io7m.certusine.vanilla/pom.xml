@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.certusine</artifactId>
     <groupId>com.io7m.certusine</groupId>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
   </parent>
 
   <artifactId>com.io7m.certusine.vanilla</artifactId>
@@ -83,16 +83,26 @@
       <artifactId>dnsjava</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2-mvstore</artifactId>
-    </dependency>
-    <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
     </dependency>
     <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
+    </dependency>
+
+    <!-- Internal datastore. -->
+    <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.trasco</groupId>
+      <artifactId>com.io7m.trasco.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.trasco</groupId>
+      <artifactId>com.io7m.trasco.vanilla</artifactId>
     </dependency>
 
     <!-- Build metadata. -->

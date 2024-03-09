@@ -105,6 +105,7 @@ public final class CSServices
 
     final var certificateStore =
       CSCertificateStoreService.store(
+        telemetry,
         configurationService,
         directory.requireService(CSCertificateStoreFactoryType.class)
       );

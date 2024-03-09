@@ -20,8 +20,8 @@
 
 module com.io7m.certusine.grafana
 {
-  requires org.osgi.annotation.bundle;
-  requires org.osgi.annotation.versioning;
+  requires static org.osgi.annotation.bundle;
+  requires static org.osgi.annotation.versioning;
 
   exports com.io7m.certusine.grafana;
 }

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Schemas xmlns="urn:com.io7m.trasco.database.statements:1:0">
+
+  <Schema versionCurrent="0">
+    <Comment>
+      The schema version table stores the current version of the database
+      schema. Implementations are expected to query this table on connecting to
+      the database in order to ensure that the calling code is compatible with
+      the tables in the database.
+    </Comment>
+
+    <Statement><![CDATA[
+CREATE TABLE schema_version (
+  version_lock            INTEGER NOT NULL DEFAULT 1,
+  version_application_id  TEXT    NOT NULL,
+  version_number          INTEGER NOT NULL,
+
+  CONSTRAINT check_lock_primary
+    PRIMARY KEY (version_lock),
+
+  CONSTRAINT check_lock_locked
+    CHECK (version_lock = 1)
+)
+-- [jooq ignore start]
+STRICT
+-- [jooq ignore stop]
+]]></Statement>
+  </Schema>
+
+  <Schema versionCurrent="1">
+    <Statement><![CDATA[
+CREATE TABLE domains (
+  d_id    INTEGER PRIMARY KEY NOT NULL,
+  d_name  TEXT                NOT NULL
+)
+-- [jooq ignore start]
+STRICT
+-- [jooq ignore stop]
+]]></Statement>
+
+    <Statement><![CDATA[
+-- [jooq ignore start]
+CREATE UNIQUE INDEX domains_name_unique ON domains (d_name)
+-- [jooq ignore stop]
+]]></Statement>
+
+    <Statement><![CDATA[
+CREATE TABLE certificates (
+  c_id              INTEGER PRIMARY KEY NOT NULL,
+  c_domain          INTEGER             NOT NULL,
+  c_name            TEXT                NOT NULL,
+  c_identifier      TEXT                NOT NULL,
+  c_created_on      TEXT                NOT NULL,
+  c_expires_on      TEXT                NOT NULL,
+  c_pem             TEXT                NOT NULL,
+  c_pem_full_chain  TEXT                NOT NULL,
+
+  CONSTRAINT certificates_domain_exists
+    FOREIGN KEY (c_domain)
+      REFERENCES domains (d_id)
+)
+-- [jooq ignore start]
+STRICT
+-- [jooq ignore stop]
+]]></Statement>
+
+    <Statement><![CDATA[
+-- [jooq ignore start]
+CREATE UNIQUE INDEX certificates_name_unique ON certificates (c_name)
+-- [jooq ignore stop]
+]]></Statement>
+
+    <Statement><![CDATA[
+-- [jooq ignore start]
+CREATE UNIQUE INDEX certificates_identifier_unique ON certificates (c_identifier)
+-- [jooq ignore stop]
+]]></Statement>
+  </Schema>
+
+</Schemas>

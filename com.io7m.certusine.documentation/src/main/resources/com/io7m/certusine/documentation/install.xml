@@ -35,7 +35,7 @@
         target="https://repo1.maven.org/maven2/com/io7m/certusine/com.io7m.certusine.cmdline/${project.version}/com.io7m.certusine.cmdline-${project.version}-distribution.zip">Maven Central</LinkExternal>.
     </Paragraph>
     <Paragraph>
-      The <Term type="command">certusine</Term> command requires that a Java 17+ compatible
+      The <Term type="command">certusine</Term> command requires that a Java 21+ compatible
       JVM be accessible via <Term type="command">/usr/bin/env java</Term>.
     </Paragraph>
     <Paragraph>
@@ -81,6 +81,52 @@ certusine: usage: certusine [command] [arguments ...]
 ...
 ]]></Verbatim>
       </FormalItem>
+    </Subsection>
+  </Subsection>
+
+  <Subsection title="Platform-Specific Issues" id="a1b83455-e9d8-4ce5-97f7-a4fe4b10bc5a">
+    <Subsection title="SELinux">
+      <Paragraph>
+        The <Term type="package">certusine</Term> package uses
+        <LinkExternal target="https://sqlite.org/index.html">SQLite</LinkExternal> internally. The
+        <Term type="package">certusine</Term> package is written in
+        <LinkExternal target="https://www.oracle.com/java/">Java</LinkExternal> and includes native
+        SQLite libraries compiled for a wide range of platforms. At run-time, the native library for
+        the current platform is extracted to a temporary directory. By default, the standard temporary
+        directory specified by the <Term type="expression">java.io.tmpdir</Term> system property is
+        used (<Term type="expression">/tmp</Term> on most Unix-like systems).
+      </Paragraph>
+      <Paragraph>
+        On systems using
+        <LinkExternal target="https://selinuxproject.org/page/Main_Page">SELinux</LinkExternal>,
+        applications are not allowed to execute code from binaries or libraries that are in a directory
+        that has the <Term type="expression">tmp_t</Term> SELinux type. It is practically guaranteed that
+        any system-wide temporary directory will be configured to have this type.
+        Therefore, in order to run <Term type="package">certusine</Term> on these systems,
+        it is necessary to specify a directory using the <Term type="expression">org.sqlite.tmpdir</Term>
+        system property. As an example, the <Link target="355352c9-9dd8-4b55-8714-ead57f8cae98">OCI image</Link>
+        configures this property to use <Term type="expression">/certusine/var</Term> to store the temporary
+        native libraries.
+      </Paragraph>
+    </Subsection>
+  </Subsection>
+
+  <Subsection title="Migrating From 2.*.*" id="6098843e-0c21-4d0b-bf88-9425c344c0a2">
+    <Subsection title="SQLite Store">
+      <Paragraph>
+        Versions of the <Term type="package">certusine</Term> package prior to <Term type="constant">3.0.0</Term>
+        used the <LinkExternal target="https://www.h2database.com/html/mvstore.html">MVStore</LinkExternal> database
+        to store internal certificate state. In version <Term type="constant">3.0.0</Term>, the
+        <Term type="package">certusine</Term> package switched to using
+        <LinkExternal target="https://sqlite.org/index.html">SQLite</LinkExternal>.
+      </Paragraph>
+      <Paragraph>
+        Please either delete the <Link target="59891d12-be32-4b31-852f-5e6d6b8af20e">existing store</Link> before
+        running <Term type="constant">3.0.0</Term> on a system that previously used
+        <Term type="constant">2.*.*</Term>, or specify a new file name for the store in the
+        configuration file. Certificates will be automatically recreated and placed into the new store
+        on application startup.
+      </Paragraph>
     </Subsection>
   </Subsection>
 

@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.certusine</artifactId>
     <groupId>com.io7m.certusine</groupId>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
   </parent>
 
   <artifactId>com.io7m.certusine.tests</artifactId>
@@ -20,6 +20,7 @@
 
   <properties>
     <mdep.analyze.skip>true</mdep.analyze.skip>
+    <checkstyle.skip>true</checkstyle.skip>
   </properties>
 
   <dependencies>

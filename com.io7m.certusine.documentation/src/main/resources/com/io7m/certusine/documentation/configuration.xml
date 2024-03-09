@@ -7,7 +7,7 @@
 
   <Subsection title="Overview">
     <Paragraph>
-      The <Term type="package">certusine</Term> client accepts a XML configuration file with a very strictly-defined
+      The <Term type="package">certusine</Term> client accepts an XML configuration file with a very strictly-defined
       schema. The configuration file is an XML element with the following elements:
     </Paragraph>
 
@@ -67,7 +67,7 @@
       fail.
     </Paragraph>
 
-    <Paragraph>
+    <Paragraph id="59891d12-be32-4b31-852f-5e6d6b8af20e">
       The <Term type="expression">CertificateStore</Term> attribute specifies the file that the client will use for its
       internal database of certificates. Relative paths are resolved relative to the configuration file.
     </Paragraph>
