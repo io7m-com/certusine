@@ -19,7 +19,7 @@
         <c:change date="2023-06-12T00:00:00+00:00" summary="Fix numerous documentation issues."/>
       </c:changes>
     </c:release>
-    <c:release date="2024-01-21T13:30:51+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="3.0.0">
+    <c:release date="2024-03-09T10:21:25+00:00" is-open="false" ticket-system="com.github.io7m.certusine" version="3.0.0">
       <c:changes>
         <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.io7m.jmulticlose:com.io7m.jmulticlose.core 1.0.0 → 1.1.0."/>
         <c:change date="2024-01-21T00:00:00+00:00" summary="Update org.mockito:mockito-core 5.4.0 → 5.8.0."/>
@@ -60,7 +60,7 @@
         <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.io7m.quarrel:com.io7m.quarrel.core 1.4.0 → 1.5.0."/>
         <c:change date="2024-01-21T00:00:00+00:00" summary="Update com.io7m.quarrel:com.io7m.quarrel.ext.logback 1.4.0 → 1.5.0."/>
         <c:change compatible="false" date="2024-01-21T00:00:00+00:00" summary="Require JDK 21"/>
-        <c:change compatible="false" date="2024-01-21T13:30:51+00:00" summary="Drop MVStore in favour of SQLite. Note: This is a breaking change and will require the manual deletion of the store.">
+        <c:change compatible="false" date="2024-01-21T00:00:00+00:00" summary="Drop MVStore in favour of SQLite. Note: This is a breaking change and will require the manual deletion of the store.">
           <c:tickets>
             <c:ticket id="13"/>
           </c:tickets>
