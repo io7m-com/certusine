@@ -7,7 +7,7 @@
 
   <Subsection title="Overview">
     <Paragraph>
-      The <Term type="package">certusine</Term> client accepts a XML configuration file with a very strictly-defined
+      The <Term type="package">certusine</Term> client accepts an XML configuration file with a very strictly-defined
       schema. The configuration file is an XML element with the following elements:
     </Paragraph>
 
