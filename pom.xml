@@ -43,7 +43,7 @@
     <io7m.api.previousVersion>3.0.0</io7m.api.previousVersion>
 
     <acme4j.version>2.16</acme4j.version>
-    <bouncycastle.version>1.77</bouncycastle.version>
+    <bouncycastle.version>1.78.1</bouncycastle.version>
     <jackson.version>2.17.0</jackson.version>
     <jetty.version>11.0.20</jetty.version>
     <junit.version>5.10.2</junit.version>
