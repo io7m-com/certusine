@@ -67,7 +67,7 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2024-04-20T13:12:47+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="3.1.0">
+    <c:release date="2024-05-22T18:54:03+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="3.1.0">
       <c:changes>
         <c:change date="2024-04-20T00:00:00+00:00" summary="Upgrade io.opentelemetry:opentelemetry-bom 1.36.0 → 1.37.0"/>
         <c:change date="2024-04-20T00:00:00+00:00" summary="Upgrade io.opentelemetry:opentelemetry-sdk-logs 1.36.0 → 1.37.0"/>
@@ -95,7 +95,12 @@
         <c:change date="2024-04-20T00:00:00+00:00" summary="Update org.junit.jupiter:junit-jupiter-api 5.10.1 → 5.10.2."/>
         <c:change date="2024-04-20T00:00:00+00:00" summary="Update org.junit.jupiter:junit-jupiter-engine 5.10.1 → 5.10.2."/>
         <c:change date="2024-04-20T00:00:00+00:00" summary="Update ch.qos.logback:logback-classic 1.4.14 → 1.5.3."/>
-        <c:change date="2024-04-20T13:12:47+00:00" summary="Update ch.qos.logback:logback-core 1.4.14 → 1.5.3."/>
+        <c:change date="2024-04-20T00:00:00+00:00" summary="Update ch.qos.logback:logback-core 1.4.14 → 1.5.3."/>
+        <c:change date="2024-05-22T18:54:03+00:00" summary="Logging was stuck at trace level.">
+          <c:tickets>
+            <c:ticket id="50"/>
+          </c:tickets>
+        </c:change>
       </c:changes>
     </c:release>
   </c:releases>
