@@ -61,6 +61,8 @@ public final class CSShowDNSConfigurators implements QCommandType
   public QCommandStatus onExecute(
     final QCommandContextType context)
   {
+    QLogback.configure(context);
+
     final var iter =
       ServiceLoader.load(CSDNSConfiguratorProviderType.class)
         .iterator();

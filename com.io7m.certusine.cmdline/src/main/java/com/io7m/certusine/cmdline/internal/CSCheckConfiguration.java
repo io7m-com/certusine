@@ -80,6 +80,8 @@ public final class CSCheckConfiguration implements QCommandType
     final QCommandContextType context)
     throws Exception
   {
+    QLogback.configure(context);
+
     final var parsers =
       new CSConfigurationParsers();
 

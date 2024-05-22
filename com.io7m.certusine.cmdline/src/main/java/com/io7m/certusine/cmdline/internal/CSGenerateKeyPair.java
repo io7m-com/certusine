@@ -103,6 +103,8 @@ public final class CSGenerateKeyPair implements QCommandType
     final QCommandContextType context)
     throws Exception
   {
+    QLogback.configure(context);
+
     Security.addProvider(new BouncyCastleProvider());
 
     final var generator =

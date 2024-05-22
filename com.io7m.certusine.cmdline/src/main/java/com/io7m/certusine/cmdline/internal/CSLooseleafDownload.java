@@ -160,6 +160,8 @@ public final class CSLooseleafDownload implements QCommandType
     final QCommandContextType context)
     throws Exception
   {
+    QLogback.configure(context);
+
     final var outputDirectory =
       context.parameterValue(OUTPUT_DIRECTORY)
         .toAbsolutePath();

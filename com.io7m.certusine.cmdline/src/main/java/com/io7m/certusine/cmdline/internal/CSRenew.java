@@ -111,6 +111,8 @@ public final class CSRenew implements QCommandType
     final QCommandContextType context)
     throws Exception
   {
+    QLogback.configure(context);
+
     final var parsers =
       new CSConfigurationParsers();
 
