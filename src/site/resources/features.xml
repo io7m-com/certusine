@@ -2,6 +2,54 @@
 
 <div xmlns="http://www.w3.org/1999/xhtml">
   <ul>
+    <li>
+      Uses <a href="https://github.com/shred/acme4j">acme4j</a> internally for strong RFC
+      compliance.
+    </li>
+    <li>
+      Exclusively uses the <tt>DNS-01</tt> ACME challenge type for ease of integration with
+      infrastructure without having to set up insecure web servers.
+    </li>
+    <li>
+      A small, easily auditable codebase with a heavy use of modularity for correctness.
+    </li>
+    <li>
+      Exposes a
+      <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ServiceLoader.html">service provider</a>
+      API for integrating with new DNS APIs.
+    </li>
+    <li>
+      Exposes a
+      <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ServiceLoader.html">service provider</a>
+      API for implementing new types of certificate outputs.
+    </li>
+    <li>
+      Supports
+      <a href="https://www.vultr.com/pt/docs/introduction-to-vultr-dns/">Vultr DNS</a>.
+    </li>
+    <li>
+      Supports
+      <a href="https://api.gandi.net/docs/livedns/">Gandi LiveDNS</a>.
+    </li>
+    <li>
+      Supports writing certificates to
+      <a href="https://www.io7m.com/software/looseleaf/">looseleaf</a>
+      servers.
+    </li>
+    <li>
+      Heavily instrumented with <a href="https://www.opentelemetry.io">OpenTelemetry</a>
+      for reliable service monitoring.
+    </li>
+    <li>
+      An extensive automated test suite with high coverage.
+    </li>
+    <li>
+      A small footprint; the client is designed to run in tiny 16-32mb JVM heap configurations.
+    </li>
+    <li>
+      Platform independence. No platform-dependent code is included in any form, and installations can largely be
+      carried between platforms without changes.
+    </li>
     <li><a href="https://www.osgi.org/">OSGi</a>-ready</li>
     <li><a href="https://en.wikipedia.org/wiki/Java_Platform_Module_System">JPMS</a>-ready</li>
     <li>ISC license</li>
