@@ -40,7 +40,7 @@ public final class CSGandiDNSConfigurators
   extends CSAbstractNamedProvider
   implements CSDNSConfiguratorProviderType
 {
-  private static final String API_KEY_PARAMETER = "api-key";
+  private static final String PAT_PARAMETER = "personal-access-token";
   private static final String DOMAIN_PARAMETER = "domain";
   private static final String API_BASE_PARAMETER = "api-base";
   private final CSGandiStrings strings;
@@ -108,7 +108,7 @@ public final class CSGandiDNSConfigurators
     return new CSGandiDNSConfigurator(
       this.strings,
       parameterMap.get(DOMAIN_PARAMETER),
-      parameterMap.get(API_KEY_PARAMETER),
+      parameterMap.get(PAT_PARAMETER),
       apiBase
     );
   }
@@ -130,10 +130,10 @@ public final class CSGandiDNSConfigurators
   {
     return Map.ofEntries(
       entry(
-        API_KEY_PARAMETER,
+        PAT_PARAMETER,
         new CSConfigurationParameterDescription(
-          API_KEY_PARAMETER,
-          this.strings.format("parameterApiKey"),
+          PAT_PARAMETER,
+          this.strings.format("parameterApiPAT"),
           "API Key",
           true
         )

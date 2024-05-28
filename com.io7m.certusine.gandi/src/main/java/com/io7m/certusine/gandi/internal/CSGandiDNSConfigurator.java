@@ -51,7 +51,7 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
   private final CSGandiStrings strings;
   private final HttpClient client;
   private final String apiBase;
-  private final String apiKey;
+  private final String pat;
   private final String domain;
   private final ObjectMapper mapper;
 
@@ -60,22 +60,22 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
    *
    * @param inDomain  The owning domain
    * @param inStrings String resources
-   * @param inApiKey  The Gandi API key
+   * @param inPAT     The Gandi personal access token
    * @param inApiBase The API base address
    */
 
   public CSGandiDNSConfigurator(
     final CSGandiStrings inStrings,
     final String inDomain,
-    final String inApiKey,
+    final String inPAT,
     final String inApiBase)
   {
     this.strings =
       Objects.requireNonNull(inStrings, "inStrings");
     this.domain =
       Objects.requireNonNull(inDomain, "inDomain");
-    this.apiKey =
-      Objects.requireNonNull(inApiKey, "apiKey");
+    this.pat =
+      Objects.requireNonNull(inPAT, "apiKey");
     this.apiBase =
       Objects.requireNonNull(inApiBase, "apiBase")
         .replaceAll("/$", "");
@@ -110,7 +110,7 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
       HttpRequest.newBuilder()
         .uri(targetURI)
         .GET()
-        .header("Authorization", "Apikey " + this.apiKey)
+        .header("Authorization", "Bearer " + this.pat)
         .build();
 
     final var r =
@@ -119,11 +119,17 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
     final var statusCode = r.statusCode();
     return switch (statusCode) {
       case 404 -> {
-        LOG.debug("no TXT record {} exists for domain {}", recordName, this.domain);
+        LOG.debug(
+          "no TXT record {} exists for domain {}",
+          recordName,
+          this.domain);
         yield Optional.empty();
       }
       case 200 -> {
-        LOG.debug("a TXT record {} exists for domain {}", recordName, this.domain);
+        LOG.debug(
+          "a TXT record {} exists for domain {}",
+          recordName,
+          this.domain);
         yield this.parseTXTRecord(r.body());
       }
       default -> {
@@ -277,7 +283,7 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
       HttpRequest.newBuilder()
         .uri(targetURI)
         .PUT(HttpRequest.BodyPublishers.ofString(text, UTF_8))
-        .header("Authorization", "Apikey " + this.apiKey)
+        .header("Authorization", "Bearer " + this.pat)
         .build();
 
     final var r =
@@ -378,7 +384,7 @@ public final class CSGandiDNSConfigurator implements CSDNSConfiguratorType
       HttpRequest.newBuilder()
         .uri(targetURI)
         .DELETE()
-        .header("Authorization", "Apikey " + this.apiKey)
+        .header("Authorization", "Bearer " + this.pat)
         .build();
 
     final var r =

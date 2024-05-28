@@ -7,6 +7,6 @@
   <entry key="errorParse">Error parsing server response: {0}</entry>
   <entry key="errorServer">Could not create a DNS record: HTTP status: {0}</entry>
   <entry key="parameterApiBase">The Gandi API base address.</entry>
-  <entry key="parameterApiKey">The Gandi API key.</entry>
+  <entry key="parameterApiPAT">The Gandi Personal Access Token.</entry>
   <entry key="parameterDomain">The domain name.</entry>
 </properties>
