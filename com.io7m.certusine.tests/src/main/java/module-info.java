@@ -46,6 +46,7 @@ open module com.io7m.certusine.tests
   requires org.mockito;
   requires org.shredzone.acme4j;
   requires org.slf4j;
+  requires org.dnsjava;
 
   exports com.io7m.certusine.tests;
 }

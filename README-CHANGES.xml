@@ -67,7 +67,7 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2024-05-28T20:38:37+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="3.1.0">
+    <c:release date="2024-05-31T09:18:06+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="3.1.0">
       <c:changes>
         <c:change date="2024-04-20T00:00:00+00:00" summary="Upgrade io.opentelemetry:opentelemetry-bom 1.36.0 → 1.37.0"/>
         <c:change date="2024-04-20T00:00:00+00:00" summary="Upgrade io.opentelemetry:opentelemetry-sdk-logs 1.36.0 → 1.37.0"/>
@@ -101,11 +101,12 @@
             <c:ticket id="50"/>
           </c:tickets>
         </c:change>
-        <c:change compatible="false" date="2024-05-28T20:38:37+00:00" summary="Gandi.net now requires Personal Access Tokens instead of API keys.">
+        <c:change compatible="false" date="2024-05-28T00:00:00+00:00" summary="Gandi.net now requires Personal Access Tokens instead of API keys.">
           <c:tickets>
             <c:ticket id="55"/>
           </c:tickets>
         </c:change>
+        <c:change date="2024-05-31T09:18:06+00:00" summary="Properly implement Vultr DNS record deletion."/>
       </c:changes>
     </c:release>
   </c:releases>

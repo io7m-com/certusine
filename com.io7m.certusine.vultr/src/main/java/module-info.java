@@ -28,6 +28,8 @@ module com.io7m.certusine.vultr
 
   requires transitive com.io7m.certusine.api;
 
+  requires com.fasterxml.jackson.databind;
+  requires com.io7m.dixmont.core;
   requires com.io7m.jxtrand.vanilla;
   requires java.net.http;
   requires org.slf4j;
@@ -36,7 +38,7 @@ module com.io7m.certusine.vultr
     with CSVultrDNSConfigurators;
 
   opens com.io7m.certusine.vultr.internal
-    to com.io7m.jxtrand.vanilla;
+    to com.io7m.jxtrand.vanilla, com.fasterxml.jackson.databind;
 
   exports com.io7m.certusine.vultr.internal
     to com.io7m.certusine.tests;

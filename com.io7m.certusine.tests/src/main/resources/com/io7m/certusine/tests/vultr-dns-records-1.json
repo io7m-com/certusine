@@ -1,0 +1,27 @@
+{
+  "records": [
+    {
+      "id": "34389b43-b8b9-4d9d-a380-449f05c501d9",
+      "type": "A",
+      "name": "x",
+      "data": "200.200.200.200",
+      "priority": 0,
+      "ttl": 300
+    },
+    {
+      "id": "68440bec-b17f-4532-a58b-d2b6a7e3b69c",
+      "type": "TXT",
+      "name": "z",
+      "data": "\"200.200.200.201\"",
+      "priority": 0,
+      "ttl": 300
+    }
+  ],
+  "meta": {
+    "total": 1000,
+    "links": {
+      "next": "",
+      "prev": ""
+    }
+  }
+}
