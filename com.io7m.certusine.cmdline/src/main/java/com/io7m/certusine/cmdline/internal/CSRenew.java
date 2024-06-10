@@ -111,6 +111,8 @@ public final class CSRenew implements QCommandType
     final QCommandContextType context)
     throws Exception
   {
+    QLogback.configure(context);
+
     final var parsers =
       new CSConfigurationParsers();
 
@@ -175,8 +177,7 @@ public final class CSRenew implements QCommandType
       var result = QCommandStatus.SUCCESS;
         for (final var domain : configuration.domains().values()) {
           try {
-            CSDomains.renew(services, domain, Clock.systemUTC()
-            );
+            CSDomains.renew(services, domain, Clock.systemUTC());
           } catch (final Exception e) {
             LOG.error("error executing domain: ", e);
             result = QCommandStatus.FAILURE;

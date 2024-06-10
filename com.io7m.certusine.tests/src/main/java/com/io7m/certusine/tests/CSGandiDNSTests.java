@@ -80,7 +80,7 @@ public final class CSGandiDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
-            entry("api-key", "abcd"),
+            entry("personal-access-token", "abcd"),
             entry("api-base", "http://localhost:20000/"),
             entry("domain", "example.com")
           )
@@ -105,11 +105,13 @@ public final class CSGandiDNSTests
     {
       final var req = received.remove(0);
       assertEquals("GET", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     {
       final var req = received.remove(0);
       assertEquals("PUT", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     assertEquals(0, received.size());
@@ -131,7 +133,7 @@ public final class CSGandiDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
-            entry("api-key", "abcd"),
+            entry("personal-access-token", "abcd"),
             entry("api-base", "http://localhost:20000/"),
             entry("domain", "example.com")
           )
@@ -156,11 +158,13 @@ public final class CSGandiDNSTests
     {
       final var req = received.remove(0);
       assertEquals("GET", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     {
       final var req = received.remove(0);
       assertEquals("PUT", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     assertEquals(0, received.size());
@@ -182,7 +186,7 @@ public final class CSGandiDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
-            entry("api-key", "abcd"),
+            entry("personal-access-token", "abcd"),
             entry("api-base", "http://localhost:20000/"),
             entry("domain", "example.com")
           )
@@ -214,11 +218,13 @@ public final class CSGandiDNSTests
     {
       final var req = received.remove(0);
       assertEquals("GET", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     {
       final var req = received.remove(0);
       assertEquals("PUT", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     assertEquals(0, received.size());
@@ -240,7 +246,7 @@ public final class CSGandiDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
-            entry("api-key", "abcd"),
+            entry("personal-access-token", "abcd"),
             entry("api-base", "http://localhost:20000/"),
             entry("domain", "example.com")
           )
@@ -272,6 +278,7 @@ public final class CSGandiDNSTests
     {
       final var req = received.remove(0);
       assertEquals("GET", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     assertEquals(0, received.size());
@@ -293,7 +300,7 @@ public final class CSGandiDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
-            entry("api-key", "abcd"),
+            entry("personal-access-token", "abcd"),
             entry("api-base", "http://localhost:20000/"),
             entry("domain", "example.com")
           )
@@ -333,7 +340,7 @@ public final class CSGandiDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
-            entry("api-key", "abcd"),
+            entry("personal-access-token", "abcd"),
             entry("api-base", "http://localhost:20000/")
           )
         )
@@ -381,7 +388,7 @@ public final class CSGandiDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
-            entry("api-key", "abcd"),
+            entry("personal-access-token", "abcd"),
             entry("api-base", "http://localhost:20000/"),
             entry("domain", "example.com")
           )
@@ -406,6 +413,7 @@ public final class CSGandiDNSTests
     {
       final var req = received.remove(0);
       assertEquals("GET", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     assertEquals(0, received.size());
@@ -427,7 +435,7 @@ public final class CSGandiDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
-            entry("api-key", "abcd"),
+            entry("personal-access-token", "abcd"),
             entry("api-base", "http://localhost:20000/"),
             entry("domain", "example.com")
           )
@@ -452,6 +460,7 @@ public final class CSGandiDNSTests
     {
       final var req = received.remove(0);
       assertEquals("GET", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     assertEquals(0, received.size());
@@ -473,7 +482,7 @@ public final class CSGandiDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
-            entry("api-key", "abcd"),
+            entry("personal-access-token", "abcd"),
             entry("api-base", "http://localhost:20000/"),
             entry("domain", "example.com")
           )
@@ -505,11 +514,13 @@ public final class CSGandiDNSTests
     {
       final var req = received.remove(0);
       assertEquals("GET", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     {
       final var req = received.remove(0);
       assertEquals("DELETE", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     assertEquals(0, received.size());
@@ -532,7 +543,7 @@ public final class CSGandiDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
-            entry("api-key", "abcd"),
+            entry("personal-access-token", "abcd"),
             entry("api-base", "http://localhost:20000/"),
             entry("domain", "example.com")
           )
@@ -564,11 +575,13 @@ public final class CSGandiDNSTests
     {
       final var req = received.remove(0);
       assertEquals("GET", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     {
       final var req = received.remove(0);
       assertEquals("PUT", req.method());
+      assertEquals("Bearer abcd", req.headers().get("authorization"));
       assertEquals("/v5/livedns/domains/example.com/records/a", req.path());
     }
     assertEquals(0, received.size());

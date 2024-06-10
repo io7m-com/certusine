@@ -4,7 +4,8 @@
 
 <properties>
   <entry key="errorDNSConfiguration">DNS configurator is misconfigured.</entry>
-  <entry key="errorServer">Could not create a DNS record: HTTP status: {0}</entry>
+  <entry key="errorDNSCreate">Could not create a DNS record: HTTP status: {0}</entry>
+  <entry key="errorDNSDelete">Could not delete a DNS record: HTTP status: {0}</entry>
   <entry key="parameterApiKey">The Vultr API key.</entry>
   <entry key="parameterDomain">The domain name.</entry>
   <entry key="parameterApiBase">The Vultr API base address.</entry>

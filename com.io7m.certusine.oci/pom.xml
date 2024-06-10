@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.certusine</artifactId>
     <groupId>com.io7m.certusine</groupId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
   </parent>
 
   <artifactId>com.io7m.certusine.oci</artifactId>
@@ -19,8 +19,6 @@
   <url>https://www.io7m.com/software/certusine/</url>
 
   <properties>
-    <com.io7m.oci.versionAlpine>3.18.2</com.io7m.oci.versionAlpine>
-    <com.io7m.oci.versionTemurin>21_35-jre-alpine</com.io7m.oci.versionTemurin>
     <spotbugs.skip>true</spotbugs.skip>
   </properties>
 

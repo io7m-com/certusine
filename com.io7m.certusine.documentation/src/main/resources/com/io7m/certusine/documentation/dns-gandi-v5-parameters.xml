@@ -18,13 +18,13 @@
    </Row>
    <Row>
       <Cell>
-         <Term type="parameter">api-key</Term>
+         <Term type="parameter">personal-access-token</Term>
       </Cell>
       <Cell>
-         <Term type="constant">API Key</Term>
+         <Term type="constant">Personal access token</Term>
       </Cell>
       <Cell>true</Cell>
-      <Cell>The Gandi API key.</Cell>
+      <Cell>A generated Gandi personal access token.</Cell>
    </Row>
    <Row>
       <Cell>

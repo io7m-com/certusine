@@ -59,6 +59,28 @@ public sealed interface CSDNSRecordNameType
     {
       return this.name;
     }
+
+    /**
+     * Strip a domain suffix from this name.
+     *
+     * @param domain The domain
+     *
+     * @return This name as a relative name
+     */
+
+    public CSDNSRecordNameRelative stripDomainSuffix(
+      final String domain)
+    {
+      var replaced =
+        this.name.substring(0, this.name.length() - 1);
+
+      final int index = replaced.lastIndexOf("." + domain);
+      if (index > 0) {
+        replaced = replaced.substring(0, index);
+      }
+
+      return new CSDNSRecordNameRelative(replaced);
+    }
   }
 
   /**

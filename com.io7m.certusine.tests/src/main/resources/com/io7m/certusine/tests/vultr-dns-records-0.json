@@ -1,0 +1,51 @@
+{
+  "records": [
+    {
+      "id": "e9358824-b050-4514-a1ec-39afcff829de",
+      "type": "A",
+      "name": "x",
+      "data": "200.200.200.200",
+      "priority": 0,
+      "ttl": 300
+    },
+    {
+      "id": "b542b76c-b3c3-483b-8f34-842b854b55d7",
+      "type": "TXT",
+      "name": "y",
+      "data": "\"200.200.200.200\"",
+      "priority": 0,
+      "ttl": 300
+    },
+    {
+      "id": "c473afb8-6d68-4205-a8ca-2ca81a525c04",
+      "type": "TXT",
+      "name": "y",
+      "data": "\"200.200.200.201\"",
+      "priority": 0,
+      "ttl": 300
+    },
+    {
+      "id": "0a818032-c985-482c-b62b-ece6f622b956",
+      "type": "TXT",
+      "name": "z",
+      "data": "\"200.200.200.200\"",
+      "priority": 0,
+      "ttl": 300
+    },
+    {
+      "id": "ff690447-7b0d-408b-a408-fd2410281a60",
+      "type": "TXT",
+      "name": "z",
+      "data": "\"200.200.200.201\"",
+      "priority": 0,
+      "ttl": 300
+    }
+  ],
+  "meta": {
+    "total": 1000,
+    "links": {
+      "next": "Token",
+      "prev": ""
+    }
+  }
+}

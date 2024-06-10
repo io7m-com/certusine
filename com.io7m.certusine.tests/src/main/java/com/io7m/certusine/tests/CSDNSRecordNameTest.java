@@ -1,5 +1,5 @@
 /*
- * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2024 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,13 +14,30 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * ACME client (API)
- */
 
-@Export
-@Version("1.3.0")
-package com.io7m.certusine.api;
+package com.io7m.certusine.tests;
 
-import org.osgi.annotation.bundle.Export;
-import org.osgi.annotation.versioning.Version;
+import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameAbsolute;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public final class CSDNSRecordNameTest
+{
+  @Test
+  public void testStripDomain()
+  {
+    final var r =
+      new CSDNSRecordNameAbsolute("_acme-challenge.k.example.com.");
+
+    assertEquals(
+      "_acme-challenge.k",
+      r.stripDomainSuffix("example.com").name()
+    );
+
+    assertEquals(
+      "_acme-challenge.k.example.com",
+      r.stripDomainSuffix("nowhere.com").name()
+    );
+  }
+}

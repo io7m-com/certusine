@@ -6,12 +6,12 @@
   <parent>
     <groupId>com.io7m.primogenitor</groupId>
     <artifactId>com.io7m.primogenitor.full</artifactId>
-    <version>8.1.0</version>
+    <version>8.2.0</version>
   </parent>
 
   <groupId>com.io7m.certusine</groupId>
   <artifactId>com.io7m.certusine</artifactId>
-  <version>3.0.0</version>
+  <version>3.1.0</version>
 
   <packaging>pom</packaging>
   <name>com.io7m.certusine</name>
@@ -33,29 +33,94 @@
   </modules>
 
   <properties>
-    <com.io7m.anethum.version>1.1.0</com.io7m.anethum.version>
+    <!-- Configuration -->
+    <io7m.api.previousVersion>3.0.0</io7m.api.previousVersion>
+    <io7m.java.targetJavaVersion>21</io7m.java.targetJavaVersion>
+
+    <!-- io7m dependencies. -->
+    <com.io7m.anethum.version>1.1.1</com.io7m.anethum.version>
     <com.io7m.jsx.version>3.0.1</com.io7m.jsx.version>
     <com.io7m.looseleaf.version>1.1.0</com.io7m.looseleaf.version>
-    <com.io7m.quarrel.version>1.5.0</com.io7m.quarrel.version>
-    <com.io7m.xstructural.version>1.8.0</com.io7m.xstructural.version>
+    <com.io7m.quarrel.version>1.6.1</com.io7m.quarrel.version>
+    <com.io7m.xstructural.version>1.8.1</com.io7m.xstructural.version>
     <com.io7m.trasco.version>1.1.0</com.io7m.trasco.version>
 
+    <!-- Third-party dependencies. -->
     <acme4j.version>2.16</acme4j.version>
-    <bouncycastle.version>1.77</bouncycastle.version>
-    <io7m.api.previousVersion>1.1.0</io7m.api.previousVersion>
-    <jackson.version>2.16.1</jackson.version>
-    <jetty.version>11.0.19</jetty.version>
-    <junit.version>5.10.1</junit.version>
-    <logback.version>1.4.14</logback.version>
-    <opentelemetry.version>1.34.1</opentelemetry.version>
+    <bouncycastle.version>1.78.1</bouncycastle.version>
+    <jackson.version>2.17.1</jackson.version>
+    <jetty.version>11.0.21</jetty.version>
+    <logback.version>1.5.6</logback.version>
+    <net.byte-buddy.version>1.14.17</net.byte-buddy.version>
+    <opentelemetry.version>1.39.0</opentelemetry.version>
+    <org.junit.version>5.10.2</org.junit.version>
+
+    <!-- https://hub.docker.com/_/alpine/ -->
+    <com.io7m.oci.versionAlpine>3.20.0</com.io7m.oci.versionAlpine>
+    <!-- https://hub.docker.com/_/eclipse-temurin -->
+    <com.io7m.oci.versionTemurin>21.0.3_9-jre-alpine</com.io7m.oci.versionTemurin>
   </properties>
+
+  <licenses>
+    <license>
+      <name>ISC</name>
+      <url>https://www.io7m.com/license/isc.txt</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://www.github.com/io7m-com/certusine</url>
+    <connection>scm:git:https://www.github.com/io7m-com/certusine</connection>
+    <developerConnection>scm:git:https://www.github.com/io7m-com/certusine
+    </developerConnection>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>io7m</id>
+      <name>io7m</name>
+      <email>code@io7m.com</email>
+      <url>https://www.io7m.com</url>
+    </developer>
+  </developers>
+
+  <issueManagement>
+    <url>https://www.github.com/io7m-com/certusine/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+
+  <distributionManagement>
+    <site>
+      <id>io7m.com</id>
+      <name>io7m.com</name>
+      <url>https://www.io7m.com/software/certusine</url>
+    </site>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/
+      </url>
+    </repository>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshots</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <ciManagement>
+    <system>GitHub Actions</system>
+    <url>https://github.com/io7m-com/certusine/actions</url>
+  </ciManagement>
+
+  <prerequisites>
+    <maven>3.0.4</maven>
+  </prerequisites>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>com.io7m.junreachable</groupId>
         <artifactId>com.io7m.junreachable.core</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.2</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jproperties</groupId>
@@ -65,37 +130,37 @@
       <dependency>
         <groupId>com.io7m.jdeferthrow</groupId>
         <artifactId>com.io7m.jdeferthrow.core</artifactId>
-        <version>1.2.0</version>
+        <version>1.3.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jxtrand</groupId>
         <artifactId>com.io7m.jxtrand.vanilla</artifactId>
-        <version>2.0.0</version>
+        <version>2.1.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jaffirm</groupId>
         <artifactId>com.io7m.jaffirm.core</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jlexing</groupId>
         <artifactId>com.io7m.jlexing.core</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jeucreader</groupId>
         <artifactId>com.io7m.jeucreader.core</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.repetoir</groupId>
         <artifactId>com.io7m.repetoir.core</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jmulticlose</groupId>
         <artifactId>com.io7m.jmulticlose.core</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.3</version>
       </dependency>
 
       <!-- ACME -->
@@ -140,31 +205,28 @@
 
       <!-- Test suite -->
       <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>${junit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>${junit.version}</version>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${org.junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
 
       <!-- Mockito. -->
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>5.9.0</version>
+        <version>5.12.0</version>
       </dependency>
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy-agent</artifactId>
-        <version>1.14.11</version>
+        <version>${net.byte-buddy.version}</version>
       </dependency>
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
-        <version>1.14.11</version>
+        <version>${net.byte-buddy.version}</version>
       </dependency>
 
       <dependency>
@@ -225,7 +287,7 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>2.0.11</version>
+        <version>2.0.13</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
@@ -260,7 +322,7 @@
       <dependency>
         <groupId>com.io7m.primogenitor</groupId>
         <artifactId>com.io7m.primogenitor.support</artifactId>
-        <version>8.1.0</version>
+        <version>8.2.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.looseleaf</groupId>
@@ -290,24 +352,24 @@
       <dependency>
         <groupId>jakarta.xml.bind</groupId>
         <artifactId>jakarta.xml.bind-api</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.2</version>
       </dependency>
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>
-        <version>4.0.4</version>
+        <version>4.0.5</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.quixote</groupId>
         <artifactId>com.io7m.quixote.core</artifactId>
-        <version>1.1.0</version>
+        <version>1.3.0</version>
       </dependency>
 
       <!-- Internal datastore -->
       <dependency>
         <groupId>org.xerial</groupId>
         <artifactId>sqlite-jdbc</artifactId>
-        <version>3.43.2.2</version>
+        <version>3.46.0.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.trasco</groupId>
@@ -343,7 +405,7 @@
       <dependency>
         <groupId>io.opentelemetry</groupId>
         <artifactId>opentelemetry-semconv</artifactId>
-        <version>1.18.0-alpha</version>
+        <version>1.30.1-alpha</version>
       </dependency>
       <dependency>
         <groupId>io.opentelemetry</groupId>
@@ -353,17 +415,17 @@
       <dependency>
         <groupId>io.opentelemetry</groupId>
         <artifactId>opentelemetry-sdk-logs</artifactId>
-        <version>1.34.1</version>
+        <version>1.39.0</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-stdlib</artifactId>
-        <version>1.9.22</version>
+        <version>1.9.24</version>
       </dependency>
       <dependency>
         <groupId>com.squareup.okio</groupId>
         <artifactId>okio-jvm</artifactId>
-        <version>3.7.0</version>
+        <version>3.9.0</version>
         <exclusions>
           <exclusion>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -394,7 +456,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>jaxb2-maven-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.2.0</version>
         </plugin>
       </plugins>
     </pluginManagement>

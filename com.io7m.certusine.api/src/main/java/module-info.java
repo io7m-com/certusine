@@ -23,11 +23,10 @@ module com.io7m.certusine.api
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
 
-  requires transitive com.io7m.anethum.api;
-  requires transitive com.io7m.repetoir.core;
-
+  requires com.io7m.anethum.api;
   requires com.io7m.jxtrand.vanilla;
-  requires transitive io.opentelemetry.api;
+  requires com.io7m.repetoir.core;
+  requires io.opentelemetry.api;
   requires org.slf4j;
 
   opens com.io7m.certusine.api.internal

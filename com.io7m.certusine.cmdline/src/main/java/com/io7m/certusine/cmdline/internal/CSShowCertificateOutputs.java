@@ -61,6 +61,8 @@ public final class CSShowCertificateOutputs implements QCommandType
   public QCommandStatus onExecute(
     final QCommandContextType context)
   {
+    QLogback.configure(context);
+
     final var iter =
       ServiceLoader.load(CSCertificateOutputProviderType.class)
         .iterator();

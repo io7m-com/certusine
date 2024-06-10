@@ -17,9 +17,13 @@
 
 package com.io7m.certusine.vultr.internal;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleDeserializers;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.io7m.certusine.api.CSDNSConfiguratorType;
 import com.io7m.certusine.api.CSDNSRecordNameType;
 import com.io7m.certusine.api.CSTelemetryServiceType;
+import com.io7m.dixmont.core.DmJsonRestrictedDeserializers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +32,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -46,6 +53,8 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
   private final String apiBase;
   private final String apiKey;
   private final String domain;
+  private final SimpleDeserializers serializers;
+  private final JsonMapper mapper;
 
   /**
    * A Vultr DNS configurator.
@@ -74,6 +83,28 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
 
     this.client =
       HttpClient.newHttpClient();
+
+    this.serializers =
+      DmJsonRestrictedDeserializers.builder()
+        .allowClassName(
+          "java.util.List<com.io7m.certusine.vultr.internal.CSVultrDNSRecord>")
+        .allowClass(CSVultrDNSRecord.class)
+        .allowClass(CSVultrDNSResponse.class)
+        .allowClass(CSVultrPageLinks.class)
+        .allowClass(CSVultrPageMetadata.class)
+        .allowClass(List.class)
+        .allowClass(Optional.class)
+        .allowClass(String.class)
+        .allowClass(int.class)
+        .build();
+
+    this.mapper =
+      JsonMapper.builder()
+        .build();
+
+    final var simpleModule = new SimpleModule();
+    simpleModule.setDeserializers(this.serializers);
+    this.mapper.registerModule(simpleModule);
   }
 
   @Override
@@ -88,10 +119,12 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
 
     try {
       final var targetURI =
-        URI.create("%s/domains/%s/records".formatted(this.apiBase, this.domain));
+        URI.create("%s/domains/%s/records".formatted(
+          this.apiBase,
+          this.domain));
 
       LOG.debug(
-        "creating a TXT record {} = {} for domain {}",
+        "Creating a TXT record {} = {} for domain {}",
         recordName,
         recordValue,
         this.domain
@@ -106,7 +139,7 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
           "ttl": 600,
           "priority": 0
         }
-        """.formatted(recordName, recordValue);
+        """.formatted(this.handleRecordName(recordName), recordValue);
 
       final var request =
         HttpRequest.newBuilder()
@@ -118,11 +151,11 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
       final var r =
         this.client.send(request, HttpResponse.BodyHandlers.ofString());
 
-      LOG.debug("response: {}", r.body());
+      LOG.debug("Response: {}", r.body());
 
       if (r.statusCode() != 201) {
         throw new IOException(
-          this.strings.format("errorServer", r.statusCode())
+          this.strings.format("errorDNSCreate", r.statusCode())
         );
       }
     } catch (final Exception e) {
@@ -131,14 +164,143 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
     }
   }
 
+  private String handleRecordName(
+    final CSDNSRecordNameType recordName)
+  {
+    return switch (recordName) {
+      case final CSDNSRecordNameType.CSDNSRecordNameAbsolute absolute -> {
+        yield absolute.stripDomainSuffix(this.domain).name();
+      }
+      case final CSDNSRecordNameType.CSDNSRecordNameRelative relative -> {
+        yield relative.name();
+      }
+    };
+  }
+
+  private CSVultrDNSResponse listTXTRecordsPage(
+    final Optional<String> key)
+    throws IOException, InterruptedException
+  {
+    final var targetURI =
+      key.map(cursor -> {
+        return URI.create(
+          "%s/domains/%s/records?per_page=500&cursor=%s"
+            .formatted(this.apiBase, this.domain, cursor)
+        );
+      }).orElseGet(() -> {
+        return URI.create(
+          "%s/domains/%s/records?per_page=500"
+            .formatted(this.apiBase, this.domain)
+        );
+      });
+
+    final var request =
+      HttpRequest.newBuilder()
+        .uri(targetURI)
+        .GET()
+        .header("Authorization", "Bearer " + this.apiKey)
+        .build();
+
+    final var r =
+      this.client.send(request, HttpResponse.BodyHandlers.ofString());
+
+    if (r.statusCode() != 200) {
+      throw new IOException(
+        this.strings.format("errorDNSDelete", r.statusCode())
+      );
+    }
+
+    return this.mapper.readValue(r.body(), CSVultrDNSResponse.class);
+  }
+
+  private List<CSVultrDNSRecord> listTXTRecords()
+    throws IOException, InterruptedException
+  {
+    var response =
+      this.listTXTRecordsPage(Optional.empty());
+
+    final var records =
+      new ArrayList<>(response.records());
+
+    while (true) {
+      final var next = response.meta().links().next();
+      if (Objects.equals(next, "")) {
+        break;
+      }
+      response = this.listTXTRecordsPage(Optional.of(next));
+      records.addAll(response.records());
+    }
+
+    return List.copyOf(records);
+  }
+
   @Override
   public void deleteTXTRecord(
     final CSTelemetryServiceType telemetry,
     final CSDNSRecordNameType recordName,
     final String recordValue)
+    throws IOException, InterruptedException
   {
     Objects.requireNonNull(recordName, "name");
     Objects.requireNonNull(recordValue, "text");
 
+    try {
+      final var records = this.listTXTRecords();
+      LOG.debug("Found {} records", records.size());
+
+      final var matchingRecords =
+        records.stream()
+          .filter(r -> isMatchingTXTRecord(r, recordName, recordValue))
+          .toList();
+
+      LOG.debug("Found {} matching TXT records", matchingRecords.size());
+
+      for (final var record : matchingRecords) {
+        final var targetURI =
+          URI.create(
+            "%s/domains/%s/records/%s"
+              .formatted(this.apiBase, this.domain, record.id())
+          );
+
+        LOG.debug("DELETE {}", targetURI);
+
+        final var request =
+          HttpRequest.newBuilder()
+            .uri(targetURI)
+            .DELETE()
+            .header("Authorization", "Bearer " + this.apiKey)
+            .build();
+
+        final var r =
+          this.client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (r.statusCode() != 204) {
+          throw new IOException(
+            this.strings.format("errorDNSDelete", r.statusCode())
+          );
+        }
+      }
+    } catch (final Exception e) {
+      CSTelemetryServiceType.recordExceptionAndSetError(e);
+      throw e;
+    }
+  }
+
+  private static boolean isMatchingTXTRecord(
+    final CSVultrDNSRecord r,
+    final CSDNSRecordNameType recordName,
+    final String recordValue)
+  {
+    if (!Objects.equals(r.type(), "TXT")) {
+      return false;
+    }
+
+    if (!Objects.equals(r.name(), recordName.name())) {
+      return false;
+    }
+
+    final var valRecord = r.data();
+    final var valQuoted = "\"%s\"".formatted(recordValue);
+    return Objects.equals(valRecord, valQuoted);
   }
 }
