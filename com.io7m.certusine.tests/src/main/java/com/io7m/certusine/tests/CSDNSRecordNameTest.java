@@ -1,5 +1,5 @@
 /*
- * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2024 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,23 +14,30 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * ACME client (API)
- */
 
-module com.io7m.certusine.api
+package com.io7m.certusine.tests;
+
+import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameAbsolute;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public final class CSDNSRecordNameTest
 {
-  requires static org.osgi.annotation.bundle;
-  requires static org.osgi.annotation.versioning;
+  @Test
+  public void testStripDomain()
+  {
+    final var r =
+      new CSDNSRecordNameAbsolute("_acme-challenge.k.example.com.");
 
-  requires com.io7m.anethum.api;
-  requires com.io7m.jxtrand.vanilla;
-  requires com.io7m.repetoir.core;
-  requires io.opentelemetry.api;
-  requires org.slf4j;
+    assertEquals(
+      "_acme-challenge.k",
+      r.stripDomainSuffix("example.com").name()
+    );
 
-  opens com.io7m.certusine.api.internal
-    to com.io7m.jxtrand.vanilla;
-
-  exports com.io7m.certusine.api;
+    assertEquals(
+      "_acme-challenge.k.example.com",
+      r.stripDomainSuffix("nowhere.com").name()
+    );
+  }
 }

@@ -19,7 +19,8 @@ module com.io7m.certusine.certstore.api
   requires static org.osgi.annotation.bundle;
   requires static org.osgi.annotation.versioning;
 
-  requires transitive com.io7m.certusine.api;
+  requires com.io7m.certusine.api;
+  requires com.io7m.repetoir.core;
 
   exports com.io7m.certusine.certstore.api;
 }

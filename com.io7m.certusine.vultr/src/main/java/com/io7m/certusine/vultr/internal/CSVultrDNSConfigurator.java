@@ -139,7 +139,7 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
           "ttl": 600,
           "priority": 0
         }
-        """.formatted(recordName, recordValue);
+        """.formatted(this.handleRecordName(recordName), recordValue);
 
       final var request =
         HttpRequest.newBuilder()
@@ -162,6 +162,19 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
       CSTelemetryServiceType.recordExceptionAndSetError(e);
       throw e;
     }
+  }
+
+  private String handleRecordName(
+    final CSDNSRecordNameType recordName)
+  {
+    return switch (recordName) {
+      case final CSDNSRecordNameType.CSDNSRecordNameAbsolute absolute -> {
+        yield absolute.stripDomainSuffix(this.domain).name();
+      }
+      case final CSDNSRecordNameType.CSDNSRecordNameRelative relative -> {
+        yield relative.name();
+      }
+    };
   }
 
   private CSVultrDNSResponse listTXTRecordsPage(

@@ -31,6 +31,7 @@ module com.io7m.certusine.cmdline
   requires com.io7m.junreachable.core;
   requires com.io7m.quarrel.core;
   requires com.io7m.quarrel.ext.logback;
+  requires com.io7m.repetoir.core;
   requires org.bouncycastle.pkix;
   requires org.bouncycastle.provider;
   requires org.slf4j;
