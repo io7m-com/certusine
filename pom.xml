@@ -11,7 +11,7 @@
 
   <groupId>com.io7m.certusine</groupId>
   <artifactId>com.io7m.certusine</artifactId>
-  <version>3.1.0</version>
+  <version>3.1.1-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <name>com.io7m.certusine</name>
@@ -34,7 +34,7 @@
 
   <properties>
     <!-- Configuration -->
-    <io7m.api.previousVersion>3.0.0</io7m.api.previousVersion>
+    <io7m.api.previousVersion>3.1.0</io7m.api.previousVersion>
     <io7m.java.targetJavaVersion>21</io7m.java.targetJavaVersion>
 
     <!-- io7m dependencies. -->
