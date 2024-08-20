@@ -49,7 +49,7 @@
     <acme4j.version>2.16</acme4j.version>
     <bouncycastle.version>1.78.1</bouncycastle.version>
     <jackson.version>2.17.2</jackson.version>
-    <jetty.version>11.0.22</jetty.version>
+    <jetty.version>11.0.23</jetty.version>
     <logback.version>1.5.7</logback.version>
     <net.byte-buddy.version>1.14.19</net.byte-buddy.version>
     <opentelemetry.version>1.41.0</opentelemetry.version>
