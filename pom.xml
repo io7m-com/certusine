@@ -52,7 +52,7 @@
     <jetty.version>11.0.24</jetty.version>
     <logback.version>1.5.8</logback.version>
     <net.byte-buddy.version>1.15.1</net.byte-buddy.version>
-    <opentelemetry.version>1.42.0</opentelemetry.version>
+    <opentelemetry.version>1.42.1</opentelemetry.version>
     <org.junit.version>5.11.0</org.junit.version>
 
     <!-- https://hub.docker.com/_/alpine/ -->
