@@ -42,7 +42,7 @@
     <com.io7m.jsx.version>3.0.1</com.io7m.jsx.version>
     <com.io7m.looseleaf.version>2.0.0</com.io7m.looseleaf.version>
     <com.io7m.quarrel.version>1.6.1</com.io7m.quarrel.version>
-    <com.io7m.xstructural.version>1.8.1</com.io7m.xstructural.version>
+    <com.io7m.xstructural.version>1.9.0</com.io7m.xstructural.version>
     <com.io7m.trasco.version>1.1.0</com.io7m.trasco.version>
 
     <!-- Third-party dependencies. -->
