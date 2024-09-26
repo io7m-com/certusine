@@ -51,7 +51,7 @@
     <jackson.version>2.17.2</jackson.version>
     <jetty.version>11.0.24</jetty.version>
     <logback.version>1.5.8</logback.version>
-    <net.byte-buddy.version>1.15.2</net.byte-buddy.version>
+    <net.byte-buddy.version>1.15.3</net.byte-buddy.version>
     <opentelemetry.version>1.42.1</opentelemetry.version>
     <org.junit.version>5.11.0</org.junit.version>
 
