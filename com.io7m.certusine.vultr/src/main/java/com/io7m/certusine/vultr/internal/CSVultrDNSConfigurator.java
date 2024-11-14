@@ -24,6 +24,7 @@ import com.io7m.certusine.api.CSDNSConfiguratorType;
 import com.io7m.certusine.api.CSDNSRecordNameType;
 import com.io7m.certusine.api.CSTelemetryServiceType;
 import com.io7m.dixmont.core.DmJsonRestrictedDeserializers;
+import io.opentelemetry.api.trace.Span;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,6 +118,23 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
     Objects.requireNonNull(recordName, "recordName");
     Objects.requireNonNull(recordValue, "recordValue");
 
+    final var span =
+      telemetry.tracer()
+        .spanBuilder("CreateTXTRecord")
+        .startSpan();
+
+    try (var ignored = span.makeCurrent()) {
+      this.createTXTRecordInSpan(recordName, recordValue);
+    } finally {
+      span.end();
+    }
+  }
+
+  private void createTXTRecordInSpan(
+    final CSDNSRecordNameType recordName,
+    final String recordValue)
+    throws IOException, InterruptedException
+  {
     try {
       final var targetURI =
         URI.create("%s/domains/%s/records".formatted(
@@ -132,14 +150,14 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
       LOG.debug("POST {}", targetURI);
 
       final var json = """
-        {
-          "name": "%s",
-          "type": "TXT",
-          "data": "%s",
-          "ttl": 600,
-          "priority": 0
-        }
-        """.formatted(this.handleRecordName(recordName), recordValue);
+      {
+        "name": "%s",
+        "type": "TXT",
+        "data": "%s",
+        "ttl": 600,
+        "priority": 0
+      }
+      """.formatted(this.handleRecordName(recordName), recordValue);
 
       final var request =
         HttpRequest.newBuilder()
@@ -148,10 +166,38 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
           .header("Authorization", "Bearer " + this.apiKey)
           .build();
 
+      final var span = Span.current();
+      span.setAttribute("certusine.vultr.create_txt.request", json);
+      span.setAttribute("certusine.vultr.create_txt.uri", targetURI.toString());
+
       final var r =
         this.client.send(request, HttpResponse.BodyHandlers.ofString());
 
       LOG.debug("Response: {}", r.body());
+
+      span.setAttribute(
+        "certusine.vultr.create_txt.http_response",
+        r.statusCode()
+      );
+      span.setAttribute(
+        "certusine.vultr.create_txt.http_response_text",
+        r.body()
+      );
+
+      /*
+       * The API returns 400 status codes with a recognizable error message
+       * if the record already exists.
+       */
+
+      if (r.statusCode() == 400) {
+        if (r.body().contains("Duplicate records are not allowed")) {
+          return;
+        }
+      }
+
+      /*
+       * Everything else is actually an error.
+       */
 
       if (r.statusCode() != 201) {
         throw new IOException(
@@ -194,6 +240,9 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
         );
       });
 
+    final var span = Span.current();
+    span.setAttribute("certusine.vultr.list_txt.uri", targetURI.toString());
+
     final var request =
       HttpRequest.newBuilder()
         .uri(targetURI)
@@ -204,6 +253,7 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
     final var r =
       this.client.send(request, HttpResponse.BodyHandlers.ofString());
 
+    span.setAttribute("certusine.vultr.list_txt.http_response", r.statusCode());
     if (r.statusCode() != 200) {
       throw new IOException(
         this.strings.format("errorDNSDelete", r.statusCode())
@@ -213,25 +263,35 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
     return this.mapper.readValue(r.body(), CSVultrDNSResponse.class);
   }
 
-  private List<CSVultrDNSRecord> listTXTRecords()
+  private List<CSVultrDNSRecord> listTXTRecords(
+    final CSTelemetryServiceType telemetry)
     throws IOException, InterruptedException
   {
-    var response =
-      this.listTXTRecordsPage(Optional.empty());
+    final var span =
+      telemetry.tracer()
+        .spanBuilder("ListTXTRecords")
+        .startSpan();
 
-    final var records =
-      new ArrayList<>(response.records());
+    try (var ignored = span.makeCurrent()) {
+      var response =
+        this.listTXTRecordsPage(Optional.empty());
 
-    while (true) {
-      final var next = response.meta().links().next();
-      if (Objects.equals(next, "")) {
-        break;
+      final var records =
+        new ArrayList<>(response.records());
+
+      while (true) {
+        final var next = response.meta().links().next();
+        if (Objects.equals(next, "")) {
+          break;
+        }
+        response = this.listTXTRecordsPage(Optional.of(next));
+        records.addAll(response.records());
       }
-      response = this.listTXTRecordsPage(Optional.of(next));
-      records.addAll(response.records());
-    }
 
-    return List.copyOf(records);
+      return List.copyOf(records);
+    } finally {
+      span.end();
+    }
   }
 
   @Override
@@ -244,8 +304,27 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
     Objects.requireNonNull(recordName, "name");
     Objects.requireNonNull(recordValue, "text");
 
+    final var span =
+      telemetry.tracer()
+        .spanBuilder("DeleteTXTRecord")
+        .startSpan();
+
+    try (var ignored = span.makeCurrent()) {
+      this.deleteTXTRecordInSpan(telemetry, recordName, recordValue);
+    } finally {
+      span.end();
+    }
+  }
+
+  private void deleteTXTRecordInSpan(
+    final CSTelemetryServiceType telemetry,
+    final CSDNSRecordNameType recordName,
+    final String recordValue)
+    throws IOException, InterruptedException
+  {
     try {
-      final var records = this.listTXTRecords();
+      final var records =
+        this.listTXTRecords(telemetry);
       LOG.debug("Found {} records", records.size());
 
       final var matchingRecords =
@@ -264,6 +343,9 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
 
         LOG.debug("DELETE {}", targetURI);
 
+        final var span = Span.current();
+        span.setAttribute("certusine.vultr.delete_txt.uri", targetURI.toString());
+
         final var request =
           HttpRequest.newBuilder()
             .uri(targetURI)
@@ -273,6 +355,11 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
 
         final var r =
           this.client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        span.setAttribute(
+          "certusine.vultr.delete_txt.http_response",
+          r.statusCode()
+        );
 
         if (r.statusCode() != 204) {
           throw new IOException(

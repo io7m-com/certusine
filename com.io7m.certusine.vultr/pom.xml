@@ -45,6 +45,14 @@
       <groupId>com.io7m.dixmont</groupId>
       <artifactId>com.io7m.dixmont.core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-context</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.osgi</groupId>

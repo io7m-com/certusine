@@ -31,6 +31,8 @@ module com.io7m.certusine.vultr
   requires com.fasterxml.jackson.databind;
   requires com.io7m.dixmont.core;
   requires com.io7m.jxtrand.vanilla;
+  requires io.opentelemetry.api;
+  requires io.opentelemetry.context;
   requires java.net.http;
   requires org.slf4j;
 
