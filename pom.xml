@@ -50,7 +50,7 @@
     <bouncycastle.version>1.79</bouncycastle.version>
     <jackson.version>2.18.2</jackson.version>
     <jetty.version>11.0.24</jetty.version>
-    <logback.version>1.5.14</logback.version>
+    <logback.version>1.5.15</logback.version>
     <net.byte-buddy.version>1.15.11</net.byte-buddy.version>
     <opentelemetry.version>1.45.0</opentelemetry.version>
     <org.junit.version>5.11.4</org.junit.version>
