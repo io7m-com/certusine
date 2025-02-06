@@ -47,7 +47,7 @@
 
     <!-- Third-party dependencies. -->
     <acme4j.version>2.16</acme4j.version>
-    <bouncycastle.version>1.79</bouncycastle.version>
+    <bouncycastle.version>1.80</bouncycastle.version>
     <jackson.version>2.18.2</jackson.version>
     <jetty.version>11.0.24</jetty.version>
     <logback.version>1.5.16</logback.version>
