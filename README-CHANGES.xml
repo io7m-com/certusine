@@ -147,7 +147,7 @@
         <c:change date="2024-06-07T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.38.0 → 1.39.0."/>
       </c:changes>
     </c:release>
-    <c:release date="2024-11-14T12:50:34+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="3.1.1">
+    <c:release date="2025-03-25T12:33:51+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="3.1.1">
       <c:changes>
         <c:change date="2024-11-14T00:00:00+00:00" summary="Improve telemetry.">
           <c:tickets>
@@ -155,11 +155,12 @@
             <c:ticket id="137"/>
           </c:tickets>
         </c:change>
-        <c:change date="2024-11-14T12:50:34+00:00" summary="Handle Vultr DNS API changes.">
+        <c:change date="2024-11-14T00:00:00+00:00" summary="Handle Vultr DNS API changes.">
           <c:tickets>
             <c:ticket id="138"/>
           </c:tickets>
         </c:change>
+        <c:change date="2025-03-25T12:33:51+00:00" summary="Upgrade to acme4j 3.5.1."/>
       </c:changes>
     </c:release>
   </c:releases>

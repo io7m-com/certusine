@@ -148,12 +148,15 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
     this.challenge0 =
       Mockito.mock(Dns01Challenge.class);
 
+    final var expires =
+      Instant.now(Clock.systemUTC()).plus(Duration.ofHours(1L));
+
     Mockito.when(this.challenge0.getDigest())
       .thenReturn("YW1vbmdzdCB0aGUgbGVhdmVzCg==");
     Mockito.when(this.authorization0.findChallenge(Dns01Challenge.TYPE))
-      .thenReturn(this.challenge0);
+      .thenReturn(Optional.of(this.challenge0));
     Mockito.when(this.authorization0.getExpires())
-      .thenReturn(Instant.now(Clock.systemUTC()).plus(Duration.ofHours(1L)));
+      .thenReturn(Optional.of(expires));
     Mockito.when(this.authorization0.getIdentifier())
       .thenReturn(new Identifier(TYPE_DNS, "example.com"));
     Mockito.when(this.order.getAuthorizations())
@@ -388,7 +391,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
       );
 
     Mockito.when(this.authorization0.findChallenge(Dns01Challenge.TYPE))
-      .thenReturn(null);
+      .thenReturn(Optional.empty());
     Mockito.when(this.authorization0.getStatus())
       .thenReturn(Status.READY);
 

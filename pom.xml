@@ -46,7 +46,8 @@
     <com.io7m.trasco.version>2.0.1</com.io7m.trasco.version>
 
     <!-- Third-party dependencies. -->
-    <acme4j.version>2.16</acme4j.version>
+    <acme4j.utils.version>2.16</acme4j.utils.version>
+    <acme4j.version>3.5.1</acme4j.version>
     <bouncycastle.version>1.80</bouncycastle.version>
     <jackson.version>2.18.3</jackson.version>
     <jetty.version>11.0.24</jetty.version>
@@ -167,25 +168,6 @@
       <dependency>
         <groupId>org.shredzone.acme4j</groupId>
         <artifactId>acme4j-client</artifactId>
-        <version>${acme4j.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcutil-jdk15on</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.shredzone.acme4j</groupId>
-        <artifactId>acme4j-utils</artifactId>
         <version>${acme4j.version}</version>
         <exclusions>
           <exclusion>

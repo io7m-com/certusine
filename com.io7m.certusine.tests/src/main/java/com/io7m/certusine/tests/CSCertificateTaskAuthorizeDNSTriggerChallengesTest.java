@@ -148,12 +148,15 @@ public final class CSCertificateTaskAuthorizeDNSTriggerChallengesTest
     this.challenge0 =
       Mockito.mock(Dns01Challenge.class);
 
+    final var expires =
+      Instant.now(Clock.systemUTC()).plus(Duration.ofHours(1L));
+
     Mockito.when(this.challenge0.getDigest())
       .thenReturn("YW1vbmdzdCB0aGUgbGVhdmVzCg==");
     Mockito.when(this.authorization0.findChallenge(Dns01Challenge.TYPE))
-      .thenReturn(this.challenge0);
+      .thenReturn(Optional.of(this.challenge0));
     Mockito.when(this.authorization0.getExpires())
-      .thenReturn(Instant.now(Clock.systemUTC()).plus(Duration.ofHours(1L)));
+      .thenReturn(Optional.of(expires));
     Mockito.when(this.authorization0.getIdentifier())
       .thenReturn(new Identifier(TYPE_DNS, "example.com"));
     Mockito.when(this.order.getAuthorizations())
@@ -352,7 +355,7 @@ public final class CSCertificateTaskAuthorizeDNSTriggerChallengesTest
     Mockito.when(this.challenge0.getStatus())
       .thenReturn(Status.INVALID);
     Mockito.when(this.order.getError())
-      .thenReturn(new Problem(
+      .thenReturn(Optional.of(new Problem(
         JSON.parse(
           """
             {
@@ -360,7 +363,7 @@ public final class CSCertificateTaskAuthorizeDNSTriggerChallengesTest
             }
             """),
         new URL("http://localhost:20000/")
-      ));
+      )));
 
     final var task =
       new CSCertificateTaskAuthorizeDNSTriggerChallenges(context, this.order);

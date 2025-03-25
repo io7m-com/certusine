@@ -23,6 +23,7 @@ import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSC
 import com.io7m.jdeferthrow.core.ExceptionTracker;
 import io.opentelemetry.api.trace.Span;
 import org.shredzone.acme4j.Order;
+import org.shredzone.acme4j.challenge.Challenge;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
@@ -70,11 +71,11 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
     LOG.debug("updating DNS challenges");
 
     final var challenges =
-      new HashSet<Dns01Challenge>();
+      new HashSet<Challenge>();
     final var challengesFailed =
-      new HashSet<Dns01Challenge>();
+      new HashSet<Challenge>();
     final var challengesSucceeded =
-      new HashSet<Dns01Challenge>();
+      new HashSet<Challenge>();
     final var exceptions =
       new ExceptionTracker<CSCertificateTaskException>();
 
@@ -145,21 +146,21 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
   }
 
   private void updateAllChallengesIfRequired(
-    final HashSet<Dns01Challenge> challenges,
-    final HashSet<Dns01Challenge> challengesFailed,
-    final HashSet<Dns01Challenge> challengesSucceeded,
+    final HashSet<Challenge> challenges,
+    final HashSet<Challenge> challengesFailed,
+    final HashSet<Challenge> challengesSucceeded,
     final ExceptionTracker<CSCertificateTaskException> exceptions)
   {
     final var context = this.context();
     for (final var auth : this.order.getAuthorizations()) {
-      final Dns01Challenge challenge =
-        auth.findChallenge(Dns01Challenge.TYPE);
+      final Challenge challenge =
+        auth.findChallenge(Dns01Challenge.TYPE)
+          .orElseThrow(() -> {
+            final var ex = new IllegalStateException("Missing DNS challenge!");
+            recordExceptionAndSetError(ex);
+            return ex;
+          });
 
-      if (challenge == null) {
-        final var ex = new IllegalStateException("Missing DNS challenge!");
-        recordExceptionAndSetError(ex);
-        throw ex;
-      }
       challenges.add(challenge);
 
       switch (challenge.getStatus()) {
@@ -178,7 +179,13 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
         case INVALID, REVOKED, DEACTIVATED, EXPIRED, CANCELED -> {
           LOG.error(
             "challenge failed: {}",
-            context.formatProblem(challenge.getError()));
+            context.formatProblem(
+              challenge.getError()
+                .orElseThrow(() -> {
+                  return new IllegalStateException("Missing problem report!");
+                })
+            )
+          );
           Span.current().setStatus(ERROR);
           challengesFailed.add(challenge);
         }

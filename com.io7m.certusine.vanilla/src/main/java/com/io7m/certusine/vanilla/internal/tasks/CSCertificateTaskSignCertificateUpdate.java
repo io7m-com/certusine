@@ -112,7 +112,9 @@ public final class CSCertificateTaskSignCertificateUpdate
       case INVALID, DEACTIVATED, REVOKED, EXPIRED, CANCELED, UNKNOWN -> {
         yield context.failedPermanently(
           new CSCertificateTaskException(
-            context.formatProblem(this.order.getError()),
+            this.order.getError()
+              .map(context::formatProblem)
+              .orElse("Missing problem report!"),
             false
           )
         );

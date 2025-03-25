@@ -217,10 +217,14 @@ public final class CSCertificateTaskAuthorizeDNSInitial
       final var timeExpires =
         auth.getExpires();
 
-      LOG.debug(
-        "authorization will expire in {}",
-        Duration.between(timeNow, timeExpires)
-      );
+      if (timeExpires.isEmpty()) {
+        LOG.debug("authorization will not expire");
+      } else {
+        LOG.debug(
+          "authorization will expire in {}",
+          Duration.between(timeNow, timeExpires.get())
+        );
+      }
     } finally {
       span.end();
     }
@@ -245,8 +249,9 @@ public final class CSCertificateTaskAuthorizeDNSInitial
     try (var ignored = span.makeCurrent()) {
       LOG.debug("executing authorization");
 
-      final Dns01Challenge challenge = auth.findChallenge(Dns01Challenge.TYPE);
-      if (challenge == null) {
+      final Optional<Dns01Challenge> challengeOpt =
+        auth.findChallenge(Dns01Challenge.TYPE);
+      if (challengeOpt.isEmpty()) {
         throw new CSCertificateTaskException(
           this.context().strings().format(
             "challengeTypeUnavailable",
@@ -255,6 +260,8 @@ public final class CSCertificateTaskAuthorizeDNSInitial
         );
       }
 
+      final var challenge =
+        challengeOpt.get();
       final var recordName =
         this.txtRecordNameToSet(domainName);
       final var recordText =

@@ -42,7 +42,6 @@ module com.io7m.certusine.vanilla
   requires org.bouncycastle.pkix;
   requires org.bouncycastle.provider;
   requires org.dnsjava;
-  requires org.shredzone.acme4j.utils;
   requires org.shredzone.acme4j;
   requires org.slf4j;
   requires org.xerial.sqlitejdbc;
