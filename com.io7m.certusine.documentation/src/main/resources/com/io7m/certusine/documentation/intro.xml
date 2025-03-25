@@ -34,6 +34,10 @@
       </Item>
       <Item>
         Supports
+        <LinkExternal target="https://dns.hetzner.com/api-docs">Hetzner DNS</LinkExternal>.
+      </Item>
+      <Item>
+        Supports
         <LinkExternal target="https://www.vultr.com/pt/docs/introduction-to-vultr-dns/">Vultr DNS</LinkExternal>.
       </Item>
       <Item>
