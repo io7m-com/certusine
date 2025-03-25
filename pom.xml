@@ -25,6 +25,7 @@
     <module>com.io7m.certusine.documentation</module>
     <module>com.io7m.certusine.gandi</module>
     <module>com.io7m.certusine.grafana</module>
+    <module>com.io7m.certusine.hetzner</module>
     <module>com.io7m.certusine.looseleaf</module>
     <module>com.io7m.certusine.oci</module>
     <module>com.io7m.certusine.tests</module>
@@ -272,19 +273,11 @@
         <version>2.0.17</version>
       </dependency>
       <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
         <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-        <version>${jackson.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.io7m.dixmont</groupId>

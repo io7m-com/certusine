@@ -21,6 +21,7 @@ open module com.io7m.certusine.tests
   requires com.io7m.certusine.cmdline;
   requires com.io7m.certusine.gandi;
   requires com.io7m.certusine.grafana;
+  requires com.io7m.certusine.hetzner;
   requires com.io7m.certusine.looseleaf;
   requires com.io7m.certusine.vanilla;
   requires com.io7m.certusine.vultr;
