@@ -30,6 +30,7 @@ The `certusine` package provides an ACME client.
   API for integrating with new DNS APIs.
 * Exposes a [service provider](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ServiceLoader.html)
   API for implementing new types of certificate outputs.
+* Supports [Hetzner DNS](https://dns.hetzner.com/api-docs).
 * Supports [Vultr DNS](https://www.vultr.com/pt/docs/introduction-to-vultr-dns/).
 * Supports [Gandi LiveDNS](https://api.gandi.net/docs/livedns/).
 * Supports writing certificates to
