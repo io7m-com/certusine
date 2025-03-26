@@ -25,6 +25,11 @@
     <FormalItem title="Parameters">
       <xi:include href="dns-hetzner-parameters.xml"/>
     </FormalItem>
+
+    <Paragraph>
+      If not specified, the configurator defaults to the production API base address
+      <LinkExternal target="https://dns.hetzner.com/api/v1/">https://dns.hetzner.com/api/v1/</LinkExternal>.
+    </Paragraph>
   </Subsection>
 
 </Section>
