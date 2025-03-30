@@ -18,6 +18,16 @@
    </Row>
    <Row>
       <Cell>
+         <Term type="parameter">domain-name</Term>
+      </Cell>
+      <Cell>
+         <Term type="constant">Hetzner Zone ID</Term>
+      </Cell>
+      <Cell>true</Cell>
+      <Cell>The Hetzner domain zone ID.</Cell>
+   </Row>
+   <Row>
+      <Cell>
          <Term type="parameter">api-key</Term>
       </Cell>
       <Cell>

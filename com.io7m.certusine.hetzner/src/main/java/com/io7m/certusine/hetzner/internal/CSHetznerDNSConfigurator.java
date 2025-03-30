@@ -55,6 +55,7 @@ public final class CSHetznerDNSConfigurator
   private final HttpClient client;
   private final String apiBase;
   private final String apiKey;
+  private final String domainName;
   private final String zoneId;
   private final SimpleDeserializers serializers;
   private final JsonMapper mapper;
@@ -62,20 +63,24 @@ public final class CSHetznerDNSConfigurator
   /**
    * A Hetzner DNS configurator.
    *
-   * @param inZone    The owning zone ID
-   * @param inStrings String resources
-   * @param inApiKey  The Hetzner API key
-   * @param inApiBase The API base address
+   * @param inZone       The owning zone ID
+   * @param inDomainName The domain name
+   * @param inStrings    String resources
+   * @param inApiKey     The Hetzner API key
+   * @param inApiBase    The API base address
    */
 
   public CSHetznerDNSConfigurator(
     final CSHetznerStrings inStrings,
+    final String inDomainName,
     final String inZone,
     final String inApiKey,
     final String inApiBase)
   {
     this.strings =
       Objects.requireNonNull(inStrings, "inStrings");
+    this.domainName =
+      Objects.requireNonNull(inDomainName, "inDomainName");
     this.zoneId =
       Objects.requireNonNull(inZone, "inZone");
     this.apiKey =
@@ -210,7 +215,7 @@ public final class CSHetznerDNSConfigurator
   {
     return switch (recordName) {
       case final CSDNSRecordNameType.CSDNSRecordNameAbsolute absolute -> {
-        yield absolute.stripDomainSuffix(this.zoneId).name();
+        yield absolute.stripDomainSuffix(this.domainName).name();
       }
       case final CSDNSRecordNameType.CSDNSRecordNameRelative relative -> {
         yield relative.name();

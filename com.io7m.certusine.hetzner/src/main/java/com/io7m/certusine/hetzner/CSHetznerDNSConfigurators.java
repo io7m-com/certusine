@@ -41,6 +41,7 @@ public final class CSHetznerDNSConfigurators
   extends CSAbstractNamedProvider
   implements CSDNSConfiguratorProviderType
 {
+  private static final String DOMAIN_NAME_PARAMETER = "domain-name";
   private static final String API_KEY_PARAMETER = "api-key";
   private static final String ZONE_ID_PARAMETER = "zone-id";
   private static final String API_BASE_PARAMETER = "api-base";
@@ -110,6 +111,7 @@ public final class CSHetznerDNSConfigurators
 
     return new CSHetznerDNSConfigurator(
       this.strings,
+      parameterMap.get(DOMAIN_NAME_PARAMETER),
       parameterMap.get(ZONE_ID_PARAMETER),
       parameterMap.get(API_KEY_PARAMETER),
       apiBase
@@ -151,11 +153,20 @@ public final class CSHetznerDNSConfigurators
         )
       ),
       entry(
+        DOMAIN_NAME_PARAMETER,
+        new CSConfigurationParameterDescription(
+          DOMAIN_NAME_PARAMETER,
+          this.strings.format("parameterDomain"),
+          "Domain name",
+          true
+        )
+      ),
+      entry(
         ZONE_ID_PARAMETER,
         new CSConfigurationParameterDescription(
           ZONE_ID_PARAMETER,
-          this.strings.format("parameterDomain"),
-          "Domain name",
+          this.strings.format("parameterZoneId"),
+          "Hetzner Zone ID",
           true
         )
       )

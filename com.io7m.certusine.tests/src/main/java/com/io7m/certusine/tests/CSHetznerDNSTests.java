@@ -87,6 +87,7 @@ public final class CSHetznerDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
+            entry("domain-name", "example.com"),
             entry("api-key", "abcd"),
             entry("api-base", "http://localhost:20000/"),
             entry("zone-id", "1")
@@ -114,6 +115,7 @@ public final class CSHetznerDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
+            entry("domain-name", "example.com"),
             entry("api-key", "abcd"),
             entry("api-base", "http://localhost:20000/"),
             entry("zone-id", "1")
@@ -149,6 +151,7 @@ public final class CSHetznerDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
+            entry("domain-name", "example.com"),
             entry("api-key", "abcd"),
             entry("api-base", "http://localhost:20000/")
           )
@@ -173,6 +176,7 @@ public final class CSHetznerDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
+            entry("domain-name", "example.com"),
             entry("api-base", "http://localhost:20000/"),
             entry("domain", "example.com")
           )
@@ -197,6 +201,7 @@ public final class CSHetznerDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
+            entry("domain-name", "example.com"),
             entry("api-key", "abcd"),
             entry("api-base", "http://localhost:20001/"),
             entry("zone-id", "1")
@@ -280,6 +285,7 @@ public final class CSHetznerDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
+            entry("domain-name", "example.com"),
             entry("api-key", "abcd"),
             entry("api-base", "http://localhost:20001/"),
             entry("zone-id", "1")
@@ -353,6 +359,7 @@ public final class CSHetznerDNSTests
           this.directory,
           LexicalPositions.zero(),
           Map.ofEntries(
+            entry("domain-name", "example.com"),
             entry("api-key", "abcd"),
             entry("api-base", "http://localhost:20001/"),
             entry("zone-id", "1")
