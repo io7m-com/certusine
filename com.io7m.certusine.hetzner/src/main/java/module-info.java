@@ -29,13 +29,14 @@ module com.io7m.certusine.hetzner
   requires transitive com.io7m.certusine.api;
 
   requires com.fasterxml.jackson.databind;
+  requires com.fasterxml.jackson.datatype.jdk8;
   requires com.io7m.dixmont.core;
   requires com.io7m.jxtrand.vanilla;
   requires io.opentelemetry.api;
   requires io.opentelemetry.context;
   requires java.net.http;
+  requires org.apache.commons.text;
   requires org.slf4j;
-  requires com.fasterxml.jackson.datatype.jdk8;
 
   provides CSDNSConfiguratorProviderType
     with CSHetznerDNSConfigurators;

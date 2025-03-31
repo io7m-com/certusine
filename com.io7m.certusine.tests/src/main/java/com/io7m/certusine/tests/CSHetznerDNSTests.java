@@ -89,14 +89,80 @@ public final class CSHetznerDNSTests
           Map.ofEntries(
             entry("domain-name", "example.com"),
             entry("api-key", "abcd"),
-            entry("api-base", "http://localhost:20000/"),
+            entry("api-base", "http://localhost:20001/"),
             entry("zone-id", "1")
           )
         )
       );
 
-    this.fakeServer.setResponseCode(200);
+    this.server.addResponse()
+      .forPath("/records")
+      .withFixedText(text("hetzner-dns-records-2.json"));
+
+    this.server.addResponse()
+      .forPath("/records/*")
+      .withStatus(200);
+
     v.createTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
+
+    {
+      final var r =
+        this.server.requestsReceived().get(0);
+      assertEquals("/records", r.path());
+    }
+
+    {
+      final var r =
+        this.server.requestsReceived().get(1);
+      assertEquals("/records", r.path());
+    }
+
+    assertEquals(2, this.server.requestsReceived().size());
+  }
+
+  /**
+   * If the server returns all the right responses, the execution succeeds.
+   *
+   * @throws Exception On errors
+   */
+
+  @Test
+  public void testHetznerOKAlreadyExists()
+    throws Exception
+  {
+    final var v =
+      this.provider.create(
+        new CSConfigurationParameters(
+          this.directory,
+          LexicalPositions.zero(),
+          Map.ofEntries(
+            entry("domain-name", "example.com"),
+            entry("api-key", "abcd"),
+            entry("api-base", "http://localhost:20001/"),
+            entry("zone-id", "1")
+          )
+        )
+      );
+
+    this.server.addResponse()
+      .forPath("/records")
+      .withStatus(200)
+      .withFixedText(text("hetzner-dns-records-existing.json"));
+
+    this.server.addResponse()
+      .forPath("/records")
+      .withStatus(200)
+      .withFixedText(text("hetzner-dns-records-2.json"));
+
+    v.createTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
+
+    {
+      final var r =
+        this.server.requestsReceived().get(0);
+      assertEquals("/records", r.path());
+    }
+
+    assertEquals(2, this.server.requestsReceived().size());
   }
 
   /**

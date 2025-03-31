@@ -131,18 +131,38 @@ public final class CSHetznerDNSConfigurator
         .startSpan();
 
     try (var ignored = span.makeCurrent()) {
-      this.createTXTRecordInSpan(recordName, recordValue);
+      this.createTXTRecordInSpan(telemetry, recordName, recordValue);
     } finally {
       span.end();
     }
   }
 
   private void createTXTRecordInSpan(
+    final CSTelemetryServiceType telemetry,
     final CSDNSRecordNameType recordName,
     final String recordValue)
     throws IOException, InterruptedException
   {
     try {
+      final var records =
+        this.listTXTRecords(telemetry);
+      LOG.debug("Found {} records", records.size());
+
+      final var matchingRecords =
+        records.stream()
+          .filter(r -> isMatchingTXTRecord(r, recordName, recordValue))
+          .findFirst();
+
+      if (matchingRecords.isPresent()) {
+        LOG.debug(
+          "A TXT record {} = {} for domain {} already exists.",
+          recordName,
+          recordValue,
+          this.zoneId
+        );
+        return;
+      }
+
       final var targetURI =
         URI.create("%s/records".formatted(this.apiBase));
 
@@ -293,7 +313,7 @@ public final class CSHetznerDNSConfigurator
         r.statusCode());
       if (r.statusCode() != 200) {
         throw new IOException(
-          this.strings.format("errorDNSDelete", r.statusCode())
+          this.strings.format("errorDNSList", r.statusCode())
         );
       }
 
@@ -382,9 +402,6 @@ public final class CSHetznerDNSConfigurator
     if (!Objects.equals(r.name(), recordName.name())) {
       return false;
     }
-
-    final var valRecord = r.value();
-    final var valQuoted = "\"%s\"".formatted(recordValue);
-    return Objects.equals(valRecord, valQuoted);
+    return Objects.equals(r.valueWithoutQuoting(), recordValue);
   }
 }

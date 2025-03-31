@@ -20,6 +20,7 @@ package com.io7m.certusine.hetzner.internal;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -73,5 +74,19 @@ public record CSHetznerDNSRecord(
     Objects.requireNonNull(type, "type");
     Objects.requireNonNull(name, "name");
     Objects.requireNonNull(value, "value");
+  }
+
+  /**
+   * @return The value of the TXT record without quoting
+   */
+
+  public String valueWithoutQuoting()
+  {
+    var x = this.value;
+    if (x.startsWith("\"") && x.endsWith("\"")) {
+      x = x.substring(1, x.length() - 1);
+      return StringEscapeUtils.unescapeJava(x);
+    }
+    return x;
   }
 }
