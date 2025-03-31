@@ -388,20 +388,37 @@ public final class CSHetznerDNSConfigurator
     }
   }
 
-  private static boolean isMatchingTXTRecord(
+  private boolean isMatchingTXTRecord(
     final CSHetznerDNSRecord r,
     final CSDNSRecordNameType recordName,
     final String recordValue)
   {
     if (r.id().isEmpty()) {
+      traceNoMatch(r, recordName, recordValue);
       return false;
     }
     if (!Objects.equals(r.type(), "TXT")) {
+      traceNoMatch(r, recordName, recordValue);
       return false;
     }
-    if (!Objects.equals(r.name(), recordName.name())) {
+    if (!Objects.equals(r.name(), this.handleRecordName(recordName))) {
+      traceNoMatch(r, recordName, recordValue);
       return false;
     }
-    return Objects.equals(r.valueWithoutQuoting(), recordValue);
+    if (!Objects.equals(r.valueWithoutQuoting(), recordValue)) {
+      traceNoMatch(r, recordName, recordValue);
+      return false;
+    }
+
+    LOG.trace("Record {} matches {} = {}", r, recordName, recordValue);
+    return true;
+  }
+
+  private static void traceNoMatch(
+    final CSHetznerDNSRecord r,
+    final CSDNSRecordNameType recordName,
+    final String recordValue)
+  {
+    LOG.trace("Record {} doesn't match {} = {}", r, recordName, recordValue);
   }
 }
