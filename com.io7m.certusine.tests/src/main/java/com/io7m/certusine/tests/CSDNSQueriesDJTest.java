@@ -61,6 +61,6 @@ public final class CSDNSQueriesDJTest
      * servers.
      */
 
-    assertTrue(queries.contains("a.iana-servers.net."));
+    assertTrue(queries.contains("ns.icann.org."));
   }
 }
