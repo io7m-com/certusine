@@ -147,7 +147,7 @@
         <c:change date="2024-06-07T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.38.0 → 1.39.0."/>
       </c:changes>
     </c:release>
-    <c:release date="2025-03-25T19:09:59+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="3.2.0">
+    <c:release date="2025-04-17T08:01:30+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="3.2.0">
       <c:changes>
         <c:change date="2024-11-14T00:00:00+00:00" summary="Improve telemetry.">
           <c:tickets>
@@ -162,6 +162,11 @@
         </c:change>
         <c:change date="2025-03-25T00:00:00+00:00" summary="Upgrade to acme4j 3.5.1."/>
         <c:change date="2025-03-25T00:00:00+00:00" summary="Upgrade to trasco 3.0.0."/>
+        <c:change date="2025-04-17T08:01:30+00:00" summary="Disable DNS cache.">
+          <c:tickets>
+            <c:ticket id="185"/>
+          </c:tickets>
+        </c:change>
       </c:changes>
     </c:release>
   </c:releases>

@@ -69,6 +69,8 @@ public final class CSDNSQueriesDJ implements CSDNSQueriesType
       ));
     }
 
+    lookup.setCache(null);
+
     final var nsRecords = lookup.run();
     if (nsRecords != null) {
       final var nsHosts = new ArrayList<String>();
@@ -101,6 +103,8 @@ public final class CSDNSQueriesDJ implements CSDNSQueriesType
         this.nameServers.toArray(new String[0])
       ));
     }
+
+    lookup.setCache(null);
 
     final var records = lookup.run();
     if (records != null) {
