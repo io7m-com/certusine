@@ -42,6 +42,8 @@ public sealed interface CSDNSRecordNameType
   {
     /**
      * An absolute record name (ends with '.').
+     *
+     * @param name The name
      */
 
     public CSDNSRecordNameAbsolute
@@ -95,6 +97,8 @@ public sealed interface CSDNSRecordNameType
   {
     /**
      * A relative record name (does not end with '.').
+     *
+     * @param name The name
      */
 
     public CSDNSRecordNameRelative
