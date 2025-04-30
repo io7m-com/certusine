@@ -1,0 +1,12 @@
+{
+  "records": [
+    {
+      "id": "e9358824-b050-4514-a1ec-39afcff829de",
+      "zone_id": "1",
+      "type": "TXT",
+      "name": "a",
+      "value": "b",
+      "ttl": 300
+    }
+  ]
+}

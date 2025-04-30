@@ -149,9 +149,11 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallengesTest
       Mockito.when(this.challenges[index].getDigest())
         .thenReturn("YW1vbmdzdCB0aGUgbGVhdmVzCg==");
       Mockito.when(this.authorizations[index].findChallenge(Dns01Challenge.TYPE))
-        .thenReturn(this.challenges[index]);
+        .thenReturn(Optional.of(this.challenges[index]));
+      final var expires =
+        Instant.now(Clock.systemUTC()).plus(Duration.ofHours(1L));
       Mockito.when(this.authorizations[index].getExpires())
-        .thenReturn(Instant.now(Clock.systemUTC()).plus(Duration.ofHours(1L)));
+        .thenReturn(Optional.of(expires));
       Mockito.when(this.authorizations[index].getIdentifier())
         .thenReturn(new Identifier(TYPE_DNS, "example.com"));
     }

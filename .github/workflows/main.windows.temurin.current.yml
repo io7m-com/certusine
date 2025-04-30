@@ -9,7 +9,7 @@ name: main.windows.temurin.current
 
 on:
   push:
-    branches: [ develop, feature/*, release/* ]
+    branches: [ master, main, develop, feature/*, release/* ]
 
 jobs:
   build:
@@ -22,7 +22,7 @@ jobs:
       - name: JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 22
+          java-version: 23
           distribution: 'temurin'
 
       - name: Collect project version
@@ -33,7 +33,10 @@ jobs:
         id: project_is_snapshot
         run: java .github/workflows/Tools.java ShowProjectIsSnapshot pom.xml >> "$GITHUB_OUTPUT"
 
+
       - name: Build
+        env:
+          XOANON_REALLY_USE_LOCAL_DISPLAY: true
         run: mvn --batch-mode --strict-checksums --errors clean verify site
 
       - name: Upload test logs

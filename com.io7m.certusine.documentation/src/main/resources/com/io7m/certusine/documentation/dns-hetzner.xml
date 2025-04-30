@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Section xmlns="urn:com.io7m.structural:8:0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         id="ab90d1e9-1211-4bfd-8c02-0ace44a88a9d"
+         title="Hetzner">
+
+  <Subsection title="Name">
+    <Paragraph>
+      <Term type="package">Hetzner</Term>
+      - Support for the Hetzner DNS API
+    </Paragraph>
+  </Subsection>
+
+  <Subsection title="Description">
+    <Paragraph>
+      The <Term type="package">Hetzner</Term> DNS configurator supports creating and deleting DNS records using
+      the <LinkExternal target="https://dns.hetzner.com/api-docs">Hetzner DNS API</LinkExternal>.
+    </Paragraph>
+
+    <Paragraph>
+      The output accepts the following parameters:
+    </Paragraph>
+
+    <FormalItem title="Parameters">
+      <xi:include href="dns-hetzner-parameters.xml"/>
+    </FormalItem>
+
+    <Paragraph>
+      If not specified, the configurator defaults to the production API base address
+      <LinkExternal target="https://dns.hetzner.com/api/v1/">https://dns.hetzner.com/api/v1/</LinkExternal>.
+    </Paragraph>
+  </Subsection>
+
+</Section>

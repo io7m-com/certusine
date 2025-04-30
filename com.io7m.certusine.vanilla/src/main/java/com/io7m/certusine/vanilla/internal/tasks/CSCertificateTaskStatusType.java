@@ -52,6 +52,8 @@ public sealed interface CSCertificateTaskStatusType
   {
     /**
      * The task failed permanently and retrying will not result in success.
+     *
+     * @param exception The exception raised
      */
 
     public CSCertificateTaskFailedPermanently
@@ -86,6 +88,9 @@ public sealed interface CSCertificateTaskStatusType
   {
     /**
      * The task failed, but might succeed if it is retried.
+     *
+     * @param delayRequired The delay required before retrying
+     * @param exception     The exception raised
      */
 
     public CSCertificateTaskFailedButCanBeRetried
@@ -113,6 +118,8 @@ public sealed interface CSCertificateTaskStatusType
   {
     /**
      * The task is in progress and should be retried.
+     *
+     * @param delayRequired The delay required before retrying
      */
 
     public CSCertificateTaskInProgress
@@ -141,6 +148,9 @@ public sealed interface CSCertificateTaskStatusType
   {
     /**
      * The task is completed.
+     *
+     * @param delayRequired The delay required before the next task is executed
+     * @param next          The next task, if any
      */
 
     public CSCertificateTaskCompleted

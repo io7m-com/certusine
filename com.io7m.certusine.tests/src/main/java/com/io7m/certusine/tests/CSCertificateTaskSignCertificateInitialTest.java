@@ -380,7 +380,7 @@ public final class CSCertificateTaskSignCertificateInitialTest
 
     Mockito.doThrow(new AcmeException())
       .when(this.order)
-      .execute(Mockito.any());
+      .execute((byte[]) Mockito.any());
 
     final var task =
       new CSCertificateTaskSignCertificateInitial(context, this.order);

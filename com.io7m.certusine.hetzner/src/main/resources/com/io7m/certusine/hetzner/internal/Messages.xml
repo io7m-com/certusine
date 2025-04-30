@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+  <entry key="errorDNSConfiguration">DNS configurator is misconfigured.</entry>
+  <entry key="errorDNSCreate">Could not create a DNS record: HTTP status: {0}</entry>
+  <entry key="errorDNSDelete">Could not delete a DNS record: HTTP status: {0}</entry>
+  <entry key="errorDNSList">Could not list DNS records: HTTP status: {0}</entry>
+  <entry key="parameterApiKey">The Hetzner API key.</entry>
+  <entry key="parameterDomain">The domain name.</entry>
+  <entry key="parameterZoneId">The Hetzner domain zone ID.</entry>
+  <entry key="parameterApiBase">The Hetzner API base address.</entry>
+</properties>

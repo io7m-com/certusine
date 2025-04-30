@@ -22,13 +22,16 @@ jobs:
       - name: JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 21
+          java-version: 23
           distribution: temurin
+
+      - name: Check PGP version
+        run: gpg --version
 
       - name: Import signing key
         env:
           PGP_SIGNING_KEY: ${{ secrets.PGP_SIGNING_KEY }}
-        run: echo "${PGP_SIGNING_KEY}" | gpg --import
+        run: echo "${PGP_SIGNING_KEY}" | gpg -v --import
 
       - name: Log in to Quay.io.
         uses: redhat-actions/podman-login@v1.7

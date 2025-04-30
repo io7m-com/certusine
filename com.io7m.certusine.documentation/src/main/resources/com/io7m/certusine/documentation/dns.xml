@@ -10,6 +10,7 @@
   </Section>
 
   <xi:include href="dns-gandi-v5.xml"/>
+  <xi:include href="dns-hetzner.xml"/>
   <xi:include href="dns-vultr.xml"/>
 
 </Section>

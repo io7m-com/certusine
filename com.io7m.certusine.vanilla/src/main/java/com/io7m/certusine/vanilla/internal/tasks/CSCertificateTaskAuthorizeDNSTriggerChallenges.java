@@ -21,6 +21,7 @@ import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSC
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
 import com.io7m.jdeferthrow.core.ExceptionTracker;
 import org.shredzone.acme4j.Order;
+import org.shredzone.acme4j.challenge.Challenge;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
@@ -73,12 +74,11 @@ public final class CSCertificateTaskAuthorizeDNSTriggerChallenges
       this.context();
 
     for (final var auth : this.order.getAuthorizations()) {
-      final Dns01Challenge challenge =
-        auth.findChallenge(Dns01Challenge.TYPE);
-
-      if (challenge == null) {
-        throw new IllegalStateException("Missing DNS challenge!");
-      }
+      final Challenge challenge =
+        auth.findChallenge(Dns01Challenge.TYPE)
+          .orElseThrow(() -> {
+            return new IllegalStateException("Missing DNS challenge!");
+          });
 
       try {
         final var challengeStatus = challenge.getStatus();
@@ -86,13 +86,20 @@ public final class CSCertificateTaskAuthorizeDNSTriggerChallenges
           case INVALID -> {
             final var ex =
               new CSCertificateTaskException(
-                context.formatProblem(this.order.getError()), false
+                context.formatProblem(
+                  this.order.getError()
+                    .orElseThrow(() -> {
+                      return new IllegalStateException("Missing problem report!");
+                    })
+                ),
+                false
               );
             recordExceptionAndSetError(ex);
             return context.failedPermanently(ex);
           }
 
-          case VALID, READY, UNKNOWN, CANCELED, EXPIRED, DEACTIVATED, REVOKED, PROCESSING -> {
+          case VALID, READY, UNKNOWN, CANCELED, EXPIRED, DEACTIVATED, REVOKED,
+               PROCESSING -> {
             LOG.debug(
               "challenge status for authorization {} is {}, so not triggering",
               auth.getIdentifier().getDomain(),

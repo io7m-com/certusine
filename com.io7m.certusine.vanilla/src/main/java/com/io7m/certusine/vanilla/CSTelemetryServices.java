@@ -27,6 +27,7 @@ import com.io7m.certusine.api.CSTelemetryServiceType;
 import com.io7m.certusine.api.CSVersion;
 import com.io7m.certusine.vanilla.internal.telemetry.CSTelemetryService;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.propagation.ContextPropagators;
@@ -160,6 +161,13 @@ public final class CSTelemetryServices
     final var logger =
       openTelemetry.getLogsBridge()
         .get("com.io7m.certusine");
+
+    meter.counterBuilder("certusine_version")
+      .build()
+      .add(1L, Attributes.of(
+        AttributeKey.stringKey("version"),
+        CSVersion.MAIN_VERSION
+      ));
 
     return new CSTelemetryService(
       tracer,

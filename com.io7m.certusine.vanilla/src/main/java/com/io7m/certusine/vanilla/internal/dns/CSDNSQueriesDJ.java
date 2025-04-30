@@ -20,8 +20,8 @@ import com.io7m.jaffirm.core.Preconditions;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.ExtendedResolver;
 import org.xbill.DNS.Lookup;
-import org.xbill.DNS.NSRecord;
 import org.xbill.DNS.Name;
+import org.xbill.DNS.SOARecord;
 import org.xbill.DNS.TXTRecord;
 import org.xbill.DNS.Type;
 
@@ -61,7 +61,7 @@ public final class CSDNSQueriesDJ implements CSDNSQueriesType
     );
 
     final var lookup =
-      new Lookup(Name.fromString(domain), Type.NS, DClass.IN);
+      new Lookup(Name.fromString(domain), Type.SOA, DClass.IN);
 
     if (!this.nameServers.isEmpty()) {
       lookup.setResolver(new ExtendedResolver(
@@ -69,12 +69,14 @@ public final class CSDNSQueriesDJ implements CSDNSQueriesType
       ));
     }
 
+    lookup.setCache(null);
+
     final var nsRecords = lookup.run();
     if (nsRecords != null) {
       final var nsHosts = new ArrayList<String>();
       for (final var record : nsRecords) {
-        if (record instanceof NSRecord nsRecord) {
-          nsHosts.add(nsRecord.getTarget().toString());
+        if (record instanceof final SOARecord soaRecord) {
+          nsHosts.add(soaRecord.getHost().toString());
         }
       }
       return nsHosts;
@@ -102,11 +104,13 @@ public final class CSDNSQueriesDJ implements CSDNSQueriesType
       ));
     }
 
+    lookup.setCache(null);
+
     final var records = lookup.run();
     if (records != null) {
       final var results = new ArrayList<CSDNSTXTRecord>();
       for (final var record : records) {
-        if (record instanceof TXTRecord txtRecord) {
+        if (record instanceof final TXTRecord txtRecord) {
           results.add(
             new CSDNSTXTRecord(
               txtRecord.getName().toString(),
