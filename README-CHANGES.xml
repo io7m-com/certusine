@@ -147,8 +147,74 @@
         <c:change date="2024-06-07T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.38.0 → 1.39.0."/>
       </c:changes>
     </c:release>
-    <c:release date="2025-04-17T08:33:31+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="3.2.0">
+    <c:release date="2025-04-30T08:35:37+00:00" is-open="false" ticket-system="com.github.io7m.certusine" version="3.2.0">
       <c:changes>
+        <c:change date="2024-06-28T00:00:00+00:00" summary="Update org.junit:junit-bom:5.10.2 → 5.10.3."/>
+        <c:change date="2024-07-04T00:00:00+00:00" summary="Update jetty.version:11.0.21 → 11.0.22."/>
+        <c:change date="2024-07-05T00:00:00+00:00" summary="Update jackson.version:2.17.1 → 2.17.2."/>
+        <c:change date="2024-07-05T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.39.0 → 1.40.0."/>
+        <c:change date="2024-07-05T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-sdk-logs:1.39.0 → 1.40.0."/>
+        <c:change date="2024-07-08T00:00:00+00:00" summary="Update net.byte-buddy.version:1.14.17 → 1.14.18."/>
+        <c:change date="2024-07-19T00:00:00+00:00" summary="Update org.jetbrains.kotlin:kotlin-stdlib:1.9.24 → 1.9.25."/>
+        <c:change date="2024-07-22T00:00:00+00:00" summary="Update dnsjava:dnsjava:3.5.3 → 3.6.0."/>
+        <c:change date="2024-07-29T00:00:00+00:00" summary="Update dnsjava:dnsjava:3.6.0 → 3.6.1."/>
+        <c:change date="2024-07-30T00:00:00+00:00" summary="Update org.xerial:sqlite-jdbc:3.46.0.0 → 3.46.0.1."/>
+        <c:change date="2024-08-06T00:00:00+00:00" summary="Update org.slf4j:slf4j-api:2.0.13 → 2.0.14."/>
+        <c:change date="2024-08-08T00:00:00+00:00" summary="Update org.slf4j:slf4j-api:2.0.14 → 2.0.15."/>
+        <c:change date="2024-08-09T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.40.0 → 1.41.0."/>
+        <c:change date="2024-08-09T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-sdk-logs:1.40.0 → 1.41.0."/>
+        <c:change date="2024-08-12T00:00:00+00:00" summary="Update com.h2database:h2-mvstore:2.2.224 → 2.3.232."/>
+        <c:change date="2024-08-12T00:00:00+00:00" summary="Update org.slf4j:slf4j-api:2.0.15 → 2.0.16."/>
+        <c:change date="2024-08-14T00:00:00+00:00" summary="Update org.junit:junit-bom:5.10.3 → 5.11.0."/>
+        <c:change date="2024-08-15T00:00:00+00:00" summary="Update logback.version:1.5.6 → 1.5.7."/>
+        <c:change date="2024-08-16T00:00:00+00:00" summary="Update net.byte-buddy.version:1.14.18 → 1.14.19."/>
+        <c:change date="2024-08-19T00:00:00+00:00" summary="Update org.xerial:sqlite-jdbc:3.46.0.1 → 3.46.1.0."/>
+        <c:change date="2024-08-20T00:00:00+00:00" summary="Update jetty.version:11.0.22 → 11.0.23."/>
+        <c:change date="2024-08-23T00:00:00+00:00" summary="Update net.byte-buddy.version:1.14.19 → 1.15.0."/>
+        <c:change date="2024-08-27T00:00:00+00:00" summary="Update org.mockito:mockito-core:5.12.0 → 5.13.0."/>
+        <c:change date="2024-08-29T00:00:00+00:00" summary="Update net.byte-buddy.version:1.15.0 → 1.15.1."/>
+        <c:change date="2024-09-03T00:00:00+00:00" summary="Update jetty.version:11.0.23 → 11.0.24."/>
+        <c:change date="2024-09-06T00:00:00+00:00" summary="Update logback.version:1.5.7 → 1.5.8."/>
+        <c:change date="2024-09-06T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-sdk-logs:1.41.0 → 1.42.0."/>
+        <c:change date="2024-09-06T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.41.0 → 1.42.0."/>
+        <c:change date="2024-09-10T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-sdk-logs:1.42.0 → 1.42.1."/>
+        <c:change date="2024-09-10T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.42.0 → 1.42.1."/>
+        <c:change date="2024-09-12T00:00:00+00:00" summary="Update com.squareup.okio:okio-jvm:3.9.0 → 3.9.1."/>
+        <c:change date="2024-09-18T00:00:00+00:00" summary="Update com.io7m.jproperties:com.io7m.jproperties.core:3.2.0 → 4.0.0."/>
+        <c:change date="2024-09-18T00:00:00+00:00" summary="Update com.io7m.looseleaf.version:1.1.0 → 2.0.0."/>
+        <c:change date="2024-09-19T00:00:00+00:00" summary="Update com.io7m.dixmont:com.io7m.dixmont.core:1.0.0 → 2.0.0."/>
+        <c:change date="2024-09-19T00:00:00+00:00" summary="Update com.io7m.trasco.version:1.1.0 → 2.0.0."/>
+        <c:change date="2024-09-20T00:00:00+00:00" summary="Update com.io7m.trasco.version:2.0.0 → 2.0.1."/>
+        <c:change date="2024-09-23T00:00:00+00:00" summary="Update dnsjava:dnsjava:3.6.1 → 3.6.2."/>
+        <c:change date="2024-09-25T00:00:00+00:00" summary="Update net.byte-buddy.version:1.15.1 → 1.15.2."/>
+        <c:change date="2024-09-25T00:00:00+00:00" summary="Update org.xerial:sqlite-jdbc:3.46.1.0 → 3.46.1.2."/>
+        <c:change date="2024-09-26T00:00:00+00:00" summary="Update net.byte-buddy.version:1.15.2 → 1.15.3."/>
+        <c:change date="2024-09-26T00:00:00+00:00" summary="Update org.junit:junit-bom:5.11.0 → 5.11.1."/>
+        <c:change date="2024-09-26T00:00:00+00:00" summary="Update org.xerial:sqlite-jdbc:3.46.1.2 → 3.46.1.3."/>
+        <c:change date="2024-09-27T00:00:00+00:00" summary="Update jackson.version:2.17.2 → 2.18.0."/>
+        <c:change date="2024-09-27T00:00:00+00:00" summary="Update org.mockito:mockito-core:5.13.0 → 5.14.0."/>
+        <c:change date="2024-09-30T00:00:00+00:00" summary="Update org.mockito:mockito-core:5.14.0 → 5.14.1."/>
+        <c:change date="2024-10-04T00:00:00+00:00" summary="Update org.junit:junit-bom:5.11.1 → 5.11.2."/>
+        <c:change date="2024-10-08T00:00:00+00:00" summary="Update logback.version:1.5.8 → 1.5.9."/>
+        <c:change date="2024-10-09T00:00:00+00:00" summary="Update net.byte-buddy.version:1.15.3 → 1.15.4."/>
+        <c:change date="2024-10-11T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.42.1 → 1.43.0."/>
+        <c:change date="2024-10-11T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-sdk-logs:1.42.1 → 1.43.0."/>
+        <c:change date="2024-10-14T00:00:00+00:00" summary="Update logback.version:1.5.9 → 1.5.10."/>
+        <c:change date="2024-10-15T00:00:00+00:00" summary="Update org.mockito:mockito-core:5.14.1 → 5.14.2."/>
+        <c:change date="2024-10-15T00:00:00+00:00" summary="Update logback.version:1.5.10 → 1.5.11."/>
+        <c:change date="2024-10-17T00:00:00+00:00" summary="Update net.byte-buddy.version:1.15.4 → 1.15.5."/>
+        <c:change date="2024-10-21T00:00:00+00:00" summary="Update org.junit:junit-bom:5.11.2 → 5.11.3."/>
+        <c:change date="2024-10-28T00:00:00+00:00" summary="Update net.byte-buddy.version:1.15.5 → 1.15.7."/>
+        <c:change date="2024-10-28T00:00:00+00:00" summary="Update org.xerial:sqlite-jdbc:3.46.1.3 → 3.47.0.0."/>
+        <c:change date="2024-10-29T00:00:00+00:00" summary="Update logback.version:1.5.11 → 1.5.12."/>
+        <c:change date="2024-10-29T00:00:00+00:00" summary="Update jackson.version:2.18.0 → 2.18.1."/>
+        <c:change date="2024-10-30T00:00:00+00:00" summary="Update bouncycastle.version:1.78.1 → 1.79."/>
+        <c:change date="2024-11-01T00:00:00+00:00" summary="Update net.byte-buddy.version:1.15.7 → 1.15.8."/>
+        <c:change date="2024-11-04T00:00:00+00:00" summary="Update net.byte-buddy.version:1.15.8 → 1.15.10."/>
+        <c:change date="2024-11-08T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-sdk-logs:1.43.0 → 1.44.0."/>
+        <c:change date="2024-11-08T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.43.0 → 1.44.0."/>
+        <c:change date="2024-11-11T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.44.0 → 1.44.1."/>
+        <c:change date="2024-11-11T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-sdk-logs:1.44.0 → 1.44.1."/>
         <c:change date="2024-11-14T00:00:00+00:00" summary="Improve telemetry.">
           <c:tickets>
             <c:ticket id="136"/>
@@ -160,14 +226,47 @@
             <c:ticket id="138"/>
           </c:tickets>
         </c:change>
+        <c:change date="2024-11-26T00:00:00+00:00" summary="Update org.xerial:sqlite-jdbc:3.47.0.0 → 3.47.1.0."/>
+        <c:change date="2024-11-28T00:00:00+00:00" summary="Update jackson.version:2.18.1 → 2.18.2."/>
+        <c:change date="2024-12-06T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-sdk-logs:1.44.1 → 1.45.0."/>
+        <c:change date="2024-12-06T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.44.1 → 1.45.0."/>
+        <c:change date="2024-12-16T00:00:00+00:00" summary="Update net.byte-buddy.version:1.15.10 → 1.15.11."/>
+        <c:change date="2024-12-16T00:00:00+00:00" summary="Update org.junit:junit-bom:5.11.3 → 5.11.4."/>
+        <c:change date="2024-12-18T00:00:00+00:00" summary="Update logback.version:1.5.12 → 1.5.13."/>
+        <c:change date="2024-12-20T00:00:00+00:00" summary="Update logback.version:1.5.13 → 1.5.14."/>
+        <c:change date="2024-12-23T00:00:00+00:00" summary="Update logback.version:1.5.14 → 1.5.15."/>
+        <c:change date="2025-01-02T00:00:00+00:00" summary="Update org.mockito:mockito-core:5.14.2 → 5.15.2."/>
+        <c:change date="2025-01-03T00:00:00+00:00" summary="Update org.xerial:sqlite-jdbc:3.47.1.0 → 3.47.2.0."/>
+        <c:change date="2025-01-06T00:00:00+00:00" summary="Update logback.version:1.5.15 → 1.5.16."/>
+        <c:change date="2025-01-07T00:00:00+00:00" summary="Update com.squareup.okio:okio-jvm:3.9.1 → 3.10.1."/>
+        <c:change date="2025-01-08T00:00:00+00:00" summary="Update com.squareup.okio:okio-jvm:3.10.1 → 3.10.2."/>
+        <c:change date="2025-01-10T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-sdk-logs:1.45.0 → 1.46.0."/>
+        <c:change date="2025-01-14T00:00:00+00:00" summary="Update bouncycastle.version:1.79 → 1.80."/>
+        <c:change date="2025-01-24T00:00:00+00:00" summary="Update codecov/codecov-action:5.1.2 → 5.3.1."/>
+        <c:change date="2025-02-05T00:00:00+00:00" summary="Update net.byte-buddy.version:1.15.11 → 1.17.0."/>
+        <c:change date="2025-02-05T00:00:00+00:00" summary="Update dnsjava:dnsjava:3.6.2 → 3.6.3."/>
+        <c:change date="2025-02-06T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.45.0 → 1.46.0."/>
+        <c:change date="2025-03-01T00:00:00+00:00" summary="Update logback.version:1.5.16 → 1.5.17."/>
+        <c:change date="2025-03-01T00:00:00+00:00" summary="Update jackson.version:2.18.2 → 2.18.3."/>
+        <c:change date="2025-03-01T00:00:00+00:00" summary="Update org.junit:junit-bom:5.11.4 → 5.12.0."/>
         <c:change date="2025-03-25T00:00:00+00:00" summary="Upgrade to acme4j 3.5.1."/>
         <c:change date="2025-03-25T00:00:00+00:00" summary="Upgrade to trasco 3.0.0."/>
+        <c:change date="2025-03-25T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.46.0 → 1.47.0."/>
+        <c:change date="2025-03-25T00:00:00+00:00" summary="Update net.byte-buddy.version:1.17.0 → 1.17.1."/>
+        <c:change date="2025-03-25T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-sdk-logs:1.46.0 → 1.48.0."/>
+        <c:change date="2025-03-25T00:00:00+00:00" summary="Update org.xerial:sqlite-jdbc:3.47.2.0 → 3.49.1.0."/>
+        <c:change date="2025-03-25T00:00:00+00:00" summary="Update org.junit:junit-bom:5.12.0 → 5.12.1."/>
+        <c:change date="2025-03-25T00:00:00+00:00" summary="Update jetty.version:11.0.24 → 11.0.25."/>
+        <c:change date="2025-03-25T00:00:00+00:00" summary="Update org.slf4j:slf4j-api:2.0.16 → 2.0.17."/>
+        <c:change date="2025-04-01T00:00:00+00:00" summary="Update org.codehaus.mojo:jaxb2-maven-plugin:3.2.0 → 3.3.0."/>
+        <c:change date="2025-04-01T00:00:00+00:00" summary="Update net.byte-buddy.version:1.17.4 → 1.17.5."/>
+        <c:change date="2025-04-02T00:00:00+00:00" summary="Update logback.version:1.5.17 → 1.5.18."/>
         <c:change date="2025-04-17T00:00:00+00:00" summary="Disable DNS cache.">
           <c:tickets>
             <c:ticket id="185"/>
           </c:tickets>
         </c:change>
-        <c:change date="2025-04-17T08:33:31+00:00" summary="Use SOA queries instead of NS queries to find name servers."/>
+        <c:change date="2025-04-17T00:00:00+00:00" summary="Use SOA queries instead of NS queries to find name servers."/>
       </c:changes>
     </c:release>
   </c:releases>
