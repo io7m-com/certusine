@@ -147,7 +147,7 @@
         <c:change date="2024-06-07T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.38.0 → 1.39.0."/>
       </c:changes>
     </c:release>
-    <c:release date="2025-04-30T08:35:37+00:00" is-open="false" ticket-system="com.github.io7m.certusine" version="3.2.0">
+    <c:release date="2025-04-30T00:00:00+00:00" is-open="false" ticket-system="com.github.io7m.certusine" version="3.2.0">
       <c:changes>
         <c:change date="2024-06-28T00:00:00+00:00" summary="Update org.junit:junit-bom:5.10.2 → 5.10.3."/>
         <c:change date="2024-07-04T00:00:00+00:00" summary="Update jetty.version:11.0.21 → 11.0.22."/>
@@ -267,6 +267,12 @@
           </c:tickets>
         </c:change>
         <c:change date="2025-04-17T00:00:00+00:00" summary="Use SOA queries instead of NS queries to find name servers."/>
+      </c:changes>
+    </c:release>
+    <c:release date="2025-08-15T10:31:50+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="3.3.0">
+      <c:changes>
+        <c:change date="2025-08-15T00:00:00+00:00" summary="Upgrade OCI JRE to 21.0.8_9."/>
+        <c:change date="2025-08-15T10:31:50+00:00" summary="Upgrade OCI Alpine to 3.22.1."/>
       </c:changes>
     </c:release>
   </c:releases>
