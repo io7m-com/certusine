@@ -38,16 +38,17 @@ open module com.io7m.certusine.tests
   requires com.io7m.looseleaf.server.api;
   requires com.io7m.looseleaf.server;
   requires com.io7m.quixote.core;
+  requires com.io7m.repetoir.core;
   requires java.net.http;
   requires jetty.servlet.api;
   requires net.bytebuddy.agent;
   requires net.bytebuddy;
+  requires org.dnsjava;
   requires org.eclipse.jetty.server;
   requires org.eclipse.jetty.servlet;
   requires org.mockito;
   requires org.shredzone.acme4j;
   requires org.slf4j;
-  requires org.dnsjava;
 
   exports com.io7m.certusine.tests;
 }

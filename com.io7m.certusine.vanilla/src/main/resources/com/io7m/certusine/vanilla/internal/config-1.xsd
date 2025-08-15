@@ -41,6 +41,19 @@
           </documentation>
         </annotation>
       </attribute>
+
+      <attribute name="DropUnreferencedCertificates"
+                 type="boolean"
+                 default="false"
+                 use="optional">
+        <annotation>
+          <documentation>
+            Specifies whether to delete certificates from the database if the
+            certificates are not otherwise referenced in the configuration
+            file.
+          </documentation>
+        </annotation>
+      </attribute>
     </complexType>
   </element>
 

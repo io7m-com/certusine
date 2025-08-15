@@ -21,6 +21,7 @@ import com.io7m.anethum.api.ParsingException;
 import com.io7m.certusine.api.CSConfiguration;
 import com.io7m.certusine.api.CSConfigurationServiceType;
 import com.io7m.certusine.api.CSParseErrorLogging;
+import com.io7m.certusine.vanilla.CSCertificateUtilities;
 import com.io7m.certusine.vanilla.CSConfigurationParsers;
 import com.io7m.certusine.vanilla.CSDomains;
 import com.io7m.certusine.vanilla.CSServices;
@@ -145,7 +146,10 @@ public final class CSRenew implements QCommandType
     final var configurationService =
       services.requireService(CSConfigurationServiceType.class);
 
+
     try {
+      CSCertificateUtilities.cleanUpUnusedCertificates(services);
+
       while (true) {
         final var result =
           runOneIteration(onlyOnce, schedule, services, configurationService);
@@ -170,19 +174,19 @@ public final class CSRenew implements QCommandType
         configurationService.configuration();
 
       LOG.debug(
-        "loaded {} domains",
+        "Loaded {} domains",
         Integer.valueOf(configuration.domains().size())
       );
 
       var result = QCommandStatus.SUCCESS;
-        for (final var domain : configuration.domains().values()) {
-          try {
-            CSDomains.renew(services, domain, Clock.systemUTC());
-          } catch (final Exception e) {
-            LOG.error("error executing domain: ", e);
-            result = QCommandStatus.FAILURE;
-          }
+      for (final var domain : configuration.domains().values()) {
+        try {
+          CSDomains.renew(services, domain, Clock.systemUTC());
+        } catch (final Exception e) {
+          LOG.error("Error executing domain: ", e);
+          result = QCommandStatus.FAILURE;
         }
+      }
 
       if (onlyOnce) {
         return Optional.of(result);
@@ -196,7 +200,7 @@ public final class CSRenew implements QCommandType
         timeNext.withNano(0);
 
       LOG.info(
-        "waiting until {} for the next renewal attempt ({})",
+        "Waiting until {} for the next renewal attempt ({})",
         timeNextClamp,
         schedule
       );

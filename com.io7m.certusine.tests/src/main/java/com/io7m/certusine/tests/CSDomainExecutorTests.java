@@ -184,6 +184,7 @@ public final class CSDomainExecutorTests
     when(this.configurations.configuration())
       .thenReturn(new CSConfiguration(
         new CSOptions(
+          false,
           this.file,
           Duration.of(5L, ChronoUnit.MINUTES),
           Duration.ofHours(72L),

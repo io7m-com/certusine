@@ -60,6 +60,11 @@
     </Paragraph>
 
     <Paragraph>
+      The <Term type="expression">DropUnreferencedCertificates</Term> attribute specifies that any certificates that
+      are no longer present in the configuration file should be dropped from the internal certificate store.
+    </Paragraph>
+
+    <Paragraph>
       The <Term type="expression">DNSWaitTime</Term> attribute specifies the amount of time that the client will wait
       between creating DNS records, and then notifying the ACME servers that the records have been created. This wait
       time is necessary because DNS records sometimes take time to propagate, and if the client instructs the ACME
