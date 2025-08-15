@@ -31,6 +31,9 @@
 
   <logger name="org.testcontainers" level="INFO"/>
 
+  <logger name="org.sqlite.core.NativeDB"
+          level="DEBUG"/>
+
   <root level="TRACE">
     <appender-ref ref="STDOUT"/>
   </root>

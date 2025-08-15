@@ -12,6 +12,9 @@
 
   <logger name="de.uka.ilkd.pp" level="INFO"/>
 
+  <logger name="org.sqlite.core.NativeDB"
+          level="DEBUG"/>
+
   <root level="TRACE">
     <appender-ref ref="STDERR"/>
   </root>
