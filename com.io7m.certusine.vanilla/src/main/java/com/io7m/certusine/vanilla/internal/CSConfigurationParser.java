@@ -437,6 +437,7 @@ public final class CSConfigurationParser
   {
     try {
       this.options = new CSOptions(
+        optionsRaw.isDropUnreferencedCertificates(),
         this.baseDirectory.resolve(optionsRaw.getCertificateStore()),
         Duration.parse(optionsRaw.getDNSWaitTime().toString()),
         Duration.parse(optionsRaw.getCertificateExpirationThreshold().toString()),
