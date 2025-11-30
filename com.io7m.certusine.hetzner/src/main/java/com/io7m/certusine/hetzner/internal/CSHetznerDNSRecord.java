@@ -19,7 +19,7 @@ package com.io7m.certusine.hetzner.internal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import org.apache.commons.text.StringEscapeUtils;
 
 import java.util.Objects;

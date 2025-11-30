@@ -41,7 +41,7 @@
     <!-- io7m dependencies. -->
     <com.io7m.anethum.version>1.1.1</com.io7m.anethum.version>
     <com.io7m.jsx.version>3.0.1</com.io7m.jsx.version>
-    <com.io7m.looseleaf.version>2.0.0</com.io7m.looseleaf.version>
+    <com.io7m.looseleaf.version>4.0.0</com.io7m.looseleaf.version>
     <com.io7m.quarrel.version>1.8.0</com.io7m.quarrel.version>
     <com.io7m.xstructural.version>1.9.0</com.io7m.xstructural.version>
     <com.io7m.trasco.version>3.1.1</com.io7m.trasco.version>
@@ -50,7 +50,7 @@
     <acme4j.utils.version>2.16</acme4j.utils.version>
     <acme4j.version>3.5.1</acme4j.version>
     <bouncycastle.version>1.82</bouncycastle.version>
-    <jackson.version>2.19.2</jackson.version>
+    <jackson.version>3.0.3</jackson.version>
     <jetty.version>11.0.26</jetty.version>
     <logback.version>1.5.20</logback.version>
     <net.byte-buddy.version>1.17.8</net.byte-buddy.version>
@@ -268,7 +268,7 @@
         <version>2.0.17</version>
       </dependency>
       <dependency>
-        <groupId>com.fasterxml.jackson</groupId>
+        <groupId>tools.jackson</groupId>
         <artifactId>jackson-bom</artifactId>
         <version>${jackson.version}</version>
         <type>pom</type>
@@ -277,7 +277,7 @@
       <dependency>
         <groupId>com.io7m.dixmont</groupId>
         <artifactId>com.io7m.dixmont.core</artifactId>
-        <version>2.1.0</version>
+        <version>3.0.0</version>
       </dependency>
       <dependency>
         <groupId>dnsjava</groupId>

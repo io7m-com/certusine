@@ -17,7 +17,7 @@
 
 package com.io7m.certusine.tests;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.io7m.certusine.grafana.CSGrafana;
 import org.junit.jupiter.api.Test;
 

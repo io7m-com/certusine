@@ -33,7 +33,6 @@ open module com.io7m.certusine.tests
   requires org.junit.platform.launcher;
 
   requires ch.qos.logback.classic;
-  requires com.fasterxml.jackson.databind;
   requires com.io7m.looseleaf.security;
   requires com.io7m.looseleaf.server.api;
   requires com.io7m.looseleaf.server;
@@ -49,6 +48,7 @@ open module com.io7m.certusine.tests
   requires org.mockito;
   requires org.shredzone.acme4j;
   requires org.slf4j;
+  requires tools.jackson.databind;
 
   exports com.io7m.certusine.tests;
 }

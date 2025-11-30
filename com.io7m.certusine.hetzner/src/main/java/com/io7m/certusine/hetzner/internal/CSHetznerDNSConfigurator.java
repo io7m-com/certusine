@@ -17,10 +17,9 @@
 
 package com.io7m.certusine.hetzner.internal;
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.module.SimpleDeserializers;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleDeserializers;
+import tools.jackson.databind.module.SimpleModule;
 import com.io7m.certusine.api.CSDNSConfiguratorType;
 import com.io7m.certusine.api.CSDNSRecordNameType;
 import com.io7m.certusine.api.CSTelemetryServiceType;
@@ -94,25 +93,24 @@ public final class CSHetznerDNSConfigurator
 
     this.serializers =
       DmJsonRestrictedDeserializers.builder()
-        .allowClassName(
-          "java.util.List<com.io7m.certusine.hetzner.internal.CSHetznerDNSRecord>")
+        .allowClass(CSHetznerDNSRecord.class)
+        .allowClass(CSHetznerDNSRecordResponse.class)
+        .allowClass(CSHetznerDNSRecordsResponse.class)
         .allowClass(List.class)
         .allowClass(Optional.class)
         .allowClass(String.class)
         .allowClass(int.class)
-        .allowClass(CSHetznerDNSRecord.class)
-        .allowClass(CSHetznerDNSRecordResponse.class)
-        .allowClass(CSHetznerDNSRecordsResponse.class)
-        .build();
-
-    this.mapper =
-      JsonMapper.builder()
+        .allowListsOfClass(CSHetznerDNSRecord.class)
+        .allowOptionalOfClass(String.class)
         .build();
 
     final var simpleModule = new SimpleModule();
     simpleModule.setDeserializers(this.serializers);
-    this.mapper.registerModule(simpleModule);
-    this.mapper.registerModule(new Jdk8Module());
+
+    this.mapper =
+      JsonMapper.builder()
+        .addModule(simpleModule)
+        .build();
   }
 
   @Override
