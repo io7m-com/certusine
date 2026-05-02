@@ -269,12 +269,17 @@
         <c:change date="2025-04-17T00:00:00+00:00" summary="Use SOA queries instead of NS queries to find name servers."/>
       </c:changes>
     </c:release>
-    <c:release date="2025-11-30T18:01:38+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="4.0.0">
+    <c:release date="2026-05-02T17:35:40+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="4.0.0">
       <c:changes>
         <c:change date="2025-08-15T00:00:00+00:00" summary="Upgrade OCI JRE to 21.0.8_9."/>
         <c:change date="2025-08-15T00:00:00+00:00" summary="Upgrade OCI Alpine to 3.22.1."/>
         <c:change date="2025-08-15T00:00:00+00:00" summary="Add an option to remove unreferenced certificates."/>
-        <c:change date="2025-11-30T18:01:38+00:00" summary="Upgrade to Jackson 3.0.3." compatible="false"/>
+        <c:change compatible="false" date="2025-11-30T00:00:00+00:00" summary="Upgrade to Jackson 3.0.3."/>
+        <c:change date="2026-05-02T17:35:40+00:00" summary="Replace obsolete Hetzner DNS API with Hetzner Cloud API.">
+          <c:tickets>
+            <c:ticket id="239"/>
+          </c:tickets>
+        </c:change>
       </c:changes>
     </c:release>
   </c:releases>

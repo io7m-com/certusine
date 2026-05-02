@@ -28,7 +28,7 @@ import java.util.Objects;
  *
  * @param record The record
  *
- * @see "https://dns.hetzner.com/api-docs#operation/CreateRecord"
+ * @see "https://docs.hetzner.cloud/reference/cloud#tag/zones"
  */
 
 @JsonDeserialize

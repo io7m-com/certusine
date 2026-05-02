@@ -20,28 +20,28 @@ package com.io7m.certusine.hetzner.internal;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import tools.jackson.databind.annotation.JsonDeserialize;
-import org.apache.commons.text.StringEscapeUtils;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * The Hetzner DNS record.
  *
- * @param zoneId The zone ID
- * @param id     The record ID
- * @param type   The type
- * @param name   The name
- * @param value  The value
- * @param ttl    The time-to-live
+ * @param zoneId  The zone ID
+ * @param id      The record ID
+ * @param type    The type
+ * @param name    The name
+ * @param records The record values
+ * @param ttl     The time-to-live
  *
- * @see "https://dns.hetzner.com/api-docs#operation/CreateRecord"
+ * @see "https://docs.hetzner.cloud/reference/cloud#tag/zones"
  */
 
 @JsonDeserialize
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record CSHetznerDNSRecord(
-  @JsonProperty(value = "zone_id")
+  @JsonProperty(value = "zone")
   String zoneId,
   @JsonProperty(value = "id", required = false)
   Optional<String> id,
@@ -49,20 +49,21 @@ public record CSHetznerDNSRecord(
   String type,
   @JsonProperty(value = "name")
   String name,
-  @JsonProperty(value = "value")
-  String value,
+  @JsonProperty(value = "records")
+  List<CSHetznerRecordValue> records,
   @JsonProperty(value = "ttl")
   int ttl)
 {
+
   /**
    * The Hetzner DNS record.
    *
-   * @param zoneId The zone ID
-   * @param id     The record ID
-   * @param type   The type
-   * @param name   The name
-   * @param value  The value
-   * @param ttl    The time-to-live
+   * @param zoneId  The zone ID
+   * @param id      The record ID
+   * @param type    The type
+   * @param name    The name
+   * @param records The records
+   * @param ttl     The time-to-live
    *
    * @see "https://dns.hetzner.com/api-docs#operation/CreateRecord"
    */
@@ -73,20 +74,6 @@ public record CSHetznerDNSRecord(
     Objects.requireNonNull(id, "id");
     Objects.requireNonNull(type, "type");
     Objects.requireNonNull(name, "name");
-    Objects.requireNonNull(value, "value");
-  }
-
-  /**
-   * @return The value of the TXT record without quoting
-   */
-
-  public String valueWithoutQuoting()
-  {
-    var x = this.value;
-    if (x.startsWith("\"") && x.endsWith("\"")) {
-      x = x.substring(1, x.length() - 1);
-      return StringEscapeUtils.unescapeJava(x);
-    }
-    return x;
+    Objects.requireNonNull(records, "records");
   }
 }

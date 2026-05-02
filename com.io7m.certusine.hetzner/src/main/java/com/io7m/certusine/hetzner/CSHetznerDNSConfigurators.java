@@ -106,7 +106,7 @@ public final class CSHetznerDNSConfigurators
     final var apiBase =
       parameterMap.getOrDefault(
         API_BASE_PARAMETER,
-        "https://dns.hetzner.com/api/v1/"
+        "https://api.hetzner.cloud/v1/"
       );
 
     return new CSHetznerDNSConfigurator(

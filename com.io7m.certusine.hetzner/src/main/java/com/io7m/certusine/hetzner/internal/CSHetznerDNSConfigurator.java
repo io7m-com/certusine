@@ -17,9 +17,6 @@
 
 package com.io7m.certusine.hetzner.internal;
 
-import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.databind.module.SimpleDeserializers;
-import tools.jackson.databind.module.SimpleModule;
 import com.io7m.certusine.api.CSDNSConfiguratorType;
 import com.io7m.certusine.api.CSDNSRecordNameType;
 import com.io7m.certusine.api.CSTelemetryServiceType;
@@ -27,6 +24,9 @@ import com.io7m.dixmont.core.DmJsonRestrictedDeserializers;
 import io.opentelemetry.api.trace.Span;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleDeserializers;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.io.IOException;
 import java.net.URI;
@@ -94,6 +94,7 @@ public final class CSHetznerDNSConfigurator
     this.serializers =
       DmJsonRestrictedDeserializers.builder()
         .allowClass(CSHetznerDNSRecord.class)
+        .allowListsOfClass(CSHetznerRecordValue.class)
         .allowClass(CSHetznerDNSRecordResponse.class)
         .allowClass(CSHetznerDNSRecordsResponse.class)
         .allowClass(List.class)
@@ -162,7 +163,13 @@ public final class CSHetznerDNSConfigurator
       }
 
       final var targetURI =
-        URI.create("%s/records".formatted(this.apiBase));
+        URI.create(
+          "%s/zones/%s/rrsets/%s/TXT/actions/add_records"
+            .formatted(
+              this.apiBase,
+              this.zoneId,
+              recordName)
+        );
 
       LOG.debug(
         "Creating a TXT record {} = {} for domain {}",
@@ -174,23 +181,23 @@ public final class CSHetznerDNSConfigurator
 
       final var json = """
         {
-          "name": "%s",
-          "type": "TXT",
-          "value": "%s",
           "ttl": 600,
-          "zone_id": "%s"
+          "records": [
+            {
+              "value": %s,
+              "comment": ""
+            }
+          ]
         }
         """.formatted(
-        this.handleRecordName(recordName),
-        recordValue,
-        this.zoneId
+        recordValue
       );
 
       final var request =
         HttpRequest.newBuilder()
           .uri(targetURI)
           .POST(HttpRequest.BodyPublishers.ofString(json, UTF_8))
-          .header("Auth-API-Token", this.apiKey)
+          .header("Authorization", "Bearer " + this.apiKey)
           .build();
 
       final var span = Span.current();
@@ -287,7 +294,7 @@ public final class CSHetznerDNSConfigurator
     final var records = new ArrayList<CSHetznerDNSRecord>();
     while (true) {
       final var targetURI =
-        URI.create("%s/records?zone_id=%s&page=%s".formatted(
+        URI.create("%s/zones/%s/rrsets?type=TXT&page=%s".formatted(
           this.apiBase,
           this.zoneId,
           Integer.valueOf(page)
@@ -300,7 +307,7 @@ public final class CSHetznerDNSConfigurator
         HttpRequest.newBuilder()
           .uri(targetURI)
           .GET()
-          .header("Auth-API-Token", this.apiKey)
+          .header("Authorization", "Bearer " + this.apiKey)
           .build();
 
       final var r =
@@ -318,11 +325,11 @@ public final class CSHetznerDNSConfigurator
       final var data =
         this.mapper.readValue(r.body(), CSHetznerDNSRecordsResponse.class);
 
-      if (data.records().isEmpty()) {
+      if (data.rrsets().isEmpty()) {
         return List.copyOf(records);
       }
 
-      records.addAll(data.records());
+      records.addAll(data.rrsets());
       ++page;
     }
   }
@@ -348,11 +355,28 @@ public final class CSHetznerDNSConfigurator
       for (final var record : matchingRecords) {
         final var targetURI =
           URI.create(
-            "%s/records/%s"
-              .formatted(this.apiBase, record.id().orElseThrow())
+            "%s/zones/%s/rrsets/%s/TXT/actions/remove_records"
+              .formatted(
+                this.apiBase,
+                this.zoneId,
+                record.name()
+              )
           );
 
-        LOG.debug("DELETE {}", targetURI);
+        LOG.debug("POST {}", targetURI);
+
+        final var json = """
+        {
+          "records": [
+            {
+              "value": %s,
+              "comment": ""
+            }
+          ]
+        }
+        """.formatted(
+          recordValue
+        );
 
         final var span = Span.current();
         span.setAttribute(
@@ -362,8 +386,8 @@ public final class CSHetznerDNSConfigurator
         final var request =
           HttpRequest.newBuilder()
             .uri(targetURI)
-            .DELETE()
-            .header("Auth-API-Token", this.apiKey)
+            .POST(HttpRequest.BodyPublishers.ofString(json, UTF_8))
+            .header("Authorization", "Bearer " + this.apiKey)
             .build();
 
         final var r =
@@ -403,9 +427,11 @@ public final class CSHetznerDNSConfigurator
       traceNoMatch(r, recordName, recordValue);
       return false;
     }
-    if (!Objects.equals(r.valueWithoutQuoting(), recordValue)) {
-      traceNoMatch(r, recordName, recordValue);
-      return false;
+    for (final var rec : r.records()) {
+      if (!Objects.equals(rec.valueWithoutQuoting(), recordValue)) {
+        traceNoMatch(r, recordName, recordValue);
+        return false;
+      }
     }
 
     LOG.trace("Record {} matches {} = {}", r, recordName, recordValue);

@@ -36,6 +36,7 @@ module com.io7m.certusine.hetzner
   requires org.apache.commons.text;
   requires org.slf4j;
   requires tools.jackson.databind;
+  requires com.fasterxml.jackson.annotation;
 
   provides CSDNSConfiguratorProviderType
     with CSHetznerDNSConfigurators;

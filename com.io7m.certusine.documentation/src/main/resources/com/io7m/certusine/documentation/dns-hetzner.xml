@@ -8,14 +8,14 @@
   <Subsection title="Name">
     <Paragraph>
       <Term type="package">Hetzner</Term>
-      - Support for the Hetzner DNS API
+      - Support for the Hetzner Cloud API
     </Paragraph>
   </Subsection>
 
   <Subsection title="Description">
     <Paragraph>
       The <Term type="package">Hetzner</Term> DNS configurator supports creating and deleting DNS records using
-      the <LinkExternal target="https://dns.hetzner.com/api-docs">Hetzner DNS API</LinkExternal>.
+      the <LinkExternal target="https://docs.hetzner.cloud/reference/cloud">Hetzner Cloud API</LinkExternal>.
     </Paragraph>
 
     <Paragraph>
@@ -28,7 +28,7 @@
 
     <Paragraph>
       If not specified, the configurator defaults to the production API base address
-      <LinkExternal target="https://dns.hetzner.com/api/v1/">https://dns.hetzner.com/api/v1/</LinkExternal>.
+      <LinkExternal target="https://api.hetzner.cloud/v1/">https://api.hetzner.cloud/v1/</LinkExternal>.
     </Paragraph>
   </Subsection>
 
