@@ -60,9 +60,9 @@
     <org.junit.version>5.14.1</org.junit.version>
 
     <!-- https://hub.docker.com/_/alpine/ -->
-    <com.io7m.oci.versionAlpine>3.22.1</com.io7m.oci.versionAlpine>
+    <com.io7m.oci.versionAlpine>3.23.4</com.io7m.oci.versionAlpine>
     <!-- https://hub.docker.com/_/eclipse-temurin -->
-    <com.io7m.oci.versionTemurin>21.0.8_9-jre-alpine</com.io7m.oci.versionTemurin>
+    <com.io7m.oci.versionTemurin>25.0.3_9-jre-alpine</com.io7m.oci.versionTemurin>
   </properties>
 
   <licenses>
