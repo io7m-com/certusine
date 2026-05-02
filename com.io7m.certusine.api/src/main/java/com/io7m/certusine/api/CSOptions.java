@@ -24,6 +24,8 @@ import java.util.Optional;
 /**
  * The options associated with the ACME process.
  *
+ * @param dropUnreferencedCertificates   Whether to drop certificates that are
+ *                                       no longer mentioned in the configuration file.
  * @param certificateStore               The local certificate store used to
  *                                       hold persistent certificate state
  *                                       during processing
@@ -40,6 +42,7 @@ import java.util.Optional;
  */
 
 public record CSOptions(
+  boolean dropUnreferencedCertificates,
   Path certificateStore,
   Duration dnsWaitTime,
   Duration certificateExpirationThreshold,
@@ -49,6 +52,8 @@ public record CSOptions(
   /**
    * The options associated with the ACME process.
    *
+   * @param dropUnreferencedCertificates   Whether to drop certificates that are
+   *                                       no longer mentioned in the configuration file.
    * @param certificateStore               The local certificate store used to
    *                                       hold persistent certificate state
    *                                       during processing

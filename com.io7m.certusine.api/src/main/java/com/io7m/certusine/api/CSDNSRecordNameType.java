@@ -31,6 +31,17 @@ public sealed interface CSDNSRecordNameType
   String name();
 
   /**
+   * Strip a domain suffix from this name.
+   *
+   * @param domain The domain
+   *
+   * @return This name as a relative name
+   */
+
+  CSDNSRecordNameRelative stripDomainSuffix(
+    String domain);
+
+  /**
    * An absolute record name (ends with '.').
    *
    * @param name The name
@@ -62,14 +73,7 @@ public sealed interface CSDNSRecordNameType
       return this.name;
     }
 
-    /**
-     * Strip a domain suffix from this name.
-     *
-     * @param domain The domain
-     *
-     * @return This name as a relative name
-     */
-
+    @Override
     public CSDNSRecordNameRelative stripDomainSuffix(
       final String domain)
     {
@@ -115,6 +119,13 @@ public sealed interface CSDNSRecordNameType
     public String toString()
     {
       return this.name;
+    }
+
+    @Override
+    public CSDNSRecordNameRelative stripDomainSuffix(
+      final String domain)
+    {
+      return this;
     }
   }
 }

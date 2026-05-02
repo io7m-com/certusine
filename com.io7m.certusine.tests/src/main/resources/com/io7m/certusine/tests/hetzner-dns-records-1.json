@@ -1,20 +1,90 @@
 {
-  "records": [
+  "meta": {
+    "pagination": {
+      "last_page": 1,
+      "next_page": null,
+      "page": 1,
+      "per_page": 25,
+      "previous_page": null,
+      "total_entries": 15
+    }
+  },
+  "rrsets": [
     {
-      "id": "34389b43-b8b9-4d9d-a380-449f05c501d9",
-      "zone_id": "1",
-      "type": "A",
-      "name": "x",
-      "value": "200.200.200.200",
-      "ttl": 300
+      "id": "_acme-challenge/TXT",
+      "name": "_acme-challenge",
+      "type": "TXT",
+      "ttl": 600,
+      "labels": {},
+      "protection": {
+        "change": false
+      },
+      "records": [
+        {
+          "value": "\"11223344\"",
+          "comment": ""
+        },
+        {
+          "value": "\"aabbccdd\"",
+          "comment": ""
+        }
+      ],
+      "zone": 5999999
     },
     {
-      "id": "68440bec-b17f-4532-a58b-d2b6a7e3b69c",
-      "zone_id": "1",
+      "id": "_acme-challenge.honeydew/TXT",
+      "name": "_acme-challenge.honeydew",
       "type": "TXT",
+      "ttl": 600,
+      "labels": {},
+      "protection": {
+        "change": false
+      },
+      "records": [
+        {
+          "value": "\"aabbccdd\"",
+          "comment": ""
+        },
+        {
+          "value": "\"1111111111\"",
+          "comment": ""
+        }
+      ],
+      "zone": 5999999
+    },
+    {
+      "id": "_acme-challenge.tomato.int/TXT",
+      "name": "_acme-challenge.tomato.int",
+      "type": "TXT",
+      "ttl": 600,
+      "labels": {},
+      "protection": {
+        "change": false
+      },
+      "records": [
+        {
+          "value": "\"aabbccdd\"",
+          "comment": ""
+        }
+      ],
+      "zone": 5999999
+    },
+    {
+      "id": "z/TXT",
       "name": "z",
-      "value": "\"200.200.200.201\"",
-      "ttl": 300
+      "type": "TXT",
+      "ttl": 600,
+      "labels": {},
+      "protection": {
+        "change": false
+      },
+      "records": [
+        {
+          "value": "\"200.200.200.201\"",
+          "comment": ""
+        }
+      ],
+      "zone": 5999999
     }
   ]
 }

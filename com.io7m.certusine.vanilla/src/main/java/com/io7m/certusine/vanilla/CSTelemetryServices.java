@@ -34,9 +34,6 @@ import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter;
 import io.opentelemetry.exporter.otlp.http.metrics.OtlpHttpMetricExporter;
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter;
-import io.opentelemetry.exporter.otlp.logs.OtlpGrpcLogRecordExporter;
-import io.opentelemetry.exporter.otlp.metrics.OtlpGrpcMetricExporter;
-import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.logs.SdkLoggerProvider;
 import io.opentelemetry.sdk.logs.export.BatchLogRecordProcessor;
@@ -194,11 +191,6 @@ public final class CSTelemetryServices
             .setEndpoint(endpoint)
             .build();
         }
-        case GRPC -> {
-          yield OtlpGrpcLogRecordExporter.builder()
-            .setEndpoint(endpoint)
-            .build();
-        }
       };
 
     final var processor =
@@ -226,11 +218,6 @@ public final class CSTelemetryServices
       switch (metrics.protocol()) {
         case HTTP -> {
           yield OtlpHttpMetricExporter.builder()
-            .setEndpoint(endpoint)
-            .build();
-        }
-        case GRPC -> {
-          yield OtlpGrpcMetricExporter.builder()
             .setEndpoint(endpoint)
             .build();
         }
@@ -262,11 +249,6 @@ public final class CSTelemetryServices
       switch (traces.protocol()) {
         case HTTP -> {
           yield OtlpHttpSpanExporter.builder()
-            .setEndpoint(endpoint)
-            .build();
-        }
-        case GRPC -> {
-          yield OtlpGrpcSpanExporter.builder()
             .setEndpoint(endpoint)
             .build();
         }

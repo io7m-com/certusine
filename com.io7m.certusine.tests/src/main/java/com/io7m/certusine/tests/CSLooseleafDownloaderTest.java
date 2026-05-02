@@ -88,6 +88,7 @@ public final class CSLooseleafDownloaderTest
             new LLServerAddress("localhost", 20000)
           ),
           this.directory.resolve("looseleaf.db"),
+          Optional.of("SQLITE"),
           List.of(
             new LLServerRole(
               "main",

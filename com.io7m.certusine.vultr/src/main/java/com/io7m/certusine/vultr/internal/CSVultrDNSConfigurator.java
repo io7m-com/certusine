@@ -17,9 +17,9 @@
 
 package com.io7m.certusine.vultr.internal;
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.module.SimpleDeserializers;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleDeserializers;
+import tools.jackson.databind.module.SimpleModule;
 import com.io7m.certusine.api.CSDNSConfiguratorType;
 import com.io7m.certusine.api.CSDNSRecordNameType;
 import com.io7m.certusine.api.CSTelemetryServiceType;
@@ -99,13 +99,13 @@ public final class CSVultrDNSConfigurator implements CSDNSConfiguratorType
         .allowClass(int.class)
         .build();
 
-    this.mapper =
-      JsonMapper.builder()
-        .build();
-
     final var simpleModule = new SimpleModule();
     simpleModule.setDeserializers(this.serializers);
-    this.mapper.registerModule(simpleModule);
+
+    this.mapper =
+      JsonMapper.builder()
+        .addModule(simpleModule)
+        .build();
   }
 
   @Override

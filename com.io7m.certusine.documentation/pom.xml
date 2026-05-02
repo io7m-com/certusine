@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.certusine</artifactId>
     <groupId>com.io7m.certusine</groupId>
-    <version>3.2.0</version>
+    <version>4.0.0-beta0001</version>
   </parent>
 
   <artifactId>com.io7m.certusine.documentation</artifactId>
@@ -161,7 +161,7 @@
               <excludes>module-info.java</excludes>
               <includeGroupIds>${project.groupId}</includeGroupIds>
               <includeArtifactIds>com.io7m.certusine.vanilla</includeArtifactIds>
-              <includes>**/config-1.xsd</includes>
+              <includes>**/config-2.xsd</includes>
               <classifier>sources</classifier>
               <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
               <outputDirectory>${project.build.directory}/documentation/</outputDirectory>

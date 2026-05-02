@@ -105,6 +105,7 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecordsTest
       new CSStrings(Locale.getDefault());
     this.options =
       new CSOptions(
+        false,
         this.file,
         Duration.ofSeconds(1L),
         Duration.ofDays(1L),

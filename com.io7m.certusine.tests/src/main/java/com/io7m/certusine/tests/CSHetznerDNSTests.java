@@ -96,11 +96,11 @@ public final class CSHetznerDNSTests
       );
 
     this.server.addResponse()
-      .forPath("/records")
+      .forPath("/zones/1/rrsets")
       .withFixedText(text("hetzner-dns-records-2.json"));
 
     this.server.addResponse()
-      .forPath("/records/*")
+      .forPath("/zones/1/rrsets/a/TXT/actions/add_records")
       .withStatus(200);
 
     v.createTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
@@ -108,13 +108,13 @@ public final class CSHetznerDNSTests
     {
       final var r =
         this.server.requestsReceived().get(0);
-      assertEquals("/records", r.path());
+      assertEquals("/zones/1/rrsets", r.path());
     }
 
     {
       final var r =
         this.server.requestsReceived().get(1);
-      assertEquals("/records", r.path());
+      assertEquals("/zones/1/rrsets/a/TXT/actions/add_records", r.path());
     }
 
     assertEquals(2, this.server.requestsReceived().size());
@@ -145,24 +145,41 @@ public final class CSHetznerDNSTests
       );
 
     this.server.addResponse()
-      .forPath("/records")
+      .forPath("/zones/1/rrsets")
       .withStatus(200)
       .withFixedText(text("hetzner-dns-records-existing.json"));
 
     this.server.addResponse()
-      .forPath("/records")
+      .forPath("/zones/1/rrsets")
       .withStatus(200)
       .withFixedText(text("hetzner-dns-records-2.json"));
+
+    this.server.addResponse()
+      .forPath("/zones/1/rrsets/a/TXT/actions/add_records")
+      .withStatus(200)
+      .withFixedText(text("hetzner-dns-records-existing.json"));
 
     v.createTXTRecord(noop(), new CSDNSRecordNameRelative("a"), "b");
 
     {
       final var r =
         this.server.requestsReceived().get(0);
-      assertEquals("/records", r.path());
+      assertEquals("/zones/1/rrsets", r.path());
     }
 
-    assertEquals(2, this.server.requestsReceived().size());
+    {
+      final var r =
+        this.server.requestsReceived().get(1);
+      assertEquals("/zones/1/rrsets", r.path());
+    }
+
+    {
+      final var r =
+        this.server.requestsReceived().get(2);
+      assertEquals("/zones/1/rrsets/a/TXT/actions/add_records", r.path());
+    }
+
+    assertEquals(3, this.server.requestsReceived().size());
   }
 
   /**
@@ -276,26 +293,20 @@ public final class CSHetznerDNSTests
       );
 
     this.server.addResponse()
-      .forPath("/records")
+      .forPath("/zones/1/rrsets")
       .withFixedText(text("hetzner-dns-records-0.json"));
 
     this.server.addResponse()
-      .forPath("/records")
+      .forPath("/zones/1/rrsets")
       .withFixedText(text("hetzner-dns-records-1.json"));
 
     this.server.addResponse()
-      .forPath("/records")
+      .forPath("/zones/1/rrsets")
       .withFixedText(text("hetzner-dns-records-2.json"));
 
     this.server.addResponse()
-      .forPath("/records/.*")
-      .forMethod("DELETE")
-      .withStatus(200)
-      .withFixedText("");
-
-    this.server.addResponse()
-      .forPath("/records/.*")
-      .forMethod("DELETE")
+      .forPath("/zones/1/rrsets/z/TXT/actions/remove_records")
+      .forMethod("POST")
       .withStatus(200)
       .withFixedText("");
 
@@ -307,31 +318,25 @@ public final class CSHetznerDNSTests
     {
       final var r =
         this.server.requestsReceived().get(0);
-      assertEquals("/records", r.path());
+      assertEquals("/zones/1/rrsets", r.path());
     }
 
     {
       final var r =
         this.server.requestsReceived().get(1);
-      assertEquals("/records", r.path());
+      assertEquals("/zones/1/rrsets", r.path());
     }
 
     {
       final var r =
         this.server.requestsReceived().get(2);
-      assertEquals("/records", r.path());
+      assertEquals("/zones/1/rrsets", r.path());
     }
 
     {
       final var r =
         this.server.requestsReceived().get(3);
-      assertEquals("/records/ff690447-7b0d-408b-a408-fd2410281a60", r.path());
-    }
-
-    {
-      final var r =
-        this.server.requestsReceived().get(4);
-      assertEquals("/records/68440bec-b17f-4532-a58b-d2b6a7e3b69c", r.path());
+      assertEquals("/zones/1/rrsets/z/TXT/actions/remove_records", r.path());
     }
   }
 
@@ -360,20 +365,20 @@ public final class CSHetznerDNSTests
       );
 
     this.server.addResponse()
-      .forPath("/records")
+      .forPath("/zones/1/rrsets")
       .withFixedText(text("hetzner-dns-records-0.json"));
 
     this.server.addResponse()
-      .forPath("/records")
+      .forPath("/zones/1/rrsets")
       .withFixedText(text("hetzner-dns-records-1.json"));
 
     this.server.addResponse()
-      .forPath("/records")
+      .forPath("/zones/1/rrsets")
       .withFixedText(text("hetzner-dns-records-2.json"));
 
     this.server.addResponse()
-      .forPath("/records/.*")
-      .forMethod("DELETE")
+      .forPath("/zones/1/rrsets/z/TXT/actions/remove_records")
+      .forMethod("POST")
       .withStatus(500)
       .withFixedText("");
 
@@ -387,25 +392,25 @@ public final class CSHetznerDNSTests
     {
       final var r =
         this.server.requestsReceived().get(0);
-      assertEquals("/records", r.path());
+      assertEquals("/zones/1/rrsets", r.path());
     }
 
     {
       final var r =
         this.server.requestsReceived().get(1);
-      assertEquals("/records", r.path());
+      assertEquals("/zones/1/rrsets", r.path());
     }
 
     {
       final var r =
         this.server.requestsReceived().get(2);
-      assertEquals("/records", r.path());
+      assertEquals("/zones/1/rrsets", r.path());
     }
 
     {
       final var r =
         this.server.requestsReceived().get(3);
-      assertEquals("/records/ff690447-7b0d-408b-a408-fd2410281a60", r.path());
+      assertEquals("/zones/1/rrsets/z/TXT/actions/remove_records", r.path());
     }
   }
 
@@ -434,13 +439,16 @@ public final class CSHetznerDNSTests
       );
 
     this.server.addResponse()
-      .forPath("/records")
+      .forPath("/zones/1/rrsets")
       .withFixedText(text("hetzner-dns-records-0.json"));
 
     this.server.addResponse()
-      .forPath("/records")
-      .withStatus(500)
+      .forPath("/zones/1/rrsets")
       .withFixedText(text("hetzner-dns-records-1.json"));
+
+    this.server.addResponse()
+      .forPath("/zones/1/rrsets")
+      .withFixedText(text("hetzner-dns-records-2.json"));
 
     assertThrows(IOException.class, () -> {
       v.deleteTXTRecord(
@@ -452,13 +460,25 @@ public final class CSHetznerDNSTests
     {
       final var r =
         this.server.requestsReceived().get(0);
-      assertEquals("/records", r.path());
+      assertEquals("/zones/1/rrsets", r.path());
     }
 
     {
       final var r =
         this.server.requestsReceived().get(1);
-      assertEquals("/records", r.path());
+      assertEquals("/zones/1/rrsets", r.path());
+    }
+
+    {
+      final var r =
+        this.server.requestsReceived().get(2);
+      assertEquals("/zones/1/rrsets", r.path());
+    }
+
+    {
+      final var r =
+        this.server.requestsReceived().get(3);
+      assertEquals("/zones/1/rrsets/z/TXT/actions/remove_records", r.path());
     }
   }
 

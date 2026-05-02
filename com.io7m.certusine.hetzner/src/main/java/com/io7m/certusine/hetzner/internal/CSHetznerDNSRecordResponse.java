@@ -19,7 +19,7 @@ package com.io7m.certusine.hetzner.internal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Objects;
 
@@ -28,7 +28,7 @@ import java.util.Objects;
  *
  * @param record The record
  *
- * @see "https://dns.hetzner.com/api-docs#operation/CreateRecord"
+ * @see "https://docs.hetzner.cloud/reference/cloud#tag/zones"
  */
 
 @JsonDeserialize

@@ -1,5 +1,15 @@
 {
-  "records": [
+  "meta": {
+    "pagination": {
+      "last_page": 1,
+      "next_page": null,
+      "page": 1,
+      "per_page": 25,
+      "previous_page": null,
+      "total_entries": 0
+    }
+  },
+  "rrsets": [
 
   ]
 }

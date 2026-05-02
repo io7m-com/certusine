@@ -9,7 +9,7 @@
   <parent>
     <artifactId>com.io7m.certusine</artifactId>
     <groupId>com.io7m.certusine</groupId>
-    <version>3.2.0</version>
+    <version>4.0.0-beta0001</version>
   </parent>
 
   <artifactId>com.io7m.certusine.gandi</artifactId>
@@ -26,7 +26,7 @@
     </dependency>
 
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
+      <groupId>tools.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
     <dependency>

@@ -49,7 +49,7 @@
               id="c361dd52-36d5-4dfe-b873-090a6d679d1a">
     <Paragraph>
       The <Term type="expression">xmlns</Term> attribute must be present and set to the value
-      <Term type="expression">"urn:com.io7m.certusine:configuration:1"</Term>.
+      <Term type="expression">"urn:com.io7m.certusine:configuration:2"</Term>.
     </Paragraph>
   </Subsection>
 
@@ -57,6 +57,11 @@
               id="bc26c6cd-dcab-49bd-8e50-02cd4ff85c1f">
     <Paragraph>
       The <Term type="expression">Options</Term> element specifies global options for the client.
+    </Paragraph>
+
+    <Paragraph>
+      The <Term type="expression">DropUnreferencedCertificates</Term> attribute specifies that any certificates that
+      are no longer present in the configuration file should be dropped from the internal certificate store.
     </Paragraph>
 
     <Paragraph>
@@ -322,8 +327,8 @@
         <Term type="expression">Logs</Term> element, OTLP <LinkExternal
         target="https://opentelemetry.io/docs/concepts/signals/logs/">logs</LinkExternal>
         will be sent to a specified endpoint. The <Term type="expression">Endpoint</Term> attribute
-        specifies the endpoint, and the <Term type="expression">Protocol</Term> attribute can either
-        be <Term type="constant">GRPC</Term> or <Term type="constant">HTTP</Term>.
+        specifies the endpoint, and the <Term type="expression">Protocol</Term> attribute must
+        be <Term type="constant">HTTP</Term>.
       </Paragraph>
     </Subsection>
     <Subsection title="Example">
@@ -334,11 +339,11 @@
         <Verbatim><![CDATA[
 <OpenTelemetry LogicalServiceName="certusine">
   <Logs Endpoint="http://logs.example.com:4317"
-        Protocol="GRPC"/>
+        Protocol="HTTP"/>
   <Metrics Endpoint="http://metrics.example.com:4317"
-           Protocol="GRPC"/>
+           Protocol="HTTP"/>
   <Traces Endpoint="http://traces.example.com:4317"
-          Protocol="GRPC"/>
+          Protocol="HTTP"/>
 </OpenTelemetry>
 ]]></Verbatim>
       </FormalItem>
@@ -364,7 +369,7 @@
     </Paragraph>
     <FormalItem title="Schema">
       <Verbatim>
-        <xi:include href="com/io7m/certusine/vanilla/internal/config-1.xsd"
+        <xi:include href="com/io7m/certusine/vanilla/internal/config-2.xsd"
                     parse="text"/>
       </Verbatim>
     </FormalItem>

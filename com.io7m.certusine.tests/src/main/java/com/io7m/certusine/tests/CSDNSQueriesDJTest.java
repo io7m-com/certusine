@@ -61,6 +61,6 @@ public final class CSDNSQueriesDJTest
      * servers.
      */
 
-    assertTrue(queries.contains("ns.icann.org."));
+    assertTrue(queries.contains("elliott.ns.cloudflare.com."));
   }
 }

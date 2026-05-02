@@ -163,6 +163,12 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallenges
 
       challenges.add(challenge);
 
+      LOG.debug(
+        "Challenge Status [{}]: {}",
+        auth.getIdentifier(),
+        challenge.getStatus()
+      );
+
       switch (challenge.getStatus()) {
         case VALID -> {
           challengesSucceeded.add(challenge);

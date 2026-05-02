@@ -2,7 +2,8 @@
 
 <Configuration xmlns="urn:com.io7m.certusine:configuration:2">
 
-  <Options CertificateStore="store.db"
+  <Options DropUnreferencedCertificates="true"
+           CertificateStore="store.db"
            DNSWaitTime="PT5M"
            CertificateExpirationThreshold="PT72H"/>
 
@@ -14,7 +15,7 @@
   </Accounts>
 
   <Outputs>
-    <Output Type="directory"
+    <Output Type="Directory"
             Name="main-output">
       <Parameters>
         <Parameter Name="path"
@@ -24,7 +25,7 @@
   </Outputs>
 
   <DNSConfigurators>
-    <DNSConfigurator Type="vultr"
+    <DNSConfigurator Type="Vultr"
                      Name="vultr-dns">
       <Parameters>
         <Parameter Name="api-key"
@@ -40,11 +41,28 @@
             Account="main"
             DNSConfigurator="vultr-dns">
       <Certificates>
-        <Certificate Name="this is not allowed"
+        <Certificate Name="www"
                      PublicKeyPath="fake.pub"
                      PrivateKeyPath="fake.pri">
           <Hosts>
             <Host Name="www0"/>
+            <Host Name="www1"/>
+            <Host Name="www2"/>
+          </Hosts>
+        </Certificate>
+        <Certificate Name="mail"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="mail0"/>
+            <Host Name="mail1"/>
+          </Hosts>
+        </Certificate>
+        <Certificate Name="wildcard"
+                     PublicKeyPath="fake.pub"
+                     PrivateKeyPath="fake.pri">
+          <Hosts>
+            <Host Name="*"/>
           </Hosts>
         </Certificate>
       </Certificates>

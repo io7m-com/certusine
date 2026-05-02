@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:c="urn:com.io7m.certusine:configuration:1"
-        targetNamespace="urn:com.io7m.certusine:configuration:1">
+        xmlns:c="urn:com.io7m.certusine:configuration:2"
+        targetNamespace="urn:com.io7m.certusine:configuration:2">
 
   <element name="Options">
     <complexType>
@@ -38,6 +38,19 @@
             Specifies the maximum amount of time before expiration that the client will allow before it attempts to
             renew a certificate. For example, a value of PT72H means that the client will start attempting to renew a
             certificate when the certificate becomes due to expire in less than 72 hours.
+          </documentation>
+        </annotation>
+      </attribute>
+
+      <attribute name="DropUnreferencedCertificates"
+                 type="boolean"
+                 default="false"
+                 use="optional">
+        <annotation>
+          <documentation>
+            Specifies whether to delete certificates from the database if the
+            certificates are not otherwise referenced in the configuration
+            file.
           </documentation>
         </annotation>
       </attribute>
@@ -502,13 +515,6 @@
     </annotation>
 
     <restriction base="string">
-      <enumeration value="GRPC">
-        <annotation>
-          <documentation>
-            The data will be sent using gRPC.
-          </documentation>
-        </annotation>
-      </enumeration>
       <enumeration value="HTTP">
         <annotation>
           <documentation>

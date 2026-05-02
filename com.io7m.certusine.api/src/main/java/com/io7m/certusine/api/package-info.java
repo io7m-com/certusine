@@ -19,7 +19,7 @@
  */
 
 @Export
-@Version("1.3.1")
+@Version("2.0.0")
 package com.io7m.certusine.api;
 
 import org.osgi.annotation.bundle.Export;

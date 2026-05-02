@@ -1,12 +1,31 @@
 {
-  "records": [
+  "meta": {
+    "pagination": {
+      "last_page": 1,
+      "next_page": null,
+      "page": 1,
+      "per_page": 25,
+      "previous_page": null,
+      "total_entries": 15
+    }
+  },
+  "rrsets": [
     {
-      "id": "e9358824-b050-4514-a1ec-39afcff829de",
-      "zone_id": "1",
+      "id": "_acme-challenge.www/TXT",
+      "name": "_acme-challenge.www",
       "type": "TXT",
-      "name": "a",
-      "value": "b",
-      "ttl": 300
+      "ttl": 600,
+      "labels": {},
+      "protection": {
+        "change": false
+      },
+      "records": [
+        {
+          "value": "\"aabbccdd\"",
+          "comment": ""
+        }
+      ],
+      "zone": 5999999
     }
   ]
 }

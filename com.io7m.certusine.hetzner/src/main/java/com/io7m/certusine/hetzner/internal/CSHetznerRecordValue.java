@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,40 +14,41 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
 package com.io7m.certusine.hetzner.internal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.text.StringEscapeUtils;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
-import java.util.List;
-import java.util.Objects;
-
 /**
- * The Hetzner DNS records response.
+ * The Hetzner DNS record value.
  *
- * @param rrsets The rrsets
+ * @param value   The value
+ * @param comment The comment
  *
- * @see "https://dns.hetzner.com/api-docs#operation/GetRecords"
+ * @see "https://docs.hetzner.cloud/reference/cloud#tag/zones"
  */
 
 @JsonDeserialize
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record CSHetznerDNSRecordsResponse(
-  @JsonProperty(value = "rrsets")
-  List<CSHetznerDNSRecord> rrsets)
+record CSHetznerRecordValue(
+  @JsonProperty(value = "value")
+  String value,
+  @JsonProperty(value = "comment")
+  String comment)
 {
   /**
-   * The Hetzner DNS records response.
-   *
-   * @param rrsets The rrsets
-   *
-   * @see "https://docs.hetzner.cloud/reference/cloud#tag/zones"
+   * @return The value of the record without quoting
    */
 
-  public CSHetznerDNSRecordsResponse
+  public String valueWithoutQuoting()
   {
-    Objects.requireNonNull(rrsets, "rrsets");
+    var x = this.value;
+    if (x.startsWith("\"") && x.endsWith("\"")) {
+      x = x.substring(1, x.length() - 1);
+      return StringEscapeUtils.unescapeJava(x);
+    }
+    return x;
   }
 }
