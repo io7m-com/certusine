@@ -269,12 +269,45 @@
         <c:change date="2025-04-17T00:00:00+00:00" summary="Use SOA queries instead of NS queries to find name servers."/>
       </c:changes>
     </c:release>
-    <c:release date="2026-05-02T19:59:58+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="4.0.0-beta0001">
+    <c:release date="2026-05-02T20:00:22+00:00" is-open="false" ticket-system="com.github.io7m.certusine" version="4.0.0-beta0001">
       <c:changes>
+        <c:change date="2025-05-01T00:00:00+00:00" summary="Update org.apache.commons:commons-text:1.13.0 → 1.13.1."/>
+        <c:change date="2025-05-01T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.48.0 → 1.49.0."/>
+        <c:change date="2025-05-01T00:00:00+00:00" summary="Update com.squareup.okio:okio-jvm:3.10.2 → 3.11.0."/>
+        <c:change date="2025-05-02T00:00:00+00:00" summary="Update org.junit:junit-bom:5.12.1 → 5.12.2."/>
+        <c:change date="2025-06-01T00:00:00+00:00" summary="Update com.squareup.okio:okio-jvm:3.11.0 → 3.12.0."/>
+        <c:change date="2025-06-01T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.49.0 → 1.50.0."/>
+        <c:change date="2025-06-01T00:00:00+00:00" summary="Update com.io7m.trasco.version:3.0.0 → 3.1.1."/>
+        <c:change date="2025-06-01T00:00:00+00:00" summary="Update com.io7m.quarrel.version:1.6.1 → 1.8.0."/>
+        <c:change date="2025-07-01T00:00:00+00:00" summary="Update net.byte-buddy.version:1.17.5 → 1.17.6."/>
+        <c:change date="2025-08-01T00:00:00+00:00" summary="Update com.fasterxml.jackson:jackson-bom:2.18.3 → 2.19.2."/>
+        <c:change date="2025-08-01T00:00:00+00:00" summary="Update org.xerial:sqlite-jdbc:3.49.1.0 → 3.50.3.0."/>
         <c:change date="2025-08-15T00:00:00+00:00" summary="Upgrade OCI JRE to 21.0.8_9."/>
         <c:change date="2025-08-15T00:00:00+00:00" summary="Upgrade OCI Alpine to 3.22.1."/>
         <c:change date="2025-08-15T00:00:00+00:00" summary="Add an option to remove unreferenced certificates."/>
+        <c:change date="2025-08-15T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.50.0 → 1.53.0."/>
+        <c:change date="2025-08-15T00:00:00+00:00" summary="Update bouncycastle.version:1.80 → 1.81."/>
+        <c:change date="2025-08-15T00:00:00+00:00" summary="Update com.squareup.okio:okio-jvm:3.12.0 → 3.16.0."/>
+        <c:change date="2025-08-15T00:00:00+00:00" summary="Update jetty.version:11.0.25 → 11.0.26."/>
+        <c:change date="2025-08-15T00:00:00+00:00" summary="Update org.apache.commons:commons-text:1.13.1 → 1.14.0."/>
+        <c:change date="2025-08-15T00:00:00+00:00" summary="Update org.junit:junit-bom:5.12.2 → 5.13.4."/>
+        <c:change date="2025-10-01T00:00:00+00:00" summary="Update logback.version:1.5.18 → 1.5.19."/>
+        <c:change date="2025-10-01T00:00:00+00:00" summary="Update bouncycastle.version:1.81 → 1.82."/>
+        <c:change date="2025-10-01T00:00:00+00:00" summary="Update org.junit:junit-bom:5.13.4 → 5.14.0."/>
+        <c:change date="2025-10-25T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.53.0 → 1.54.1."/>
+        <c:change date="2025-11-01T00:00:00+00:00" summary="Update actions/upload-artifact:4.6.2 → 5.0.0."/>
+        <c:change date="2025-11-01T00:00:00+00:00" summary="Update org.junit:junit-bom:5.14.0 → 5.14.1."/>
+        <c:change date="2025-11-01T00:00:00+00:00" summary="Update com.io7m.dixmont:com.io7m.dixmont.core:2.0.0 → 2.1.0."/>
+        <c:change date="2025-11-01T00:00:00+00:00" summary="Update net.byte-buddy.version:1.17.6 → 1.17.8."/>
+        <c:change date="2025-11-01T00:00:00+00:00" summary="Update jakarta.xml.bind:jakarta.xml.bind-api:4.0.2 → 4.0.4."/>
+        <c:change date="2025-11-22T00:00:00+00:00" summary="Update com.squareup.okio:okio-jvm:3.16.0 → 3.16.2."/>
+        <c:change date="2025-11-22T00:00:00+00:00" summary="Update logback.version:1.5.19 → 1.5.20."/>
+        <c:change date="2025-11-22T00:00:00+00:00" summary="Update com.sun.xml.bind:jaxb-impl:4.0.5 → 4.0.6."/>
+        <c:change date="2025-11-22T00:00:00+00:00" summary="Update com.h2database:h2-mvstore:2.3.232 → 2.4.240."/>
         <c:change compatible="false" date="2025-11-30T00:00:00+00:00" summary="Upgrade to Jackson 3.0.3."/>
+        <c:change date="2025-11-30T00:00:00+00:00" summary="Update io.opentelemetry:opentelemetry-bom:1.55.0 → 1.56.0."/>
+        <c:change date="2025-11-30T00:00:00+00:00" summary="Update org.xerial:sqlite-jdbc:3.50.3.0 → 3.51.0.0."/>
+        <c:change date="2025-12-02T00:00:00+00:00" summary="Update logback.version:1.5.20 → 1.5.21."/>
         <c:change date="2026-05-02T00:00:00+00:00" summary="Replace obsolete Hetzner DNS API with Hetzner Cloud API.">
           <c:tickets>
             <c:ticket id="239"/>
