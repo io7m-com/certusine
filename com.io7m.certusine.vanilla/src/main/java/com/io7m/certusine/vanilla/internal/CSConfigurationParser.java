@@ -43,7 +43,6 @@ import com.io7m.certusine.vanilla.internal.jaxb.Domains;
 import com.io7m.certusine.vanilla.internal.jaxb.FaultInjection;
 import com.io7m.certusine.vanilla.internal.jaxb.Host;
 import com.io7m.certusine.vanilla.internal.jaxb.OpenTelemetry;
-import com.io7m.certusine.vanilla.internal.jaxb.OpenTelemetryProtocol;
 import com.io7m.certusine.vanilla.internal.jaxb.Options;
 import com.io7m.certusine.vanilla.internal.jaxb.Outputs;
 import com.io7m.certusine.vanilla.internal.jaxb.Parameters;
@@ -191,7 +190,7 @@ public final class CSConfigurationParser
       final var schema =
         schemas.newSchema(
           CSConfigurationParser.class.getResource(
-            "/com/io7m/certusine/vanilla/internal/config-1.xsd")
+            "/com/io7m/certusine/vanilla/internal/config-2.xsd")
         );
 
       final var context =
@@ -745,21 +744,21 @@ public final class CSConfigurationParser
       Optional.ofNullable(openTelemetry.getMetrics())
         .map(m -> new CSMetrics(
           URI.create(m.getEndpoint()),
-          processProtocol(m.getProtocol())
+          CSOTLPProtocol.HTTP
         ));
 
     final var traces =
       Optional.ofNullable(openTelemetry.getTraces())
         .map(m -> new CSTraces(
           URI.create(m.getEndpoint()),
-          processProtocol(m.getProtocol())
+          CSOTLPProtocol.HTTP
         ));
 
     final var logs =
       Optional.ofNullable(openTelemetry.getLogs())
         .map(m -> new CSLogs(
           URI.create(m.getEndpoint()),
-          processProtocol(m.getProtocol())
+          CSOTLPProtocol.HTTP
         ));
 
     return Optional.of(
@@ -770,14 +769,5 @@ public final class CSConfigurationParser
         traces
       )
     );
-  }
-
-  private static CSOTLPProtocol processProtocol(
-    final OpenTelemetryProtocol protocol)
-  {
-    return switch (protocol) {
-      case GRPC -> CSOTLPProtocol.GRPC;
-      case HTTP -> CSOTLPProtocol.HTTP;
-    };
   }
 }

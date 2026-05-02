@@ -168,7 +168,7 @@ public final class CSHetznerDNSConfigurator
             .formatted(
               this.apiBase,
               this.zoneId,
-              recordName)
+              recordName.stripDomainSuffix(this.domainName))
         );
 
       LOG.debug(
@@ -184,7 +184,7 @@ public final class CSHetznerDNSConfigurator
           "ttl": 600,
           "records": [
             {
-              "value": %s,
+              "value": "\\"%s\\"",
               "comment": ""
             }
           ]
@@ -197,6 +197,7 @@ public final class CSHetznerDNSConfigurator
         HttpRequest.newBuilder()
           .uri(targetURI)
           .POST(HttpRequest.BodyPublishers.ofString(json, UTF_8))
+          .header("Content-Type", "application/json")
           .header("Authorization", "Bearer " + this.apiKey)
           .build();
 
@@ -224,7 +225,7 @@ public final class CSHetznerDNSConfigurator
        * Everything else is actually an error.
        */
 
-      if (r.statusCode() != 200) {
+      if (r.statusCode() >= 400) {
         throw new IOException(
           this.strings.format("errorDNSCreate", r.statusCode())
         );
@@ -270,7 +271,18 @@ public final class CSHetznerDNSConfigurator
     }
   }
 
-  private List<CSHetznerDNSRecord> listTXTRecords(
+  /**
+   * List TXT records.
+   *
+   * @param telemetry The telemetry service
+   *
+   * @return The TXT records
+   *
+   * @throws IOException          On errors
+   * @throws InterruptedException On interruption
+   */
+
+  public List<CSHetznerDNSRecord> listTXTRecords(
     final CSTelemetryServiceType telemetry)
     throws IOException, InterruptedException
   {
@@ -316,7 +328,8 @@ public final class CSHetznerDNSConfigurator
       span.setAttribute(
         "certusine.hetzner.list_txt.http_response",
         r.statusCode());
-      if (r.statusCode() != 200) {
+
+      if (r.statusCode() >= 400) {
         throw new IOException(
           this.strings.format("errorDNSList", r.statusCode())
         );
@@ -366,15 +379,15 @@ public final class CSHetznerDNSConfigurator
         LOG.debug("POST {}", targetURI);
 
         final var json = """
-        {
-          "records": [
-            {
-              "value": %s,
-              "comment": ""
-            }
-          ]
-        }
-        """.formatted(
+          {
+            "records": [
+              {
+                "value": "\\"%s\\"",
+                "comment": ""
+              }
+            ]
+          }
+          """.formatted(
           recordValue
         );
 
@@ -387,18 +400,25 @@ public final class CSHetznerDNSConfigurator
           HttpRequest.newBuilder()
             .uri(targetURI)
             .POST(HttpRequest.BodyPublishers.ofString(json, UTF_8))
+            .header("Content-Type", "application/json")
             .header("Authorization", "Bearer " + this.apiKey)
             .build();
 
         final var r =
           this.client.send(request, HttpResponse.BodyHandlers.ofString());
 
+        LOG.debug("Response: {}", r.body());
+
         span.setAttribute(
           "certusine.hetzner.delete_txt.http_response",
           r.statusCode()
         );
+        span.setAttribute(
+          "certusine.hetzner.delete_txt.http_response_text",
+          r.body()
+        );
 
-        if (r.statusCode() != 200) {
+        if (r.statusCode() >= 400) {
           throw new IOException(
             this.strings.format("errorDNSDelete", r.statusCode())
           );

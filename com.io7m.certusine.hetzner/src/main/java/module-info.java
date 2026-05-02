@@ -28,6 +28,7 @@ module com.io7m.certusine.hetzner
 
   requires transitive com.io7m.certusine.api;
 
+  requires com.fasterxml.jackson.annotation;
   requires com.io7m.dixmont.core;
   requires com.io7m.jxtrand.vanilla;
   requires io.opentelemetry.api;
@@ -36,13 +37,14 @@ module com.io7m.certusine.hetzner
   requires org.apache.commons.text;
   requires org.slf4j;
   requires tools.jackson.databind;
-  requires com.fasterxml.jackson.annotation;
 
   provides CSDNSConfiguratorProviderType
     with CSHetznerDNSConfigurators;
 
   opens com.io7m.certusine.hetzner.internal
-    to com.io7m.jxtrand.vanilla, tools.jackson.databind;
+    to com.io7m.jxtrand.vanilla,
+    tools.jackson.databind,
+    com.io7m.certusine.tests;
 
   exports com.io7m.certusine.hetzner.internal
     to com.io7m.certusine.tests;

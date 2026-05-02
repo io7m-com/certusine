@@ -269,7 +269,7 @@
         <c:change date="2025-04-17T00:00:00+00:00" summary="Use SOA queries instead of NS queries to find name servers."/>
       </c:changes>
     </c:release>
-    <c:release date="2026-05-02T17:39:05+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="4.0.0">
+    <c:release date="2026-05-02T18:08:10+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="4.0.0">
       <c:changes>
         <c:change date="2025-08-15T00:00:00+00:00" summary="Upgrade OCI JRE to 21.0.8_9."/>
         <c:change date="2025-08-15T00:00:00+00:00" summary="Upgrade OCI Alpine to 3.22.1."/>
@@ -281,7 +281,8 @@
           </c:tickets>
         </c:change>
         <c:change date="2026-05-02T00:00:00+00:00" summary="Upgrade alpine 3.22.1 -&gt; 3.23.4."/>
-        <c:change date="2026-05-02T17:39:05+00:00" summary="Upgrade temurin 21.0.8_9 -&gt; 25.0.3_9."/>
+        <c:change date="2026-05-02T00:00:00+00:00" summary="Upgrade temurin 21.0.8_9 -&gt; 25.0.3_9."/>
+        <c:change compatible="false" date="2026-05-02T18:08:10+00:00" summary="Remove GRPC telemetry option."/>
       </c:changes>
     </c:release>
   </c:releases>

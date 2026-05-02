@@ -131,6 +131,10 @@
       <artifactId>opentelemetry-exporter-otlp</artifactId>
       <exclusions>
         <exclusion>
+          <groupId>io.opentelemetry</groupId>
+          <artifactId>opentelemetry-exporter-sender-okhttp</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>*</artifactId>
         </exclusion>
@@ -141,12 +145,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.squareup.okio</groupId>
-      <artifactId>okio-jvm</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-stdlib</artifactId>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-exporter-sender-jdk</artifactId>
     </dependency>
     <dependency>
       <groupId>io.opentelemetry</groupId>
@@ -182,6 +182,7 @@
             <ignoredUnusedDeclaredDependency>com.sun.xml.bind:jaxb-impl:*</ignoredUnusedDeclaredDependency>
             <ignoredUnusedDeclaredDependency>org.jetbrains.kotlin:kotlin-stdlib:*</ignoredUnusedDeclaredDependency>
             <ignoredUnusedDeclaredDependency>com.squareup.okio:*</ignoredUnusedDeclaredDependency>
+            <ignoredUnusedDeclaredDependency>io.opentelemetry:opentelemetry-exporter-sender-jdk:*</ignoredUnusedDeclaredDependency>
           </ignoredUnusedDeclaredDependencies>
         </configuration>
       </plugin>
@@ -199,7 +200,7 @@
             <configuration>
               <packageName>com.io7m.certusine.vanilla.internal.jaxb</packageName>
               <sources>
-                <source>src/main/resources/com/io7m/certusine/vanilla/internal/config-1.xsd</source>
+                <source>src/main/resources/com/io7m/certusine/vanilla/internal/config-2.xsd</source>
               </sources>
             </configuration>
           </execution>

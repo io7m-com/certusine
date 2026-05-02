@@ -59,12 +59,6 @@ public record CSOpenTelemetryConfiguration(
   public enum CSOTLPProtocol
   {
     /**
-     * gRPC
-     */
-
-    GRPC,
-
-    /**
      * HTTP(s)
      */
 

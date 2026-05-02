@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:c="urn:com.io7m.certusine:configuration:1"
-        targetNamespace="urn:com.io7m.certusine:configuration:1">
+        xmlns:c="urn:com.io7m.certusine:configuration:2"
+        targetNamespace="urn:com.io7m.certusine:configuration:2">
 
   <element name="Options">
     <complexType>
@@ -515,13 +515,6 @@
     </annotation>
 
     <restriction base="string">
-      <enumeration value="GRPC">
-        <annotation>
-          <documentation>
-            The data will be sent using gRPC.
-          </documentation>
-        </annotation>
-      </enumeration>
       <enumeration value="HTTP">
         <annotation>
           <documentation>

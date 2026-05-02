@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Configuration xmlns="urn:com.io7m.certusine:configuration:1">
+<Configuration xmlns="urn:com.io7m.certusine:configuration:2">
 
   <Options DropUnreferencedCertificates="true"
            CertificateStore="store.db"
