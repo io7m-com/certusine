@@ -37,8 +37,8 @@
     <io7m.workID>2b14dfde-81c8-3b9b-a4a7-1848adfbb1de</io7m.workID>
 
     <!-- Configuration -->
-    <io7m.api.previousVersion>4.0.0-beta0004</io7m.api.previousVersion>
-    <io7m.java.targetJavaVersion>21</io7m.java.targetJavaVersion>
+    <io7m.api.previousVersion>4.0.0-SNAPSHOT</io7m.api.previousVersion>
+    <io7m.java.targetJavaVersion>25</io7m.java.targetJavaVersion>
 
     <!-- io7m dependencies. -->
     <com.io7m.anethum.version>1.1.1</com.io7m.anethum.version>
