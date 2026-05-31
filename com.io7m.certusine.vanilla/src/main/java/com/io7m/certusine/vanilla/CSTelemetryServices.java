@@ -113,6 +113,8 @@ public final class CSTelemetryServices
       return CSTelemetryNoOp.noop();
     }
 
+    LOG.warn("OpenTelemetry is deprecated.");
+
     final var resource =
       Resource.getDefault()
         .merge(Resource.create(

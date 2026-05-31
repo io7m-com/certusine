@@ -341,9 +341,14 @@
         </c:change>
       </c:changes>
     </c:release>
-    <c:release date="2026-05-31T17:30:37+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="4.0.0-beta0004">
+    <c:release date="2026-05-31T17:36:08+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="4.0.0-beta0004">
       <c:changes>
-        <c:change date="2026-05-31T17:30:37+00:00" summary="Refactor DNS handling to allow for prompt and reliable certificate signing."/>
+        <c:change date="2026-05-31T00:00:00+00:00" summary="Refactor DNS handling to allow for prompt and reliable certificate signing."/>
+        <c:change date="2026-05-31T17:36:08+00:00" summary="OpenTelemetry is now deprecated.">
+          <c:tickets>
+            <c:ticket id="240"/>
+          </c:tickets>
+        </c:change>
       </c:changes>
     </c:release>
   </c:releases>
