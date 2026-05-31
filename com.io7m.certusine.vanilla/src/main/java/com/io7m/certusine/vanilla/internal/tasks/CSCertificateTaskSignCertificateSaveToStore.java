@@ -21,8 +21,6 @@ import com.io7m.certusine.certstore.api.CSCertificateStored;
 import com.io7m.certusine.vanilla.internal.CSCertificateIO;
 import com.io7m.certusine.vanilla.internal.events.CSEventCertificateStoreFailed;
 import com.io7m.certusine.vanilla.internal.events.CSEventCertificateStored;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
 import org.shredzone.acme4j.Certificate;
 import org.shredzone.acme4j.Order;
 import org.slf4j.Logger;

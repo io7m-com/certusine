@@ -19,8 +19,6 @@ package com.io7m.certusine.vanilla.internal.tasks;
 import com.io7m.certusine.api.CSCertificateOutputData;
 import com.io7m.certusine.vanilla.internal.events.CSEventCertificateStoreFailed;
 import com.io7m.certusine.vanilla.internal.events.CSEventCertificateStored;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
 import com.io7m.jdeferthrow.core.ExceptionTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

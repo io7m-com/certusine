@@ -34,13 +34,15 @@ import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskAuthorizeDNSIn
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskContext;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskException;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskSignCertificateInitial;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskCompleted;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.shredzone.acme4j.Account;
 import org.shredzone.acme4j.Authorization;
 import org.shredzone.acme4j.Identifier;
 import org.shredzone.acme4j.Order;
+import org.shredzone.acme4j.OrderBuilder;
 import org.shredzone.acme4j.Status;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
 
@@ -60,10 +62,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
 
-import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
-import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskFailedButCanBeRetried;
+
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskFailedPermanently;
 import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.shredzone.acme4j.Identifier.TYPE_DNS;
 
 public final class CSCertificateTaskAuthorizeDNSInitialTest
@@ -84,6 +88,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
   private CSFakeCertificateStore certificates;
   private CSFakeClock clock;
   private CSCertificateStoreServiceType certificateStores;
+  private Account acmeAccount;
 
   private static KeyPair generateKeyPair()
     throws Exception
@@ -134,6 +139,8 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
     Mockito.when(this.certificateStores.store())
       .thenReturn(this.certificates);
 
+    this.acmeAccount =
+      Mockito.mock(Account.class);
     this.account =
       new CSAccount(this.accountKeyPair, URI.create("http://localhost:20000"));
     this.certificate0 =
@@ -148,6 +155,15 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
       Mockito.mock(Authorization.class);
     this.challenge0 =
       Mockito.mock(Dns01Challenge.class);
+
+    final var orderBuilder =
+      Mockito.mock(OrderBuilder.class);
+    Mockito.when(this.acmeAccount.newOrder())
+      .thenReturn(orderBuilder);
+    Mockito.when(orderBuilder.domains(anyList()))
+      .thenReturn(orderBuilder);
+    Mockito.when(orderBuilder.create())
+      .thenReturn(this.order);
 
     final var expires =
       Instant.now(Clock.systemUTC()).plus(Duration.ofHours(1L));
@@ -191,6 +207,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
         this.options,
         this.certificateStores,
         this.clock,
+        this.acmeAccount,
         domain,
         this.certificate0,
         3,
@@ -201,7 +218,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
       .thenReturn(Status.READY);
 
     final var task =
-      new CSCertificateTaskAuthorizeDNSInitial(context, this.order);
+      new CSCertificateTaskAuthorizeDNSInitial(context);
 
     this.clock.times.add(
       OffsetDateTime.parse("2000-01-01T00:00:00+00:00")
@@ -251,6 +268,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
         this.options,
         this.certificateStores,
         this.clock,
+        this.acmeAccount,
         domain,
         this.certificate0,
         3,
@@ -261,7 +279,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
       .thenReturn(Status.VALID);
 
     final var task =
-      new CSCertificateTaskAuthorizeDNSInitial(context, this.order);
+      new CSCertificateTaskAuthorizeDNSInitial(context);
 
     final var status = (CSCertificateTaskCompleted) task.execute();
     assertEquals(OptionalLong.empty(), status.delayRequired());
@@ -304,6 +322,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
         this.options,
         this.certificateStores,
         this.clock,
+        this.acmeAccount,
         domain,
         this.certificate0,
         3,
@@ -314,7 +333,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
       .thenReturn(Status.READY);
 
     final var task =
-      new CSCertificateTaskAuthorizeDNSInitial(context, this.order);
+      new CSCertificateTaskAuthorizeDNSInitial(context);
 
     {
       final var status =
@@ -385,6 +404,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
         this.options,
         this.certificateStores,
         this.clock,
+        this.acmeAccount,
         domain,
         this.certificate0,
         3,
@@ -397,7 +417,7 @@ public final class CSCertificateTaskAuthorizeDNSInitialTest
       .thenReturn(Status.READY);
 
     final var task =
-      new CSCertificateTaskAuthorizeDNSInitial(context, this.order);
+      new CSCertificateTaskAuthorizeDNSInitial(context);
 
     {
       final var status =

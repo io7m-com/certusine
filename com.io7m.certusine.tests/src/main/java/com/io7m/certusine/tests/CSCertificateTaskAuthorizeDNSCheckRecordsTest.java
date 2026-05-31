@@ -28,16 +28,16 @@ import com.io7m.certusine.vanilla.internal.CSStrings;
 import com.io7m.certusine.vanilla.internal.dns.CSDNSTXTRecord;
 import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
 import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreServiceType;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTask;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskAuthorizeDNSCheckRecords;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskAuthorizeDNSTriggerChallenges;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskContext;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskInProgress;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskCompleted;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskInProgress;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.shredzone.acme4j.Account;
 import org.shredzone.acme4j.Order;
+import org.shredzone.acme4j.OrderBuilder;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -54,6 +54,7 @@ import java.util.OptionalLong;
 
 import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyList;
 
 public final class CSCertificateTaskAuthorizeDNSCheckRecordsTest
 {
@@ -73,6 +74,7 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecordsTest
   private CSFakeCertificateStore certificates;
   private CSFakeClock clock;
   private CSCertificateStoreServiceType certificateStores;
+  private Account acmeAccount;
 
   private static KeyPair generateKeyPair()
     throws Exception
@@ -124,6 +126,8 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecordsTest
     Mockito.when(this.certificateStores.store())
       .thenReturn(this.certificates);
 
+    this.acmeAccount =
+      Mockito.mock(Account.class);
     this.account =
       new CSAccount(this.accountKeyPair, URI.create("http://localhost:20000"));
     this.certificate0 =
@@ -134,6 +138,16 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecordsTest
 
     this.order =
       Mockito.mock(Order.class);
+
+    final var orderBuilder =
+      Mockito.mock(OrderBuilder.class);
+    Mockito.when(this.acmeAccount.newOrder())
+      .thenReturn(orderBuilder);
+    Mockito.when(orderBuilder.domains(anyList()))
+      .thenReturn(orderBuilder);
+    Mockito.when(orderBuilder.create())
+      .thenReturn(this.order);
+
     this.dnsQuery =
       new CSFakeDNSQueries();
     this.dnsQueryFactory =
@@ -167,6 +181,7 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecordsTest
         this.options,
         this.certificateStores,
         this.clock,
+        this.acmeAccount,
         domain,
         this.certificate0,
         3,
@@ -185,16 +200,11 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecordsTest
     final var task =
       new CSCertificateTaskAuthorizeDNSCheckRecords(
         context,
-        this.order,
         Map.of("_acme-challenge.example.com", "YW1vbmdzdCB0aGUgbGVhdmVzCg==")
       );
 
     final var status = (CSCertificateTaskCompleted) task.execute();
     assertEquals(OptionalLong.empty(), status.delayRequired());
-    assertEquals(
-      CSCertificateTaskAuthorizeDNSTriggerChallenges.class,
-      status.next().map(CSCertificateTask::getClass).orElseThrow()
-    );
 
     final var dnsRequests = this.dns.requests();
     assertEquals(0, dnsRequests.size());
@@ -228,6 +238,7 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecordsTest
         this.options,
         this.certificateStores,
         this.clock,
+        this.acmeAccount,
         domain,
         this.certificate0,
         3,
@@ -237,7 +248,6 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecordsTest
     final var task =
       new CSCertificateTaskAuthorizeDNSCheckRecords(
         context,
-        this.order,
         Map.of("_acme-challenge.example.com", "YW1vbmdzdCB0aGUgbGVhdmVzCg==")
       );
 

@@ -19,10 +19,6 @@ package com.io7m.certusine.vanilla.internal.tasks;
 
 import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameAbsolute;
 import com.io7m.certusine.api.CSFaultInjectionConfiguration;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskInProgress;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import org.slf4j.MDC;
@@ -139,6 +135,10 @@ public abstract class CSCertificateTask
           yield this.onCompletelyFailed(span, result);
         }
         case final CSCertificateTaskInProgress ignored0 -> {
+          ++this.retryAttempts;
+          yield result;
+        }
+        case final CSCertificateTaskFailedAndRestart ignored0 -> {
           ++this.retryAttempts;
           yield result;
         }
