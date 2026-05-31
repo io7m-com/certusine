@@ -11,7 +11,7 @@
 
   <groupId>com.io7m.certusine</groupId>
   <artifactId>com.io7m.certusine</artifactId>
-  <version>4.0.0-beta0001</version>
+  <version>4.0.0-beta0002</version>
 
   <packaging>pom</packaging>
   <name>com.io7m.certusine</name>
@@ -37,27 +37,27 @@
     <io7m.workID>2b14dfde-81c8-3b9b-a4a7-1848adfbb1de</io7m.workID>
 
     <!-- Configuration -->
-    <io7m.api.previousVersion>3.2.0</io7m.api.previousVersion>
+    <io7m.api.previousVersion>4.0.0-beta0002</io7m.api.previousVersion>
     <io7m.java.targetJavaVersion>21</io7m.java.targetJavaVersion>
 
     <!-- io7m dependencies. -->
     <com.io7m.anethum.version>1.1.1</com.io7m.anethum.version>
     <com.io7m.jsx.version>3.0.1</com.io7m.jsx.version>
     <com.io7m.looseleaf.version>4.0.0</com.io7m.looseleaf.version>
-    <com.io7m.quarrel.version>1.8.0</com.io7m.quarrel.version>
-    <com.io7m.xstructural.version>2.0.1</com.io7m.xstructural.version>
+    <com.io7m.quarrel.version>1.8.1</com.io7m.quarrel.version>
     <com.io7m.trasco.version>3.1.1</com.io7m.trasco.version>
+    <com.io7m.xstructural.version>2.0.1</com.io7m.xstructural.version>
 
     <!-- Third-party dependencies. -->
     <acme4j.utils.version>2.16</acme4j.utils.version>
     <acme4j.version>3.5.1</acme4j.version>
-    <bouncycastle.version>1.82</bouncycastle.version>
-    <jackson.version>3.0.3</jackson.version>
+    <bouncycastle.version>1.84</bouncycastle.version>
+    <jackson.version>3.1.4</jackson.version>
     <jetty.version>11.0.26</jetty.version>
-    <logback.version>1.5.21</logback.version>
+    <logback.version>1.5.33</logback.version>
     <net.byte-buddy.version>1.17.8</net.byte-buddy.version>
-    <opentelemetry.version>1.61.0</opentelemetry.version>
-    <org.junit.version>5.14.1</org.junit.version>
+    <opentelemetry.version>1.62.0</opentelemetry.version>
+    <org.junit.version>6.1.0</org.junit.version>
 
     <!-- https://hub.docker.com/_/alpine/ -->
     <com.io7m.oci.versionAlpine>3.23.4</com.io7m.oci.versionAlpine>
@@ -279,12 +279,12 @@
       <dependency>
         <groupId>com.io7m.dixmont</groupId>
         <artifactId>com.io7m.dixmont.core</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
       </dependency>
       <dependency>
         <groupId>dnsjava</groupId>
         <artifactId>dnsjava</artifactId>
-        <version>3.6.3</version>
+        <version>3.6.5</version>
       </dependency>
       <dependency>
         <groupId>com.h2database</groupId>
@@ -339,14 +339,14 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-text</artifactId>
-        <version>1.14.0</version>
+        <version>1.15.0</version>
       </dependency>
 
       <!-- Internal datastore -->
       <dependency>
         <groupId>org.xerial</groupId>
         <artifactId>sqlite-jdbc</artifactId>
-        <version>3.51.0.0</version>
+        <version>3.53.1.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.trasco</groupId>
