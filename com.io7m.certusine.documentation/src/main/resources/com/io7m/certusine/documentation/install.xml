@@ -111,7 +111,7 @@ certusine: usage: certusine [command] [arguments ...]
     </Subsection>
   </Subsection>
 
-  <Subsection title="Migrating From 2.*.*" id="6098843e-0c21-4d0b-bf88-9425c344c0a2">
+  <Subsection title="Migrating From 2.*.* -> 3.*.*" id="6098843e-0c21-4d0b-bf88-9425c344c0a2">
     <Subsection title="SQLite Store">
       <Paragraph>
         Versions of the <Term type="package">certusine</Term> package prior to <Term type="constant">3.0.0</Term>
@@ -126,6 +126,19 @@ certusine: usage: certusine [command] [arguments ...]
         <Term type="constant">2.*.*</Term>, or specify a new file name for the store in the
         configuration file. Certificates will be automatically recreated and placed into the new store
         on application startup.
+      </Paragraph>
+    </Subsection>
+  </Subsection>
+
+  <Subsection title="Migrating From 3.*.* -> 4.*.*" id="6340e63c-442a-4e72-b95a-a1ddeccb909b">
+    <Subsection title="Configuration Format">
+      <Paragraph>
+        The configuration file schema changed from
+        <Term type="constant">urn:com.io7m.certusine:configuration:1</Term>
+        to
+        <Term type="constant">urn:com.io7m.certusine:configuration:2</Term> to support
+        the new
+        <Term type="constant">DropUnreferencedCertificates</Term> feature.
       </Paragraph>
     </Subsection>
   </Subsection>
