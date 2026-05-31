@@ -58,6 +58,7 @@ import java.util.Optional;
 import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
 import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.shredzone.acme4j.Identifier.TYPE_DNS;
 
 public final class CSCertificateTaskAuthorizeDNSUpdateChallengesTest
@@ -192,7 +193,7 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallengesTest
         this.clock,
         domain,
         this.certificate0,
-        3,
+        10,
         new CSDNSQueriesFactoryDJ()
       );
 
@@ -205,7 +206,8 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallengesTest
       new CSCertificateTaskAuthorizeDNSUpdateChallenges(context, this.order);
 
     for (int index = 0; index < 5; ++index) {
-      final var status = (CSCertificateTaskInProgress) task.execute();
+      final var status = task.execute();
+      assertInstanceOf(CSCertificateTaskInProgress.class, status);
     }
 
     for (int index = 0; index < this.authorizations.length; ++index) {
@@ -213,7 +215,8 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallengesTest
         .thenReturn(Status.VALID);
     }
 
-    final var status = (CSCertificateTaskCompleted) task.execute();
+    final var lastStatus = task.execute();
+    assertInstanceOf(CSCertificateTaskCompleted.class, lastStatus);
 
     final var dnsRequests = this.dns.requests();
     assertEquals(0, dnsRequests.size());
@@ -248,7 +251,7 @@ public final class CSCertificateTaskAuthorizeDNSUpdateChallengesTest
         this.clock,
         domain,
         this.certificate0,
-        3,
+        10,
         new CSDNSQueriesFactoryDJ()
       );
 

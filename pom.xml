@@ -11,7 +11,7 @@
 
   <groupId>com.io7m.certusine</groupId>
   <artifactId>com.io7m.certusine</artifactId>
-  <version>4.0.0-beta0002</version>
+  <version>4.0.0-beta0003</version>
 
   <packaging>pom</packaging>
   <name>com.io7m.certusine</name>
@@ -37,7 +37,7 @@
     <io7m.workID>2b14dfde-81c8-3b9b-a4a7-1848adfbb1de</io7m.workID>
 
     <!-- Configuration -->
-    <io7m.api.previousVersion>4.0.0-beta0002</io7m.api.previousVersion>
+    <io7m.api.previousVersion>4.0.0-beta0003</io7m.api.previousVersion>
     <io7m.java.targetJavaVersion>21</io7m.java.targetJavaVersion>
 
     <!-- io7m dependencies. -->
