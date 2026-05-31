@@ -332,9 +332,9 @@
         <c:change date="2026-05-31T00:00:00+00:00" summary="Upgrade sqlite-jdbc 3.51.0.0 -&gt; 3.53.1.0."/>
       </c:changes>
     </c:release>
-    <c:release date="2026-05-31T11:33:07+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="4.0.0">
+    <c:release date="2026-05-31T11:42:31+00:00" is-open="true" ticket-system="com.github.io7m.certusine" version="4.0.0-beta0003">
       <c:changes>
-        <c:change date="2026-05-31T11:33:07+00:00" summary="Fail challenges that are PENDING for too long.">
+        <c:change date="2026-05-31T00:00:00+00:00" summary="Fail challenges that are PENDING for too long.">
           <c:tickets>
             <c:ticket id="193"/>
           </c:tickets>
