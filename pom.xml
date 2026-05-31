@@ -57,7 +57,7 @@
     <logback.version>1.5.33</logback.version>
     <net.byte-buddy.version>1.17.8</net.byte-buddy.version>
     <opentelemetry.version>1.61.0</opentelemetry.version>
-    <org.junit.version>5.14.1</org.junit.version>
+    <org.junit.version>6.1.0</org.junit.version>
 
     <!-- https://hub.docker.com/_/alpine/ -->
     <com.io7m.oci.versionAlpine>3.23.4</com.io7m.oci.versionAlpine>
