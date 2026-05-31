@@ -45,8 +45,8 @@
     <com.io7m.jsx.version>3.0.1</com.io7m.jsx.version>
     <com.io7m.looseleaf.version>4.0.0</com.io7m.looseleaf.version>
     <com.io7m.quarrel.version>1.8.0</com.io7m.quarrel.version>
-    <com.io7m.xstructural.version>2.0.1</com.io7m.xstructural.version>
     <com.io7m.trasco.version>3.1.1</com.io7m.trasco.version>
+    <com.io7m.xstructural.version>2.0.1</com.io7m.xstructural.version>
 
     <!-- Third-party dependencies. -->
     <acme4j.utils.version>2.16</acme4j.utils.version>
@@ -279,7 +279,7 @@
       <dependency>
         <groupId>com.io7m.dixmont</groupId>
         <artifactId>com.io7m.dixmont.core</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
       </dependency>
       <dependency>
         <groupId>dnsjava</groupId>
