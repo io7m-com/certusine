@@ -19,7 +19,10 @@ package com.io7m.certusine.vanilla.internal.tasks;
 
 import com.io7m.certusine.api.CSDNSRecordNameType.CSDNSRecordNameAbsolute;
 import com.io7m.certusine.api.CSFaultInjectionConfiguration;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskInProgress;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import org.slf4j.MDC;
@@ -122,15 +125,24 @@ public abstract class CSCertificateTask
       }
 
       final var result = this.executeActual();
-      if (result.isFailure()) {
-        if (result instanceof CSCertificateTaskFailedPermanently) {
-          return this.onCompletelyFailed(span, result);
+      return switch (result) {
+        case final CSCertificateTaskCompleted ignored0 -> {
+          span.setStatus(StatusCode.OK);
+          yield result;
         }
-        ++this.retryAttempts;
-      } else {
-        span.setStatus(StatusCode.OK);
-      }
-      return result;
+        case final CSCertificateTaskFailedButCanBeRetried ignored0 -> {
+          ++this.retryAttempts;
+          yield result;
+        }
+        case final CSCertificateTaskFailedPermanently ignored0 -> {
+          ++this.retryAttempts;
+          yield this.onCompletelyFailed(span, result);
+        }
+        case final CSCertificateTaskInProgress ignored0 -> {
+          ++this.retryAttempts;
+          yield result;
+        }
+      };
     } catch (final Exception e) {
       recordExceptionAndSetError(e);
       return this.context.failedPermanently(e);

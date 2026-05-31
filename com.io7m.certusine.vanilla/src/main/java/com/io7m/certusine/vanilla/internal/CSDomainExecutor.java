@@ -208,19 +208,24 @@ public final class CSDomainExecutor
 
       delayRequired = accumulateDelayRequired(delayRequired, status);
 
-      if (status instanceof final CSCertificateTaskCompleted completed) {
-        completed.next().ifPresent(tasksNext::add);
-        taskOk.add(1L);
-        taskExec.add(1L);
-      } else if (status instanceof CSCertificateTaskInProgress) {
-        tasksNext.add(task);
-      } else if (status instanceof CSCertificateTaskFailedPermanently) {
-        taskFailed.add(1L);
-        taskExec.add(1L);
-      } else if (status instanceof CSCertificateTaskFailedButCanBeRetried) {
-        taskRetry.add(1L);
-        taskExec.add(1L);
-        tasksNext.add(task);
+      switch (status) {
+        case final CSCertificateTaskCompleted completed -> {
+          completed.next().ifPresent(tasksNext::add);
+          taskOk.add(1L);
+          taskExec.add(1L);
+        }
+        case final CSCertificateTaskInProgress ignored -> {
+          tasksNext.add(task);
+        }
+        case final CSCertificateTaskFailedPermanently ignored -> {
+          taskFailed.add(1L);
+          taskExec.add(1L);
+        }
+        case final CSCertificateTaskFailedButCanBeRetried ignored -> {
+          taskRetry.add(1L);
+          taskExec.add(1L);
+          tasksNext.add(task);
+        }
       }
     }
 
