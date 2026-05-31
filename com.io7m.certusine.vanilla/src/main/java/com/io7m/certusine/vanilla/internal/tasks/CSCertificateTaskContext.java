@@ -26,8 +26,12 @@ import com.io7m.certusine.vanilla.internal.dns.CSDNSQueriesFactoryType;
 import com.io7m.certusine.vanilla.internal.dns.CSDNSTXTRecord;
 import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
 import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreServiceType;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
+import org.shredzone.acme4j.Account;
+import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.Problem;
+import org.shredzone.acme4j.exception.AcmeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Clock;
 import java.time.OffsetDateTime;
@@ -41,6 +45,9 @@ import java.util.Objects;
 
 public final class CSCertificateTaskContext
 {
+  private static final Logger LOG =
+    LoggerFactory.getLogger(CSCertificateTaskContext.class);
+
   private final CSStrings strings;
   private final CSEventServiceType events;
   private final CSTelemetryServiceType telemetry;
@@ -52,7 +59,9 @@ public final class CSCertificateTaskContext
   private final int retryAttemptsMax;
   private final ArrayList<CSDNSTXTRecord> dnsRecords;
   private final CSDNSQueriesFactoryType dnsQueries;
+  private final Account account;
   private boolean failed;
+  private Order order;
 
   /**
    * The execution context for a task.
@@ -62,6 +71,7 @@ public final class CSCertificateTaskContext
    * @param inTelemetry         The telemetry service
    * @param inClock             The clock
    * @param inCertificateStores The certificate stores
+   * @param inAccount           The account
    * @param inOptions           The options
    * @param inDomain            The domain
    * @param inCertificate       The certificate
@@ -76,6 +86,7 @@ public final class CSCertificateTaskContext
     final CSOptions inOptions,
     final CSCertificateStoreServiceType inCertificateStores,
     final Clock inClock,
+    final Account inAccount,
     final CSDomain inDomain,
     final CSCertificate inCertificate,
     final int inRetryAttemptsMax,
@@ -93,6 +104,8 @@ public final class CSCertificateTaskContext
       Objects.requireNonNull(inCertificateStores, "inCertificateStores");
     this.clock =
       Objects.requireNonNull(inClock, "inClock");
+    this.account =
+      Objects.requireNonNull(inAccount, "Account");
     this.domain =
       Objects.requireNonNull(inDomain, "inDomain");
     this.certificate =
@@ -290,5 +303,45 @@ public final class CSCertificateTaskContext
   {
     this.failed = true;
     return new CSCertificateTaskFailedPermanently(exception);
+  }
+
+  /**
+   * Create or get an order for this domain and certificate.
+   *
+   * @return The order
+   *
+   * @throws AcmeException On errors
+   */
+
+  public Order createOrGetOrder()
+    throws AcmeException
+  {
+    if (this.order == null) {
+      final var fullyQualifiedDomainNames =
+        this.certificate.fullyQualifiedHostNames(this.domain());
+
+      LOG.debug(
+        "Creating a fresh certificate order for {}",
+        fullyQualifiedDomainNames
+      );
+
+      final var orderBuilder =
+        this.account.newOrder();
+
+      this.order =
+        orderBuilder.domains(fullyQualifiedDomainNames)
+          .create();
+    }
+    return this.order;
+  }
+
+  /**
+   * Destroy the current order.
+   */
+
+  public void destroyOrder()
+  {
+    LOG.debug("Discarding certificate order.");
+    this.order = null;
   }
 }

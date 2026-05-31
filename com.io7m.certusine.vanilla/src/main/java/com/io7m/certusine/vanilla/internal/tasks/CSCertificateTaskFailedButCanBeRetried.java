@@ -1,5 +1,5 @@
 /*
- * Copyright © 2022 Mark Raynsford <code@io7m.com> https://www.io7m.com
+ * Copyright © 2026 Mark Raynsford <code@io7m.com> https://www.io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,32 +14,39 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
 package com.io7m.certusine.vanilla.internal.tasks;
 
+import java.util.Objects;
 import java.util.OptionalLong;
 
 /**
- * The status of a task execution.
+ * The task failed, but might succeed if it is retried.
+ *
+ * @param delayRequired The delay required before retrying
+ * @param exception     The exception raised
  */
 
-public sealed interface CSCertificateTaskStatusType
-  permits CSCertificateTaskCompleted,
-  CSCertificateTaskFailedAndRestart,
-  CSCertificateTaskFailedButCanBeRetried,
-  CSCertificateTaskFailedPermanently,
-  CSCertificateTaskInProgress
+public record CSCertificateTaskFailedButCanBeRetried(
+  OptionalLong delayRequired,
+  Exception exception)
+  implements CSCertificateTaskStatusType
 {
   /**
-   * @return The status is a failure
+   * The task failed, but might succeed if it is retried.
+   *
+   * @param delayRequired The delay required before retrying
+   * @param exception     The exception raised
    */
 
-  boolean isFailure();
+  public CSCertificateTaskFailedButCanBeRetried
+  {
+    Objects.requireNonNull(delayRequired, "delayRequired");
+    Objects.requireNonNull(exception, "exception");
+  }
 
-  /**
-   * @return The delay required until the next time this task is retried, or the
-   * next task is executed
-   */
-
-  OptionalLong delayRequired();
+  @Override
+  public boolean isFailure()
+  {
+    return true;
+  }
 }

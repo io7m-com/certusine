@@ -33,12 +33,14 @@ import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskContext;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskSignCertificateInitial;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskSignCertificateSaveToOutputs;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskSignCertificateUpdate;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskCompleted;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskFailedPermanently;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.shredzone.acme4j.Account;
 import org.shredzone.acme4j.Order;
+import org.shredzone.acme4j.OrderBuilder;
 import org.shredzone.acme4j.exception.AcmeException;
 
 import java.net.URI;
@@ -57,6 +59,8 @@ import java.util.OptionalLong;
 
 import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 
 public final class CSCertificateTaskSignCertificateInitialTest
 {
@@ -76,6 +80,7 @@ public final class CSCertificateTaskSignCertificateInitialTest
   private CSFakeCertificateStore certificates;
   private CSFakeClock clock;
   private CSCertificateStoreServiceType certificateStores;
+  private Account acmeAccount;
 
   private static KeyPair generateKeyPair()
     throws Exception
@@ -134,8 +139,20 @@ public final class CSCertificateTaskSignCertificateInitialTest
         this.domainKeyPair,
         List.of("www"));
 
+    this.acmeAccount =
+      Mockito.mock(Account.class);
     this.order =
       Mockito.mock(Order.class);
+
+    final var orderBuilder =
+      Mockito.mock(OrderBuilder.class);
+    Mockito.when(this.acmeAccount.newOrder())
+      .thenReturn(orderBuilder);
+    Mockito.when(orderBuilder.domains(anyList()))
+      .thenReturn(orderBuilder);
+    Mockito.when(orderBuilder.create())
+      .thenReturn(this.order);
+
     this.dnsQuery =
       new CSFakeDNSQueries();
     this.dnsQueryFactory =
@@ -170,6 +187,7 @@ public final class CSCertificateTaskSignCertificateInitialTest
         this.options,
         this.certificateStores,
         this.clock,
+        this.acmeAccount,
         domain,
         this.certificate0,
         3,
@@ -200,7 +218,7 @@ public final class CSCertificateTaskSignCertificateInitialTest
     );
 
     final var task =
-      new CSCertificateTaskSignCertificateInitial(context, this.order);
+      new CSCertificateTaskSignCertificateInitial(context);
 
     final var status = (CSCertificateTaskCompleted) task.execute();
     assertEquals(OptionalLong.empty(), status.delayRequired());
@@ -240,6 +258,7 @@ public final class CSCertificateTaskSignCertificateInitialTest
         this.options,
         this.certificateStores,
         this.clock,
+        this.acmeAccount,
         domain,
         this.certificate0,
         3,
@@ -255,7 +274,7 @@ public final class CSCertificateTaskSignCertificateInitialTest
     );
 
     final var task =
-      new CSCertificateTaskSignCertificateInitial(context, this.order);
+      new CSCertificateTaskSignCertificateInitial(context);
 
     final var status = (CSCertificateTaskCompleted) task.execute();
     assertEquals(OptionalLong.of(5_000L), status.delayRequired());
@@ -295,6 +314,7 @@ public final class CSCertificateTaskSignCertificateInitialTest
         this.options,
         this.certificateStores,
         this.clock,
+        this.acmeAccount,
         domain,
         this.certificate0,
         3,
@@ -325,7 +345,7 @@ public final class CSCertificateTaskSignCertificateInitialTest
     );
 
     final var task =
-      new CSCertificateTaskSignCertificateInitial(context, this.order);
+      new CSCertificateTaskSignCertificateInitial(context);
 
     final var status = (CSCertificateTaskCompleted) task.execute();
     assertEquals(OptionalLong.of(5_000L), status.delayRequired());
@@ -365,6 +385,7 @@ public final class CSCertificateTaskSignCertificateInitialTest
         this.options,
         this.certificateStores,
         this.clock,
+        this.acmeAccount,
         domain,
         this.certificate0,
         3,
@@ -381,10 +402,10 @@ public final class CSCertificateTaskSignCertificateInitialTest
 
     Mockito.doThrow(new AcmeException())
       .when(this.order)
-      .execute((byte[]) Mockito.any());
+      .execute((byte[]) any());
 
     final var task =
-      new CSCertificateTaskSignCertificateInitial(context, this.order);
+      new CSCertificateTaskSignCertificateInitial(context);
 
     final var status = (CSCertificateTaskFailedPermanently) task.execute();
 

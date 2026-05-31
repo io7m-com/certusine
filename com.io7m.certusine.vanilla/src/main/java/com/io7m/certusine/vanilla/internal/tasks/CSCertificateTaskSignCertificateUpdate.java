@@ -16,7 +16,6 @@
 
 package com.io7m.certusine.vanilla.internal.tasks;
 
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskInProgress;
 import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
@@ -27,8 +26,6 @@ import java.util.Optional;
 import java.util.OptionalLong;
 
 import static com.io7m.certusine.api.CSTelemetryServiceType.recordExceptionAndSetError;
-import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
-import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
 import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_PAUSE_TIME;
 import static org.shredzone.acme4j.Status.VALID;
 

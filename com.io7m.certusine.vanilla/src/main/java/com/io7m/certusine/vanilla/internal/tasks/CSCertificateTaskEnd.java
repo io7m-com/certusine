@@ -16,8 +16,6 @@
 
 package com.io7m.certusine.vanilla.internal.tasks;
 
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
-
 import java.util.Optional;
 import java.util.OptionalLong;
 
