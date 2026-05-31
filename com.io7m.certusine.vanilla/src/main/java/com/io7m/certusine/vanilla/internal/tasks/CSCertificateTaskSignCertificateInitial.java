@@ -22,7 +22,6 @@ import com.io7m.certusine.api.CSDomain;
 import com.io7m.certusine.api.CSFaultInjectionConfiguration;
 import com.io7m.certusine.certstore.api.CSCertificateStoreType;
 import io.opentelemetry.api.trace.Span;
-import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.shredzone.acme4j.util.CSRBuilder;
 import org.slf4j.Logger;
@@ -31,12 +30,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalLong;
 
 import static com.io7m.certusine.api.CSTelemetryServiceType.recordExceptionAndSetError;
-import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
 import static com.io7m.certusine.vanilla.internal.tasks.CSDurations.ACME_UPDATE_PAUSE_TIME;
 
 /**
@@ -49,21 +46,16 @@ public final class CSCertificateTaskSignCertificateInitial
   private static final Logger LOG =
     LoggerFactory.getLogger(CSCertificateTaskSignCertificateInitial.class);
 
-  private final Order order;
-
   /**
    * A task that begins certificate signing.
    *
    * @param inContext The task execution context
-   * @param inOrder   The certificate order
    */
 
   public CSCertificateTaskSignCertificateInitial(
-    final CSCertificateTaskContext inContext,
-    final Order inOrder)
+    final CSCertificateTaskContext inContext)
   {
     super("SignCertificateInitial", inContext);
-    this.order = Objects.requireNonNull(inOrder, "order");
   }
 
   /**
@@ -103,7 +95,7 @@ public final class CSCertificateTaskSignCertificateInitial
   @Override
   CSCertificateTaskStatusType executeActual()
   {
-    LOG.info("checking if certificates require reissuing");
+    LOG.info("Checking if certificates require reissuing");
 
     final var context =
       this.context();
@@ -116,6 +108,8 @@ public final class CSCertificateTaskSignCertificateInitial
         .store();
 
     try {
+      final var order =
+        this.context().createOrGetOrder();
 
       /*
        * Do any required fault injection.
@@ -138,17 +132,17 @@ public final class CSCertificateTaskSignCertificateInitial
        */
 
       if (certificateExpiresSoon(domain, certificate, context, store)) {
-        LOG.info("certificates require reissuing, sending a signing request...");
+        LOG.info("Certificates require reissuing, sending a signing request...");
 
         final var csrb = new CSRBuilder();
         csrb.addDomains(certificate.fullyQualifiedHostNames(domain));
         csrb.sign(certificate.keyPair());
-        this.order.execute(csrb.getEncoded());
+        order.execute(csrb.getEncoded());
 
         return new CSCertificateTaskCompleted(
           ACME_UPDATE_PAUSE_TIME,
           Optional.of(
-            new CSCertificateTaskSignCertificateUpdate(context, this.order))
+            new CSCertificateTaskSignCertificateUpdate(context, order))
         );
       }
 
@@ -156,7 +150,7 @@ public final class CSCertificateTaskSignCertificateInitial
        * There appears to be no reason to renew the certificate yet.
        */
 
-      LOG.info("certificates do not require reissuing");
+      LOG.info("Certificates do not require reissuing");
       return new CSCertificateTaskCompleted(
         OptionalLong.empty(),
         Optional.of(
@@ -164,7 +158,7 @@ public final class CSCertificateTaskSignCertificateInitial
       );
     } catch (final IOException | AcmeException e) {
       recordExceptionAndSetError(e);
-      LOG.error("failed to submit a signing request: {}", e.getMessage());
+      LOG.error("Failed to submit a signing request: {}", e.getMessage());
       return context.failedPermanently(e);
     }
   }

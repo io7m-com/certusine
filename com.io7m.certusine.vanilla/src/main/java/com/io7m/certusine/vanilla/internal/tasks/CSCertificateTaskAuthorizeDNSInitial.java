@@ -17,13 +17,12 @@
 package com.io7m.certusine.vanilla.internal.tasks;
 
 import com.io7m.certusine.api.CSFaultInjectionConfiguration;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
 import io.opentelemetry.api.trace.Span;
 import org.shredzone.acme4j.Authorization;
 import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.Status;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
+import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +31,6 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalLong;
 
@@ -50,22 +48,17 @@ public final class CSCertificateTaskAuthorizeDNSInitial
   private static final Logger LOG =
     LoggerFactory.getLogger(CSCertificateTaskAuthorizeDNSInitial.class);
 
-  private final Order order;
-
   /**
    * The initial task that searches for a DNS challenge, and creates DNS records
    * in response.
    *
    * @param inContext The task context
-   * @param inOrder   The ACME order
    */
 
   public CSCertificateTaskAuthorizeDNSInitial(
-    final CSCertificateTaskContext inContext,
-    final Order inOrder)
+    final CSCertificateTaskContext inContext)
   {
     super("AuthorizeDNSInitial", inContext);
-    this.order = Objects.requireNonNull(inOrder, "order");
   }
 
   @Override
@@ -75,10 +68,9 @@ public final class CSCertificateTaskAuthorizeDNSInitial
     final var context =
       this.context();
 
-    LOG.info("checking if domain is authorized");
+    LOG.info("Checking if domain is authorized");
 
     try {
-
       /*
        * Do any required fault injection.
        */
@@ -114,11 +106,11 @@ public final class CSCertificateTaskAuthorizeDNSInitial
        */
 
       if (authorizationsValid.size() == authorizations.size()) {
-        LOG.info("domain is already authorized");
+        LOG.info("Domain is already authorized");
         return new CSCertificateTaskCompleted(
           OptionalLong.empty(),
           Optional.of(
-            new CSCertificateTaskSignCertificateInitial(context, this.order))
+            new CSCertificateTaskSignCertificateInitial(context))
         );
       }
 
@@ -127,20 +119,19 @@ public final class CSCertificateTaskAuthorizeDNSInitial
        * completed.
        */
 
-      LOG.info("domain requires authorization");
+      LOG.info("Domain requires authorization");
       return new CSCertificateTaskCompleted(
         OptionalLong.of(context.options().dnsWaitTime().toMillis()),
         Optional.of(
-          new CSCertificateTaskAuthorizeDNSCheckRecords(
-            context, this.order, domainNames)
+          new CSCertificateTaskAuthorizeDNSCheckRecords(context, domainNames)
         )
       );
     } catch (final CSCertificateTaskException e) {
-      LOG.error("error checking authorization: ", e);
+      LOG.error("Error checking authorization: ", e);
       recordExceptionAndSetError(e);
 
       if (e.canRetry()) {
-        LOG.info("retrying...");
+        LOG.info("Retrying...");
         return new CSCertificateTaskFailedButCanBeRetried(
           ACME_UPDATE_PAUSE_TIME,
           e
@@ -172,8 +163,15 @@ public final class CSCertificateTaskAuthorizeDNSInitial
         .spanBuilder("CheckAuthorizationsValidity")
         .startSpan();
 
+    final Order order;
+    try {
+      order = context.createOrGetOrder();
+    } catch (final AcmeException e) {
+      throw new CSCertificateTaskException(e, false);
+    }
+
     try (var ignored = span.makeCurrent()) {
-      for (final var auth : this.order.getAuthorizations()) {
+      for (final var auth : order.getAuthorizations()) {
         this.checkAuthorizationValidity(
           context,
           domainNames,
@@ -204,7 +202,7 @@ public final class CSCertificateTaskAuthorizeDNSInitial
       authorizations.add(auth);
 
       if (auth.getStatus() == Status.VALID) {
-        LOG.debug("authorization is already valid");
+        LOG.debug("Authorization is already valid");
         authorizationsValid.add(auth);
         return;
       }
@@ -218,10 +216,10 @@ public final class CSCertificateTaskAuthorizeDNSInitial
         auth.getExpires();
 
       if (timeExpires.isEmpty()) {
-        LOG.debug("authorization will not expire");
+        LOG.debug("Authorization will not expire");
       } else {
         LOG.debug(
-          "authorization will expire in {}",
+          "Authorization will expire in {}",
           Duration.between(timeNow, timeExpires.get())
         );
       }
@@ -247,7 +245,7 @@ public final class CSCertificateTaskAuthorizeDNSInitial
         .startSpan();
 
     try (var ignored = span.makeCurrent()) {
-      LOG.debug("executing authorization");
+      LOG.debug("Executing authorization");
 
       final Optional<Dns01Challenge> challengeOpt =
         auth.findChallenge(Dns01Challenge.TYPE);
@@ -268,7 +266,7 @@ public final class CSCertificateTaskAuthorizeDNSInitial
         injectFault(context, challenge.getDigest());
 
       try {
-        LOG.info("creating required DNS TXT records");
+        LOG.info("Creating required DNS TXT records");
         this.context()
           .domain()
           .dnsConfigurator()

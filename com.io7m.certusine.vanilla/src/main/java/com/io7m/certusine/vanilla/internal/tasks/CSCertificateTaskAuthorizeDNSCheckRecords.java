@@ -17,9 +17,6 @@
 
 package com.io7m.certusine.vanilla.internal.tasks;
 
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
-import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskInProgress;
-import org.shredzone.acme4j.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,26 +39,21 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecords
   private static final Logger LOG =
     LoggerFactory.getLogger(CSCertificateTaskAuthorizeDNSCheckRecords.class);
 
-  private final Order order;
   private final Map<String, String> expectedTXTRecords;
 
   /**
    * A certificate task that checks if DNS records have been created.
    *
    * @param inContext            The task execution context
-   * @param inOrder              The certificate order
    * @param inExpectedTXTRecords The expected TXT records
    */
 
   public CSCertificateTaskAuthorizeDNSCheckRecords(
     final CSCertificateTaskContext inContext,
-    final Order inOrder,
     final Map<String, String> inExpectedTXTRecords)
   {
     super("AuthorizeDNSCheckRecords", inContext);
 
-    this.order =
-      Objects.requireNonNull(inOrder, "order");
     this.expectedTXTRecords =
       Objects.requireNonNull(inExpectedTXTRecords, "expectedTXTRecords");
   }
@@ -69,7 +61,7 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecords
   @Override
   CSCertificateTaskStatusType executeActual()
   {
-    LOG.debug("checking that DNS TXT records are visible");
+    LOG.debug("Checking that DNS TXT records are visible");
 
     var foundAll = true;
 
@@ -93,7 +85,7 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecords
           dnsQueries.withDefaultNameServers()
             .findAuthoritativeNameServersForDomain(context.domain().domain() + ".");
 
-        LOG.debug("located nameservers {} for {}", nsHosts, domainName);
+        LOG.debug("Located nameservers {} for {}", nsHosts, domainName);
 
         final var recordName =
           this.txtRecordNameToQuery(domainName);
@@ -101,9 +93,9 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecords
           dnsQueries.withNameServers(nsHosts)
             .findTXTRecordsForDomain(recordName);
 
-        LOG.debug("checking that TXT record {} is visible", recordName);
+        LOG.debug("Checking that TXT record {} is visible", recordName);
         var found = false;
-        LOG.debug("received {} records", Integer.valueOf(txtRecords.size()));
+        LOG.debug("Received {} records", Integer.valueOf(txtRecords.size()));
 
         /*
          * The values returned in TXT records will be quoted. Therefore,
@@ -115,7 +107,7 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecords
         for (final var record : txtRecords) {
           final var receivedText = record.value();
           if (receivedText.equals(expectedText)) {
-            LOG.debug("found matching TXT record for domain {}", domainName);
+            LOG.debug("Found matching TXT record for domain {}", domainName);
             found = true;
             break;
           }
@@ -136,18 +128,16 @@ public final class CSCertificateTaskAuthorizeDNSCheckRecords
     }
 
     if (foundAll) {
-      LOG.debug("all required TXT records were located");
+      LOG.debug("All required TXT records were located");
       return new CSCertificateTaskCompleted(
         OptionalLong.empty(),
         Optional.of(
-          new CSCertificateTaskAuthorizeDNSTriggerChallenges(
-            context,
-            this.order)
+          new CSCertificateTaskAuthorizeDNSHandleChallenges(context)
         )
       );
     }
 
-    LOG.debug("at least one TXT record is not yet visible");
+    LOG.debug("At least one TXT record is not yet visible");
     return new CSCertificateTaskInProgress(ACME_UPDATE_PAUSE_TIME);
   }
 }

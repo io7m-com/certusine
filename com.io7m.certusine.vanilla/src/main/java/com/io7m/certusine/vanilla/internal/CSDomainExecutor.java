@@ -30,8 +30,13 @@ import com.io7m.certusine.vanilla.internal.events.CSEventServiceType;
 import com.io7m.certusine.vanilla.internal.store.CSCertificateStoreServiceType;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTask;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskAuthorizeDNSInitial;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskCompleted;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskContext;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskEnd;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskFailedAndRestart;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskFailedButCanBeRetried;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskFailedPermanently;
+import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskInProgress;
 import com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType;
 import io.opentelemetry.api.trace.StatusCode;
 import org.shredzone.acme4j.Account;
@@ -48,11 +53,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
-
-import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskCompleted;
-import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedButCanBeRetried;
-import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskFailedPermanently;
-import static com.io7m.certusine.vanilla.internal.tasks.CSCertificateTaskStatusType.CSCertificateTaskInProgress;
 
 /**
  * A domain executor.
@@ -120,7 +120,7 @@ public final class CSDomainExecutor
     final KeyPair accountKey)
     throws AcmeException
   {
-    LOG.debug("locating account");
+    LOG.debug("Locating account");
     return new AccountBuilder()
       .agreeToTermsOfService()
       .useKeyPair(accountKey)
@@ -142,17 +142,9 @@ public final class CSDomainExecutor
         .startSpan();
 
     try (var ignored = span.makeCurrent()) {
-      final var fullyQualifiedDomainNames =
-        certificate.fullyQualifiedHostNames(taskContext.domain());
-
       try {
-        final var order =
-          account.newOrder()
-            .domains(fullyQualifiedDomainNames)
-            .create();
-
-        return new CSCertificateTaskAuthorizeDNSInitial(taskContext, order);
-      } catch (final AcmeException e) {
+        return new CSCertificateTaskAuthorizeDNSInitial(taskContext);
+      } catch (final Exception e) {
         span.recordException(e);
         return new CSCertificateTaskEnd(taskContext);
       }
@@ -175,7 +167,7 @@ public final class CSDomainExecutor
     final List<CSCertificateTask> tasksNow)
     throws InterruptedException
   {
-    LOG.debug("executing tasks");
+    LOG.debug("Executing tasks");
 
     final var taskExec =
       this.telemetry.meter()
@@ -226,11 +218,16 @@ public final class CSDomainExecutor
           taskExec.add(1L);
           tasksNext.add(task);
         }
+        case final CSCertificateTaskFailedAndRestart ignored -> {
+          taskRetry.add(1L);
+          taskExec.add(1L);
+          tasksNext.add(task);
+        }
       }
     }
 
     LOG.debug(
-      "pausing for {} ms before continuing tasks",
+      "Pausing for {} ms before continuing tasks",
       Long.valueOf(delayRequired)
     );
     Thread.sleep(delayRequired);
@@ -305,6 +302,7 @@ public final class CSDomainExecutor
             options,
             this.certificateStores,
             this.clock,
+            account,
             this.domain,
             certificate,
             ATTEMPT_LIMIT,

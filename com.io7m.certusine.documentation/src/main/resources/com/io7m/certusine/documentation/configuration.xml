@@ -287,6 +287,10 @@
   <Subsection title="OpenTelemetry" id="f92270bd-cbb4-4a6a-9582-ef304f4c3047">
     <Subsection title="Overview">
       <Paragraph>
+        Note: OpenTelemetry is deprecated as of version <Term type="constant">4.0.0</Term>. The next major release of
+        the <Term type="package">certusine</Term> package will expose a Prometheus-compatible metrics endpoint.
+      </Paragraph>
+      <Paragraph>
         The <Term type="expression">OpenTelemetry</Term> section of the configuration file configures
         <LinkExternal target="https://opentelemetry.io/">Open Telemetry</LinkExternal>. This section is optional and
         telemetry is disabled if the section is not present.
